@@ -7,17 +7,12 @@ namespace SnowPlow.Model.Vehicles
 {
     public class Bus : Vehicle
     {
-        public List<MapNode> stations { get; set; }
-        public int currentTargetIndex { get; set; }
-        public int completedTrips { get; set; }
+        //stations and target moved to controller
+        public int CompletedTrips { get; set; }
 
-        public Bus(List<MapNode> stations)
+        public Bus()
         {
-            if (stations == null) throw new ArgumentNullException(nameof(stations));
-            if (stations.Count < 2) throw new ArgumentException("A bus must have at least two stations.", nameof(stations));
-            this.stations = stations;
-            currentTargetIndex = 0;
-            completedTrips = 0;
+            CompletedTrips = 0;
 
         }
     }

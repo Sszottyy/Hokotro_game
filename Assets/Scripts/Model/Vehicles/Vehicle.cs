@@ -9,7 +9,7 @@ namespace SnowPlow.Model.Vehicles
     {
         static int idCounter = 0;
 
-        public Lane CurrentLane {  get; set; }
+        public LanePosition CurrentPosition {  get; set; }
 
         public bool isBlocked { get; set; }
         private string id { get;}
