@@ -8,7 +8,10 @@ namespace SnowPlow.Model.Vehicles
 {
     public class Car : Vehicle
     {
-        //destination and start moved to controller
+        public LanePosition Home { get; set; } = null;
+        public LanePosition Work { get; set; } = null;
+        public LanePosition Destination { get; set; } = null;
+
         public Car()
         {
            

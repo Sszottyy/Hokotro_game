@@ -5,9 +5,9 @@ using System;
 
 namespace SnowPlow.Controller.Pathfinding
 {
-    public class Pathfinder
+    public static class Pathfinder
     {
-        public List<LanePosition> FindPath(LanePosition start, LanePosition end, ITraversalPolicy policy)
+        public static List<LanePosition> FindPath(LanePosition start, LanePosition end, ITraversalPolicy policy)
         {
             if(start == null) throw new ArgumentNullException(nameof(start));
             if(end == null) throw new ArgumentNullException(nameof(end));
@@ -60,8 +60,7 @@ namespace SnowPlow.Controller.Pathfinding
             }
             return new List<LanePosition>();
         }
-
-        private IEnumerable<LanePosition> GetNeighbors(LanePosition current, ITraversalPolicy policy)
+        public static IEnumerable<LanePosition> GetNeighbors(LanePosition current, ITraversalPolicy policy)
         {
             List<LanePosition> neighbors = new();
             Lane currentLane = current.Lane; //melyik sav
@@ -105,7 +104,7 @@ namespace SnowPlow.Controller.Pathfinding
             return neighbors;
         }
 
-        private IEnumerable<Lane> GetOutGoingLanes(MapNode node)
+        private static IEnumerable<Lane> GetOutGoingLanes(MapNode node)
         {
             List<Lane> result = new();
 
@@ -123,7 +122,7 @@ namespace SnowPlow.Controller.Pathfinding
             return result;
         }
 
-        private LanePosition GetLowestFScore(List<LanePosition> openSet, Dictionary<LanePosition, float> fScore)
+        private static LanePosition GetLowestFScore(List<LanePosition> openSet, Dictionary<LanePosition, float> fScore)
         {
             LanePosition best = openSet[0];
             float bestScore = GetScore(best, fScore);
@@ -136,14 +135,14 @@ namespace SnowPlow.Controller.Pathfinding
             return best;
         }
 
-        private float GetScore(LanePosition pos, Dictionary<LanePosition, float> scores)
+        private static float GetScore(LanePosition pos, Dictionary<LanePosition, float> scores)
         {
             if(scores.TryGetValue(pos, out float score)) return score;
 
             return float.PositiveInfinity;
         }
 
-        private List<LanePosition> ReconstructPath(Dictionary<LanePosition, LanePosition> cameFrom, LanePosition current)
+        private static List<LanePosition> ReconstructPath(Dictionary<LanePosition, LanePosition> cameFrom, LanePosition current)
         {
             List<LanePosition> path = new List<LanePosition>() { current };
 
@@ -157,7 +156,7 @@ namespace SnowPlow.Controller.Pathfinding
             return path;
         }
 
-        private float Heuristic(LanePosition start, LanePosition end) {
+        private static float Heuristic(LanePosition start, LanePosition end) {
             return 0f;
         }
     }
