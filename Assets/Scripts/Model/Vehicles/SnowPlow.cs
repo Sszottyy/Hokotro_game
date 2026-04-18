@@ -12,7 +12,7 @@ namespace SnowPlow.Model.Vehicles
 
         public void ApplyToolEffect(LaneSegment segment)
         {
-            equippedTool?.ApplyEffect(segment);
+            EquippedTool?.ApplyEffect(segment);
         }
         public SnowPlow() { }
 

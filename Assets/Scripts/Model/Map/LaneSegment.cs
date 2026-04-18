@@ -106,9 +106,6 @@ namespace SnowPlow.Model.Map
             return SaltPower > 0;
         }
 
-        public bool IsBlocked()
-        {
-            return HasAccident || SnowLevel >= 3;
-        }
+        //REMOVED: public bool IsBlocked() - a kocsi es a hokotro szamara mast jelent -> controller kezeli
     }
 }
