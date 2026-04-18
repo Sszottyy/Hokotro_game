@@ -9,18 +9,19 @@ namespace SnowPlow.Model.Players
     {
         public string Name { get; set; }
 
+        private Team _team;
         public Team Team
         {
             get
             {
-                return Team;
+                return _team;
             }
 
             set
             {
-                Team?.RemovePlayer(this);
-                Team = value;
-                Team.AddPlayer(this);
+                _team?.RemovePlayer(this);
+                _team = value;
+                _team?.AddPlayer(this);
             }
         }
 
@@ -29,13 +30,13 @@ namespace SnowPlow.Model.Players
         public void AddVehicle(Vehicle vehicle)
         {
             Vehicles.Add(vehicle);
-            Team?.AddVehicle(vehicle);
+            _team?.AddVehicle(vehicle);
         }
 
         public void RemoveVehicle(Vehicle vehicle)
         {
             Vehicles.Remove(vehicle);
-            Team?.RemoveVehicle(vehicle);
+            _team?.RemoveVehicle(vehicle);
         }
         public Player() { }
 
