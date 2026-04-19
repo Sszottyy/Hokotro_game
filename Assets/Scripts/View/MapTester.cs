@@ -8,6 +8,8 @@ public class MapTester : MonoBehaviour
     [Header("Generálási Paraméterek")]
     public int intersections = 10;
 
+    [SerializeField] private int _seed;
+
     void Start()
     {
         RunTest();
@@ -22,7 +24,7 @@ public class MapTester : MonoBehaviour
         }
 
         // 2. Új logikai modell generálása
-        MapGenerator generator = new MapGenerator();
+        MapGenerator generator = new MapGenerator(_seed);
         var data = generator.Generate(intersections); //MapData
 
         // 3. Megjelenítés

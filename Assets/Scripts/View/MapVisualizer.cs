@@ -64,6 +64,12 @@ public class MapVisualizer : MonoBehaviour
                     coord.y * gridSpacing + Random.Range(-1f, 1f),
                     0
                 );
+
+                _nodePositions[node] = new Vector3(
+                    coord.x * gridSpacing,
+                    coord.y * gridSpacing,
+                    0
+                );
             }
             else
             {
