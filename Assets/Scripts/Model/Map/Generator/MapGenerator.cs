@@ -18,7 +18,13 @@ namespace SnowPlow.Model.Map.Generator
 
     public class MapGenerator
     {
-        private readonly System.Random _rng = new System.Random();
+        //private readonly System.Random _rng = new System.Random();
+        private readonly System.Random _rng;
+
+        public MapGenerator(int seed)
+        {
+            _rng = new System.Random(seed);
+        }
 
         /// <summary>
         /// Generál egy úthálózatot, ahol minden csomópont kereszteződés.
