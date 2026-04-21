@@ -107,6 +107,10 @@ namespace SnowPlow.Model.Map
             return SaltPower > 0;
         }
 
+        public bool TooMuchSnow()
+        {
+            return SnowLevel > 3; // Példa küszöbérték, igény szerint módosítható
+        }
         //REMOVED: public bool IsBlocked() - a kocsi es a hokotro szamara mast jelent -> controller kezeli
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using SnowPlow.Controller;
+using SnowPlow.Model.Map;
 using UnityEngine;
 
 namespace Assets.Scripts.Controller
@@ -10,18 +11,16 @@ namespace Assets.Scripts.Controller
     {
         private SnowSystem snowSystem;
 
-        void Start()
+        public void Init(List<Lane> lanes)
         {
+            snowSystem = new SnowSystem(lanes);
         }
+
 
         void Update()
         {
             if (snowSystem != null) snowSystem.Update(Time.deltaTime);
         }
 
-        public void SetSnowSystem(SnowSystem system)
-        {
-            snowSystem = system;
-        }
     }
 }
