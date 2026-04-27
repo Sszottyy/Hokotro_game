@@ -9,17 +9,17 @@ namespace Assets.Scripts.Controller
 {
     public class SnowController : MonoBehaviour
     {
-        private SnowSystem SnowSystem { get; set; }
+        private SnowSystem snowSystem { get; set; }
 
         public void Init(List<Lane> lanes)
         {
-            SnowSystem = new SnowSystem(lanes);
+            snowSystem = new SnowSystem(lanes);
         }
 
 
         void Update()
         {
-            if (SnowSystem != null) SnowSystem.Update(Time.deltaTime);
+            if (snowSystem != null) snowSystem.Update(Time.deltaTime);
         }
 
     }

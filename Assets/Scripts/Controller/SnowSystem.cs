@@ -7,11 +7,11 @@ namespace SnowPlow.Controller
 {
     public class SnowSystem
     {
-        private List<Lane> Lanes { get; set;  } = new List<Lane>();
+        public List<Lane> Lanes { get; set;  } = new List<Lane>();
 
         public float SnowFallRate { get; set; } = 5f; // másodpercenkénti hóesés gyakorisága (kezdetben 5 másodperc)
 
-        private float Dt { get; set; } = 0;
+        private float dt { get; set; } = 0;
         public SnowSystem(List<Lane> lanes)
         {
             this.Lanes = lanes;
@@ -19,11 +19,11 @@ namespace SnowPlow.Controller
 
         public void Update(float deltaTime)
         {
-            Dt += deltaTime;
+            dt += deltaTime;
 
-            while (Dt >= SnowFallRate)
+            while (dt >= SnowFallRate)
             {
-                Dt -= SnowFallRate;
+                dt -= SnowFallRate;
                 SnowFallRate = Math.Max(2f, SnowFallRate - 0.05f);
 
                 foreach (var lane in Lanes)

@@ -8,7 +8,7 @@ namespace SnowPlow.Model.Map
         //NEW! - kesobb valtoztathato, a celja, hogy ne lehessen tulsagosan stackelni
         public const int MaxSaltPower = 12;
         //New! - áthaladt autók száma
-        private int VehicleCount { get; set; } = 0;
+        public int VehicleCount { get; set; } = 0;
         public int SnowLevel { get; private set; }
         public bool HasIce { get; private set; }
         public bool HasAccident { get; private set; }
