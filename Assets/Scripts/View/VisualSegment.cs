@@ -4,6 +4,7 @@ using UnityEngine;
 public class VisualSegment : MonoBehaviour
 {
     public LaneSegment LogicSegment { get; private set; }
+    public LanePosition LanePosition { get; private set; }
 
     [Header("Vonalak")]
     public GameObject leftOuterLine;
@@ -15,17 +16,36 @@ public class VisualSegment : MonoBehaviour
     public SpriteRenderer snowOverlay;
     public SpriteRenderer iceOverlay;
 
-    public void Initialize(LaneSegment logicSegment, bool isLeftmost, bool isRightmost, bool isDirectionDivider)
+    public void Initialize(
+        Lane lane,
+        int segmentIndex,
+        bool isLeftmost,
+        bool isRightmost,
+        bool isDirectionDivider)
     {
-        LogicSegment = logicSegment;
+        if (lane == null)
+        {
+            LogicSegment = null;
+            LanePosition = null;
+            return;
+        }
+
+        LanePosition = new LanePosition(lane, segmentIndex);
+        LogicSegment = lane[segmentIndex];
 
         if (leftOuterLine != null) leftOuterLine.SetActive(isLeftmost);
         if (rightOuterLine != null) rightOuterLine.SetActive(isRightmost);
 
         if (!isRightmost)
         {
-            if (isDirectionDivider && solidDivider != null) solidDivider.SetActive(true);
-            else if (dashedDivider != null) dashedDivider.SetActive(true);
+            if (isDirectionDivider && solidDivider != null)
+            {
+                solidDivider.SetActive(true);
+            }
+            else if (dashedDivider != null)
+            {
+                dashedDivider.SetActive(true);
+            }
         }
 
         UpdateVisuals();
@@ -43,6 +63,7 @@ public class VisualSegment : MonoBehaviour
         else
         {
             if (iceOverlay != null) iceOverlay.gameObject.SetActive(false);
+
             if (snowOverlay != null)
             {
                 float alpha = Mathf.Clamp01(LogicSegment.SnowLevel / 3f);

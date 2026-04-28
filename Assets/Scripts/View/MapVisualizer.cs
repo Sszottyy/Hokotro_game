@@ -49,7 +49,7 @@ public class MapVisualizer : MonoBehaviour
             vNode.BuildIntersectionWalls(_nodePositions, laneWidth);
         }
 
-       // AdjustCamera2D(data);
+        // AdjustCamera2D(data);
     }
 
     private void GenerateGridPositions(MapData data)
@@ -115,17 +115,17 @@ public class MapVisualizer : MonoBehaviour
     {
         Vector3 posA = _nodePositions[road.NodeA];
         Vector3 posB = _nodePositions[road.NodeB];
-        Vector3 direction = (posB - posA).normalized;
+
+        Vector3 roadDirection = (posB - posA).normalized;
+        Vector3 roadRight = new Vector3(-roadDirection.y, roadDirection.x, 0);
 
         float actualDist = Vector3.Distance(posA, posB);
-        // Itt korrigál a Unity, de a hiba láthatatlan lesz! (mindig ~2.0 lesz a szegmens hossza)
         float stepSize = actualDist / road.SegmentCount;
-
-        Vector3 right = new Vector3(-direction.y, direction.x, 0);
 
         int lanesA = road.LanesTowardsA.Count;
         int lanesB = road.LanesTowardsB.Count;
         int totalLanes = lanesA + lanesB;
+
         float roadWidthOffset = (totalLanes - 1) * laneWidth * 0.5f;
 
         List<Lane> allLanes = new List<Lane>();
@@ -134,27 +134,43 @@ public class MapVisualizer : MonoBehaviour
 
         for (int l = 0; l < totalLanes; l++)
         {
-            Vector3 laneOffset = right * (l * laneWidth - roadWidthOffset);
             Lane logicLane = allLanes[l];
 
-            bool isLeftmost = (l == 0);
-            bool isRightmost = (l == totalLanes - 1);
-            bool isDirectionDivider = (l == lanesA - 1);
+            Vector3 laneStartPosition = _nodePositions[logicLane.StartNode];
+            Vector3 laneEndPosition = _nodePositions[logicLane.EndNode];
+            Vector3 laneDirection = (laneEndPosition - laneStartPosition).normalized;
+
+            Vector3 laneOffset = roadRight * (l * laneWidth - roadWidthOffset);
 
             for (int s = 0; s < road.SegmentCount; s++)
             {
-                Vector3 spawnPos = posA + (direction * (s * stepSize + stepSize / 2f)) + laneOffset;
+                Vector3 spawnPos =
+                    laneStartPosition
+                    + laneDirection * (s * stepSize + stepSize / 2f)
+                    + laneOffset;
+
                 GameObject segmentObj = Instantiate(segmentPrefab, spawnPos, Quaternion.identity, transform);
 
-                segmentObj.transform.up = direction;
+                segmentObj.transform.up = laneDirection;
                 segmentObj.transform.localScale = new Vector3(laneWidth, stepSize, 1);
-                segmentObj.name = $"Segment_{road.Id}_L{l}_S{s}";
+                segmentObj.name = $"Segment_{road.Id}_Lane{logicLane.Id}_S{s}";
 
                 VisualSegment visSeg = segmentObj.GetComponent<VisualSegment>();
-                visSeg.Initialize(logicLane.Segments[s], isLeftmost, isRightmost, isDirectionDivider);
 
-                if (!SegmentDirectory.ContainsKey(logicLane.Segments[s]))
-                    SegmentDirectory.Add(logicLane.Segments[s], visSeg);
+                visSeg.Initialize(
+                    logicLane,
+                    s,
+                    true,
+                    true,
+                    true
+                );
+
+                LaneSegment logicSegment = logicLane.Segments[s];
+
+                if (!SegmentDirectory.ContainsKey(logicSegment))
+                {
+                    SegmentDirectory.Add(logicSegment, visSeg);
+                }
             }
         }
     }
