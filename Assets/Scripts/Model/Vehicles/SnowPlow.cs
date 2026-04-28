@@ -6,7 +6,7 @@ using SnowPlow.Model.Tools;
 
 namespace SnowPlow.Model.Vehicles
 {
-    class SnowPlow : Vehicle
+    public class SnowPlow : Vehicle
     {
         public IPlowTool EquippedTool { get; set; } = new SweaperTool(); // Default tool
 

@@ -15,5 +15,15 @@ namespace SnowPlow.Model.Vehicles
             CompletedTrips = 0;
 
         }
+        public void BusOnSegment(LaneSegment segment)
+        {
+
+            if (segment.HasIce)
+            { }
+            if (segment.SnowLevel >= 3)
+            {
+                this.isBlocked = true;
+            }
+        }
     }
 }
