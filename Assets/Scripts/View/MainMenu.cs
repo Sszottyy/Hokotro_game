@@ -11,6 +11,11 @@ public class MainMenu : MonoBehaviour
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
+    public void CreatePlayerInstance()
+    {
+        string playerName = InputField.text;
+        GameManager.Instance.CreatePlayer(playerName);
+    }
     public void CheckInput(string text)
     {
         bool isValid = isValidName(text);
