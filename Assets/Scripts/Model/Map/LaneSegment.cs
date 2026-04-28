@@ -7,7 +7,8 @@ namespace SnowPlow.Model.Map
     {
         //NEW! - kesobb valtoztathato, a celja, hogy ne lehessen tulsagosan stackelni
         public const int MaxSaltPower = 12;
-
+        //New! - áthaladt autók száma
+        public int VehicleCount { get; set; } = 0;
         public int SnowLevel { get; private set; }
         public bool HasIce { get; private set; }
         public bool HasAccident { get; private set; }
@@ -106,6 +107,10 @@ namespace SnowPlow.Model.Map
             return SaltPower > 0;
         }
 
+        public bool TooMuchSnow()
+        {
+            return SnowLevel > 3; // Példa küszöbérték, igény szerint módosítható
+        }
         //REMOVED: public bool IsBlocked() - a kocsi es a hokotro szamara mast jelent -> controller kezeli
     }
 }
