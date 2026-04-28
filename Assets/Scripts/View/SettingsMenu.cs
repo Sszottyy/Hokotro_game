@@ -42,7 +42,8 @@ public class SettingsMenu : MonoBehaviour
 
     public void SetQuality(int qualityIndex)
     {
-        QualitySettings.SetQualityLevel(qualityIndex);
+        QualitySettings.SetQualityLevel(qualityIndex, true);
+        Debug.Log("Quality: " + QualitySettings.names[qualityIndex]);
     }
 
     public void SetResolution(int resolutionIndex)
