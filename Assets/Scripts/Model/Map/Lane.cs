@@ -50,5 +50,21 @@ namespace SnowPlow.Model.Map
         {
             return $"Lane {Id}: {StartNode.Id} -> {EndNode.Id}, segments: {segments.Count}";
         }
+        //NEW! könyebb havat hozzáadni
+        public void AddSnow(int amount)
+        {
+            foreach (var segment in segments)
+            {
+                segment.AddSnow(amount);
+            }
+        }
+        public void AddSnow()
+        {
+            foreach (var segment in segments)
+            {
+                segment.AddSnow(1);
+            }
+
+        }
     }
 }
