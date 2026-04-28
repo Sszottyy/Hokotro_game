@@ -8,15 +8,17 @@ namespace SnowPlow.Model.Vehicles
 {
     class SnowPlow : Vehicle
     {
-        public IPlowTool EquippedTool { get; set; }
+        public IPlowTool equippedTool { get; set; } = new SweaperTool(); // Default tool
 
         public void ApplyToolEffect(LaneSegment segment)
         {
             EquippedTool?.ApplyEffect(segment);
         }
-        public SnowPlow()
+        public SnowPlow() { }
+
+        public SnowPlow(IPlowTool tool)
         {
-            IPlowTool EquippedTool = new SweaperTool(); // Default tool
+            equippedTool = tool;
         }
     }
 }
