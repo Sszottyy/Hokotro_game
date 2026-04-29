@@ -9,7 +9,7 @@ public class MainMenu : MonoBehaviour
     public Button[] buttons;
     public void PlayGame()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        SceneManager.LoadScene("MainGameScene",LoadSceneMode.Single);
     }
     public void CreatePlayerInstance()
     {
