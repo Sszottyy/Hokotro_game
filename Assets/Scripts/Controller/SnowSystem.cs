@@ -12,6 +12,7 @@ namespace SnowPlow.Controller
         public float SnowFallRate { get; set; } = 5f; // másodpercenkénti hóesés gyakorisága (kezdetben 5 másodperc)
 
         private float dt { get; set; } = 0;
+        private float saltTimer { get; set; } = 0;
         public SnowSystem(List<Lane> lanes)
         {
             this.Lanes = lanes;
@@ -20,6 +21,7 @@ namespace SnowPlow.Controller
         public void Update(float deltaTime)
         {
             dt += deltaTime;
+            saltTimer += deltaTime;
 
             while (dt >= SnowFallRate)
             {
@@ -29,6 +31,14 @@ namespace SnowPlow.Controller
                 foreach (var lane in Lanes)
                 {
                     lane.AddSnow();
+                }
+            }
+            while( saltTimer >= 3f)
+            {
+                saltTimer -= 3f;
+                foreach (var lane in Lanes)
+                {
+                    lane.UpdateSaltPower();
                 }
             }
 

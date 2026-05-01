@@ -4,7 +4,7 @@ using System.Text;
 using SnowPlow.Model.Map;
 using SnowPlow.Model.Tools;
 
-namespace Assets.Scripts.Model.Tools
+namespace SnowPlow.Model.Tools
 {
     class DragonTool : IPlowTool
     {
@@ -25,6 +25,6 @@ namespace Assets.Scripts.Model.Tools
             }
         }
 
-
+        public PlowToolType Type() => PlowToolType.Dragon;
     }
 }

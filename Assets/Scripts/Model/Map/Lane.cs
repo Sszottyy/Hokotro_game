@@ -66,5 +66,15 @@ namespace SnowPlow.Model.Map
             }
 
         }
+        public void UpdateSaltPower()
+        {
+            foreach (var segment in segments)
+            {
+                if (segment.SaltPower > 0)
+                {
+                    segment.UpdateSalt();
+                }
+            }
+        }
     }
 }

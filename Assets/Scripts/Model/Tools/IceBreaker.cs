@@ -17,5 +17,7 @@ namespace SnowPlow.Model.Tools
 
             }
         }
+        
+        public PlowToolType Type() => PlowToolType.IceBraker;
     }
 }

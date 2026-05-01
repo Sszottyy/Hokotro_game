@@ -4,7 +4,7 @@ using System.Text;
 using SnowPlow.Model.Map;
 using SnowPlow.Model.Tools;
 
-namespace Assets.Scripts.Model.Tools
+namespace SnowPlow.Model.Tools
 {
     class SaltTool : IPlowTool
     {
@@ -31,5 +31,7 @@ namespace Assets.Scripts.Model.Tools
                 Fuel -= 1;
             }
         }
+
+        public PlowToolType Type() => PlowToolType.Salt;
     }
 }

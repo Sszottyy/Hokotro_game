@@ -12,5 +12,6 @@ namespace SnowPlow.Model.Tools
         {
             segment?.RemoveAllSnow();
         }
+        public PlowToolType Type() => PlowToolType.Sweaper;
     }
 }

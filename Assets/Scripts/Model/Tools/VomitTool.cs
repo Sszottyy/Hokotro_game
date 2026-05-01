@@ -4,7 +4,7 @@ using System.Text;
 using SnowPlow.Model.Map;
 using SnowPlow.Model.Tools;
 
-namespace Assets.Scripts.Model.Tools
+namespace SnowPlow.Model.Tools
 {
     class VomitTool : IPlowTool
     {
@@ -13,5 +13,6 @@ namespace Assets.Scripts.Model.Tools
         {
             segment.RemoveAllSnow();
         }
+        public PlowToolType Type() => PlowToolType.Vomit;
     }
 }
