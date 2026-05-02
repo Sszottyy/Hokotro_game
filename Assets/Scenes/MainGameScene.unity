@@ -119,6 +119,54 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &76763804
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 76763806}
+  - component: {fileID: 76763807}
+  m_Layer: 0
+  m_Name: Tester
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &76763806
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 76763804}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 713.4653, y: 482.09525, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &76763807
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 76763804}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b082701942007c4796be4e9894d50e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BusBlockTester
+  mapVisualizer: {fileID: 1667520727}
+  snowySegmentCount: 0
+  icySegmentCount: 0
+  accidentSegmentCount: 0
 --- !u!114 &97474885 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5913831501275424017, guid: 24109d1be1029314ba2df5d8827c48c0, type: 3}
@@ -147,7 +195,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!199 &117464490
 ParticleSystemRenderer:
   serializedVersion: 7
@@ -5038,6 +5086,28 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 165013df6444cc249ab8a7f1426058fb, type: 3}
+--- !u!1 &715672157 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5829326260946577903, guid: b4703d1fd1bd59a43b6fb4af496673f7, type: 3}
+  m_PrefabInstance: {fileID: 6342736708919024420}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &715672158
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 715672157}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ed527938ce775a4c9b7b326c1fe867c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BusStationPassengers
+  passengerPrefab: {fileID: 4028533530101603263, guid: e4cfc2f8cccee9942ade1609efe5e35e, type: 3}
+  minSpawnInterval: 3
+  maxSpawnInterval: 8
+  maxPassengers: 6
+  spawnRadius: 0.5
 --- !u!1001 &858317968
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5046,6 +5116,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2052380798042489798, guid: bc62bf645b715b7419b3fced444bb2ba, type: 3}
+      propertyPath: _seed
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 2052380798042489798, guid: bc62bf645b715b7419b3fced444bb2ba, type: 3}
+      propertyPath: intersections
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 2052380798042489798, guid: bc62bf645b715b7419b3fced444bb2ba, type: 3}
       propertyPath: vehicleSpawner
       value: 
@@ -5099,6 +5177,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bc62bf645b715b7419b3fced444bb2ba, type: 3}
+--- !u!114 &1667520727 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3612334735104349980, guid: bc62bf645b715b7419b3fced444bb2ba, type: 3}
+  m_PrefabInstance: {fileID: 858317968}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bc94901b1be7dd488a8f9ff99be396c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MapVisualizer
 --- !u!1001 &3388257769702636784
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5156,6 +5245,66 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 24109d1be1029314ba2df5d8827c48c0, type: 3}
+--- !u!1001 &6342736708919024420
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1191860635625948192, guid: b4703d1fd1bd59a43b6fb4af496673f7, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 2.03398
+      objectReference: {fileID: 0}
+    - target: {fileID: 1191860635625948192, guid: b4703d1fd1bd59a43b6fb4af496673f7, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.62786
+      objectReference: {fileID: 0}
+    - target: {fileID: 1191860635625948192, guid: b4703d1fd1bd59a43b6fb4af496673f7, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1191860635625948192, guid: b4703d1fd1bd59a43b6fb4af496673f7, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1191860635625948192, guid: b4703d1fd1bd59a43b6fb4af496673f7, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1191860635625948192, guid: b4703d1fd1bd59a43b6fb4af496673f7, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1191860635625948192, guid: b4703d1fd1bd59a43b6fb4af496673f7, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1191860635625948192, guid: b4703d1fd1bd59a43b6fb4af496673f7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1191860635625948192, guid: b4703d1fd1bd59a43b6fb4af496673f7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1191860635625948192, guid: b4703d1fd1bd59a43b6fb4af496673f7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5829326260946577903, guid: b4703d1fd1bd59a43b6fb4af496673f7, type: 3}
+      propertyPath: m_Name
+      value: Passangers
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5829326260946577903, guid: b4703d1fd1bd59a43b6fb4af496673f7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 715672158}
+  m_SourcePrefab: {fileID: 100100000, guid: b4703d1fd1bd59a43b6fb4af496673f7, type: 3}
 --- !u!1001 &8825545291792986907
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5209,9 +5358,25 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8338259273252699864, guid: c1f5a539f6f31a9498d758e22675aa8a, type: 3}
+      propertyPath: busPrefab
+      value: 
+      objectReference: {fileID: 4312103084254756940, guid: c285ca9ee1ec27b4f998fbf32ef0f7b3, type: 3}
+    - target: {fileID: 8338259273252699864, guid: c1f5a539f6f31a9498d758e22675aa8a, type: 3}
       propertyPath: occupancyManager
       value: 
       objectReference: {fileID: 97474885}
+    - target: {fileID: 8338259273252699864, guid: c1f5a539f6f31a9498d758e22675aa8a, type: 3}
+      propertyPath: playerSnowPlowPrefab
+      value: 
+      objectReference: {fileID: 8883108311115965997, guid: 0db6188f99cb0fb44afd6e90ad1df495, type: 3}
+    - target: {fileID: 8338259273252699864, guid: c1f5a539f6f31a9498d758e22675aa8a, type: 3}
+      propertyPath: spawnPlayerBusOnStart
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8338259273252699864, guid: c1f5a539f6f31a9498d758e22675aa8a, type: 3}
+      propertyPath: spawnPlayerSnowPlowOnStart
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -5226,3 +5391,5 @@ SceneRoots:
   - {fileID: 3388257769702636784}
   - {fileID: 8825545291792986907}
   - {fileID: 117464492}
+  - {fileID: 76763806}
+  - {fileID: 6342736708919024420}
