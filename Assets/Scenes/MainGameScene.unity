@@ -5103,7 +5103,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ed527938ce775a4c9b7b326c1fe867c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BusStationPassengers
-  passengerPrefab: {fileID: 4028533530101603263, guid: e4cfc2f8cccee9942ade1609efe5e35e, type: 3}
+  passengerPrefabs:
+  - {fileID: 4028533530101603263, guid: e4cfc2f8cccee9942ade1609efe5e35e, type: 3}
+  - {fileID: 4028533530101603263, guid: ad0f2c36e4426994a99ebf41911134fb, type: 3}
+  - {fileID: 4028533530101603263, guid: 7079c33e73a6b1c4cb3ce2714696c06b, type: 3}
+  - {fileID: 4028533530101603263, guid: b7706d40cfc18a84786d0a8d2ba1f3a3, type: 3}
+  - {fileID: 4028533530101603263, guid: 0a19de2ba94951941abfddc20c44c255, type: 3}
+  - {fileID: 4028533530101603263, guid: 97de9a2af33fb1f43be9e7b4936502f1, type: 3}
+  - {fileID: 4028533530101603263, guid: dd2f55dce036fe847bb19847bc4a96be, type: 3}
   minSpawnInterval: 3
   maxSpawnInterval: 8
   maxPassengers: 6
@@ -5118,7 +5125,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2052380798042489798, guid: bc62bf645b715b7419b3fced444bb2ba, type: 3}
       propertyPath: _seed
-      value: 10
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2052380798042489798, guid: bc62bf645b715b7419b3fced444bb2ba, type: 3}
       propertyPath: intersections
