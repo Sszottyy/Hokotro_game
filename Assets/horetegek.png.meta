@@ -1,0 +1,604 @@
+fileFormatVersion: 2
+guid: e40a57b619b7fdf408ccea4ae23db429
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -6945994084524655414
+    second: horetegek_0
+  - first:
+      213: 7497755101539431444
+    second: horetegek_1
+  - first:
+      213: 5937126115144560802
+    second: horetegek_2
+  - first:
+      213: -6223714568069144021
+    second: horetegek_3
+  - first:
+      213: -1445902620008266273
+    second: horetegek_4
+  - first:
+      213: -3685305679783784290
+    second: horetegek_5
+  - first:
+      213: 8531674950128309471
+    second: horetegek_6
+  - first:
+      213: -3135002458709153310
+    second: horetegek_7
+  - first:
+      213: 8389619476233291396
+    second: horetegek_8
+  - first:
+      213: -6170558148554658979
+    second: horetegek_9
+  - first:
+      213: -1829453805083116117
+    second: horetegek_10
+  - first:
+      213: -1850026998839259763
+    second: horetegek_11
+  - first:
+      213: -6420556200536090285
+    second: horetegek_12
+  - first:
+      213: -3760989106580166967
+    second: horetegek_13
+  - first:
+      213: 9215688343877538150
+    second: horetegek_14
+  - first:
+      213: -884917457839145221
+    second: horetegek_15
+  - first:
+      213: 7060767723525403067
+    second: horetegek_16
+  - first:
+      213: 4135628456808541249
+    second: horetegek_17
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: horetegek_0
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 542
+        width: 563
+        height: 59
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: acc71fb7e2fda9f90800000000000000
+      internalID: -6945994084524655414
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: horetegek_1
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 414
+        width: 177
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 41471204a806d0860800000000000000
+      internalID: 7497755101539431444
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: horetegek_2
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 276
+        width: 284
+        height: 156
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2a0f2e7deb8e46250800000000000000
+      internalID: 5937126115144560802
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: horetegek_3
+      rect:
+        serializedVersion: 2
+        x: 34
+        y: 396
+        width: 65
+        height: 37
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b22a0d2339ce0a9a0800000000000000
+      internalID: -6223714568069144021
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: horetegek_4
+      rect:
+        serializedVersion: 2
+        x: 225
+        y: 427
+        width: 373
+        height: 88
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fd5c9925a3f1febe0800000000000000
+      internalID: -1445902620008266273
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: horetegek_5
+      rect:
+        serializedVersion: 2
+        x: 328
+        y: 324
+        width: 119
+        height: 108
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e9012c3820a2bdcc0800000000000000
+      internalID: -3685305679783784290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: horetegek_6
+      rect:
+        serializedVersion: 2
+        x: 470
+        y: 287
+        width: 125
+        height: 150
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fd41f751a29966670800000000000000
+      internalID: 8531674950128309471
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: horetegek_7
+      rect:
+        serializedVersion: 2
+        x: 408
+        y: 324
+        width: 116
+        height: 57
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2e92aaeafdb3e74d0800000000000000
+      internalID: -3135002458709153310
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: horetegek_8
+      rect:
+        serializedVersion: 2
+        x: 34
+        y: 243
+        width: 111
+        height: 55
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4868599a67aed6470800000000000000
+      internalID: 8389619476233291396
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: horetegek_9
+      rect:
+        serializedVersion: 2
+        x: 179
+        y: 245
+        width: 68
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d5be1819e06cd5aa0800000000000000
+      internalID: -6170558148554658979
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: horetegek_10
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 234
+        width: 310
+        height: 77
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline:
+      - - {x: -111, y: -38.5}
+        - {x: -64, y: -13.5}
+        - {x: -57, y: -9.5}
+        - {x: 149, y: -38.5}
+        - {x: 155, y: -38.5}
+        - {x: 155, y: -4.5}
+        - {x: 133, y: 7.5}
+        - {x: 81, y: 38.5}
+        - {x: -88, y: 38.5}
+        - {x: -134, y: 2.5}
+        - {x: -149, y: -6.5}
+        - {x: -133, y: 12.5}
+        - {x: -152, y: -4.5}
+        - {x: -155, y: -38.5}
+      - - {x: 128, y: 15.5}
+        - {x: 114, y: 29.5}
+        - {x: 125, y: 24.5}
+        - {x: 138, y: 5.5}
+        - {x: 131, y: 12.5}
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: badb80705797c96e0800000000000000
+      internalID: -1829453805083116117
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: horetegek_11
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 102
+        width: 298
+        height: 124
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d8dcd451f326356e0800000000000000
+      internalID: -1850026998839259763
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: horetegek_12
+      rect:
+        serializedVersion: 2
+        x: 357
+        y: 173
+        width: 234
+        height: 45
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3595d96372a95e6a0800000000000000
+      internalID: -6420556200536090285
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: horetegek_13
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 95
+        width: 121
+        height: 42
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9c6ec2a85584ecbc0800000000000000
+      internalID: -3760989106580166967
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: horetegek_14
+      rect:
+        serializedVersion: 2
+        x: 213
+        y: 69
+        width: 116
+        height: 61
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6615781d8b3b4ef70800000000000000
+      internalID: 9215688343877538150
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: horetegek_15
+      rect:
+        serializedVersion: 2
+        x: 361
+        y: 104
+        width: 237
+        height: 38
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bfeb4f5b24428b3f0800000000000000
+      internalID: -884917457839145221
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: horetegek_16
+      rect:
+        serializedVersion: 2
+        x: 43
+        y: 27
+        width: 160
+        height: 48
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bb17642c5d2ecf160800000000000000
+      internalID: 7060767723525403067
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: horetegek_17
+      rect:
+        serializedVersion: 2
+        x: 229
+        y: 21
+        width: 372
+        height: 70
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 14ce1138b24b46930800000000000000
+      internalID: 4135628456808541249
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 847068ef27aa81d4e989fc26bf16c2e8
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      horetegek_0: -6945994084524655414
+      horetegek_1: 7497755101539431444
+      horetegek_10: -1829453805083116117
+      horetegek_11: -1850026998839259763
+      horetegek_12: -6420556200536090285
+      horetegek_13: -3760989106580166967
+      horetegek_14: 9215688343877538150
+      horetegek_15: -884917457839145221
+      horetegek_16: 7060767723525403067
+      horetegek_17: 4135628456808541249
+      horetegek_2: 5937126115144560802
+      horetegek_3: -6223714568069144021
+      horetegek_4: -1445902620008266273
+      horetegek_5: -3685305679783784290
+      horetegek_6: 8531674950128309471
+      horetegek_7: -3135002458709153310
+      horetegek_8: 8389619476233291396
+      horetegek_9: -6170558148554658979
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

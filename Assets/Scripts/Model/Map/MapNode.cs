@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
-using static TreeEditor.TreeEditorHelper;
 
 namespace SnowPlow.Model.Map
 {

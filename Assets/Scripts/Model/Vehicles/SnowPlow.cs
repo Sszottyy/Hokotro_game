@@ -6,9 +6,9 @@ using SnowPlow.Model.Tools;
 
 namespace SnowPlow.Model.Vehicles
 {
-    class SnowPlow : Vehicle
+    public class SnowPlow : Vehicle
     {
-        public IPlowTool equippedTool { get; set; } = new SweaperTool(); // Default tool
+        public IPlowTool EquippedTool { get; set; } = new SweaperTool(); // Default tool
 
         public void ApplyToolEffect(LaneSegment segment)
         {
@@ -18,7 +18,7 @@ namespace SnowPlow.Model.Vehicles
 
         public SnowPlow(IPlowTool tool)
         {
-            equippedTool = tool;
+            EquippedTool = tool;
         }
     }
 }
