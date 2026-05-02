@@ -2,16 +2,17 @@
 using System.Collections.Generic;
 using System.Text;
 using SnowPlow.Model.Map;
+using SnowPlow.Model.Tools;
 
 namespace SnowPlow.Model.Tools
 {
-    class SweaperTool : IPlowTool
+    class VomitTool : IPlowTool
     {
-        public SweaperTool() { }
+        public VomitTool() { }
         public void ApplyEffect(LaneSegment segment)
         {
-            segment?.RemoveAllSnow();
+            segment.RemoveAllSnow();
         }
-        public PlowToolType Type() => PlowToolType.Sweaper;
+        public PlowToolType Type() => PlowToolType.Vomit;
     }
 }

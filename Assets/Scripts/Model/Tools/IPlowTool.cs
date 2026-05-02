@@ -9,5 +9,14 @@ namespace SnowPlow.Model.Tools
     public interface IPlowTool
     {
         void ApplyEffect(LaneSegment segment);
+        PlowToolType Type ();
+    }
+    public enum PlowToolType
+    {
+        Sweaper,
+        Vomit,
+        IceBraker,
+        Salt,
+        Dragon
     }
 }

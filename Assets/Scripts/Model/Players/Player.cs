@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using SnowPlow.Model.Vehicles;
+using SnowPlow.Model.Tools;
 
 namespace SnowPlow.Model.Players
 {
@@ -26,6 +27,8 @@ namespace SnowPlow.Model.Players
         }
 
         public List<Vehicle> Vehicles { get; set; } = new List<Vehicle>();
+
+        public List<IPlowTool> PlowTools { get; set; } = new List<IPlowTool>();
 
         public void AddVehicle(Vehicle vehicle)
         {
