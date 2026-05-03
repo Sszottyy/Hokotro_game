@@ -9,7 +9,7 @@ public class BusStationPassengers : MonoBehaviour
     public float minSpawnInterval = 3f;
     public float maxSpawnInterval = 8f;
     public int maxPassengers = 6;
-    public float spawnRadius = 0.5f; // how far from the sign passengers spread
+    public float spawnRadius = 0.7f; // how far from the sign passengers spread
 
     private List<GameObject> waitingPassengers = new List<GameObject>();
     private Vector3 signPosition;

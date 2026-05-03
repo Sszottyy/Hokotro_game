@@ -165,6 +165,10 @@ public class BusMovement : MonoBehaviour
             UpdateSprite(angle);
         }
 
+    }
+
+    private void Update()
+    {
         // Station interaction
         if (Input.GetKeyDown(KeyCode.Space) && currentStation != null && myRigidBody2D.linearVelocity.magnitude < 0.1f)
         {
@@ -175,7 +179,6 @@ public class BusMovement : MonoBehaviour
 
             if (isOtherStation && passengersOnBoard > 0)
             {
-                // Drop off at the other station
                 passengers.DropOffPassengers(passengersOnBoard);
                 Debug.Log($"[Bus] Dropped off {passengersOnBoard} passengers at {currentStation.gameObject.name}.");
                 passengersOnBoard = 0;
@@ -183,7 +186,6 @@ public class BusMovement : MonoBehaviour
             }
             else if (!isOtherStation || passengersOnBoard == 0)
             {
-                // Pick up — can press Space multiple times to keep picking up
                 int boarded = passengers.BoardPassengers();
                 passengersOnBoard += boarded;
                 pickupStation = currentStation;

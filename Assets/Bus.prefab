@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 8478512970846040140}
   - component: {fileID: 4644353460964745811}
   - component: {fileID: 1471605931049148573}
+  - component: {fileID: 7915359992181300374}
   m_Layer: 0
   m_Name: Bus
   m_TagString: Vehicle
@@ -195,3 +196,27 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 3.04, y: 6.66}
   m_EdgeRadius: 0
+--- !u!114 &7915359992181300374
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4312103084254756940}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ebf05d78ca19c94191db7af4239f4be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  arrow_Up: {fileID: -8741162572173067749, guid: 4ae0499e34f2e1a4eb25395a6d72b623, type: 3}
+  arrow_UpRight: {fileID: 1856342116378035492, guid: 4ae0499e34f2e1a4eb25395a6d72b623, type: 3}
+  arrow_Right: {fileID: -2004090141932228510, guid: 4ae0499e34f2e1a4eb25395a6d72b623, type: 3}
+  arrow_DownRight: {fileID: -370788707797741379, guid: 4ae0499e34f2e1a4eb25395a6d72b623, type: 3}
+  arrow_Down: {fileID: 337629612303549974, guid: 4ae0499e34f2e1a4eb25395a6d72b623, type: 3}
+  arrow_DownLeft: {fileID: -6769690973914197029, guid: 4ae0499e34f2e1a4eb25395a6d72b623, type: 3}
+  arrow_Left: {fileID: 1595856040408553336, guid: 4ae0499e34f2e1a4eb25395a6d72b623, type: 3}
+  arrow_UpLeft: {fileID: -4439693725607266777, guid: 4ae0499e34f2e1a4eb25395a6d72b623, type: 3}
+  arrowOffset: 1.5
+  arrowScale: 35
+  arrowSortingLayer: Vehicles
+  arrowSortingOrder: 20

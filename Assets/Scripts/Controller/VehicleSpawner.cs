@@ -239,6 +239,15 @@ namespace SnowPlow.Controller.Spawning
                 );
             }
 
+            StationArrowIndicator arrowIndicator = instance.GetComponent<StationArrowIndicator>();
+            if (arrowIndicator != null)
+            {
+                arrowIndicator.SetStations(
+                    mapVisualizer.SegmentDirectory[stationA],
+                    mapVisualizer.SegmentDirectory[stationB]
+                );
+            }
+
             return bus;
         }
 
