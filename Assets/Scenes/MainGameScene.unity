@@ -130,6 +130,50 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebf5a58ba614b1c4ebd1f1f3fff854ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SnowPlow.Controller.Traffic.VehicleOccupancyManager
+--- !u!1 &148537736
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 148537738}
+  - component: {fileID: 148537737}
+  m_Layer: 0
+  m_Name: Snowsystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &148537737
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 148537736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb6e6878a50358c44bccacc73cbd938b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets.Scripts.Controller.SnowController
+--- !u!4 &148537738
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 148537736}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 5.07945, y: -0.7712, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &161271741 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8338259273252699864, guid: c1f5a539f6f31a9498d758e22675aa8a, type: 3}
@@ -222,6 +266,10 @@ PrefabInstance:
       propertyPath: vehicleSpawner
       value: 
       objectReference: {fileID: 161271741}
+    - target: {fileID: 3612334735104349980, guid: bc62bf645b715b7419b3fced444bb2ba, type: 3}
+      propertyPath: snowController
+      value: 
+      objectReference: {fileID: 148537737}
     - target: {fileID: 4475072952249820817, guid: bc62bf645b715b7419b3fced444bb2ba, type: 3}
       propertyPath: m_LocalPosition.x
       value: 76.28773
@@ -591,3 +639,4 @@ SceneRoots:
   - {fileID: 858317968}
   - {fileID: 3388257769702636784}
   - {fileID: 8825545291792986907}
+  - {fileID: 148537738}

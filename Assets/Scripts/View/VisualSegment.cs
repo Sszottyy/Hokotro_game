@@ -66,9 +66,15 @@ public class VisualSegment : MonoBehaviour
 
             if (snowOverlay != null)
             {
+                snowOverlay.gameObject.SetActive(true);
+                Debug.Log($"SnowLevel: {LogicSegment.SnowLevel}");
                 float alpha = Mathf.Clamp01(LogicSegment.SnowLevel / 3f);
                 snowOverlay.color = new Color(1, 1, 1, alpha);
             }
         }
+    }
+    private void Update()
+    {
+        UpdateVisuals();
     }
 }
