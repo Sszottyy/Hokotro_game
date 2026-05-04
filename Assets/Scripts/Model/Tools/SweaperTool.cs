@@ -10,7 +10,8 @@ namespace SnowPlow.Model.Tools
         public SweaperTool() { }
         public void ApplyEffect(LaneSegment segment)
         {
-            segment.RemoveAllSnow();
+            segment?.RemoveAllSnow();
         }
+        public PlowToolType Type() => PlowToolType.Sweaper;
     }
 }
