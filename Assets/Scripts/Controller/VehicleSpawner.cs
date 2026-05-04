@@ -237,6 +237,7 @@ namespace SnowPlow.Controller.Spawning
                     mapVisualizer.SegmentDirectory[stationA],
                     mapVisualizer.SegmentDirectory[stationB]
                 );
+                busMovement.SetBusModel(bus);
             }
 
             StationArrowIndicator arrowIndicator = instance.GetComponent<StationArrowIndicator>();

@@ -42,6 +42,16 @@ public class BusMovement : MonoBehaviour
     private const float IceFriction = 0.995f;    // how little it slows down (closer to 1 = more slippery)
     private const float IceControlMultiplier = 0.15f; // how much control the player has on ice
 
+    // --- TRIP TRACKING VARIABLES ---
+    private VisualSegment tripOriginStation = null; // The station where the round trip started
+    private bool hasReachedMidpoint = false;        // True if we reached the "other" station
+    private VisualSegment lastStationVisited = null; // Prevents re-triggering while inside collider
+
+    private Bus busModel;
+    public void SetBusModel(Bus model)
+    {
+        busModel = model;
+    }
     public void SetStations(VisualSegment a, VisualSegment b)
     {
         stationA = a;
@@ -49,7 +59,7 @@ public class BusMovement : MonoBehaviour
     }
     void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log($"[Bus] Trigger entered: {other.gameObject.name} tag={other.gameObject.tag}");
+        //Debug.Log($"[Bus] Trigger entered: {other.gameObject.name} tag={other.gameObject.tag}");
 
         if (other.CompareTag("Road")) touchingRoads++;
 
@@ -90,7 +100,43 @@ public class BusMovement : MonoBehaviour
             {
                 currentStation = vs;
                 Debug.Log($"[Bus] Arrived at station: {vs.gameObject.name}");
+                if (currentStation != lastStationVisited)
+                {
+                    HandleTripCounter(currentStation);
+                    lastStationVisited = currentStation;
+                }
             }
+        }
+    }
+
+    private void HandleTripCounter(VisualSegment arrivedStation)
+    {
+        // 1. If we don't have an origin yet, set it.
+        if (tripOriginStation == null)
+        {
+            tripOriginStation = arrivedStation;
+            hasReachedMidpoint = false;
+            Debug.Log($"[Bus] Trip started at {arrivedStation.gameObject.name}");
+        }
+        // 2. If we are at the OTHER station, we've reached the midpoint.
+        else if (arrivedStation != tripOriginStation && !hasReachedMidpoint)
+        {
+            hasReachedMidpoint = true;
+            Debug.Log($"[Bus] Midpoint reached at {arrivedStation.gameObject.name}");
+        }
+        // 3. If we return to the ORIGIN after reaching the midpoint, trip is complete.
+        else if (arrivedStation == tripOriginStation && hasReachedMidpoint)
+        {
+            if (busModel != null)
+            {
+                busModel.CompletedTrips++;
+                Debug.Log($"[Bus] Full trip complete! Total: {busModel.CompletedTrips}");
+            }
+
+            // Reset for the next round trip
+            // Option A: Start new trip from here immediately
+            hasReachedMidpoint = false;
+            // Note: tripOriginStation remains the same, so it's always A->B->A
         }
     }
 
@@ -117,6 +163,11 @@ public class BusMovement : MonoBehaviour
         if (vs != null && vs == currentStation)
         {
             currentStation = null;
+        }
+
+        if (vs != null && vs == lastStationVisited)
+        {
+            lastStationVisited = null;
         }
     }
 
@@ -177,7 +228,7 @@ public class BusMovement : MonoBehaviour
 
             bool isOtherStation = pickupStation != null && currentStation != pickupStation;
 
-            if (isOtherStation && passengersOnBoard > 0)
+            if (isOtherStation)
             {
                 passengers.DropOffPassengers(passengersOnBoard);
                 Debug.Log($"[Bus] Dropped off {passengersOnBoard} passengers at {currentStation.gameObject.name}.");
