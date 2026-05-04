@@ -6,7 +6,7 @@ using SnowPlow.Model.Tools;
 
 namespace SnowPlow.Model.Tools
 {
-    class SaltTool : IPlowTool
+    public class SaltTool : IPlowTool
     {
         private int fuel = 0;
         public int Fuel { get; private set; }
@@ -18,9 +18,10 @@ namespace SnowPlow.Model.Tools
 
         public SaltTool() { }
 
-        public void AddSalt(int ammount)
+        public void AddFuel(int amount) //atneveztem, kicsit felrevezetonek gondoltam
         {
-            Fuel += ammount;
+            if (amount < 0) throw new ArgumentOutOfRangeException("Salt amount should be bigger than 0");
+            Fuel += amount;
         }
         public void ApplyEffect(LaneSegment laneSegment)
         {

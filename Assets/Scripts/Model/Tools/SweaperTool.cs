@@ -5,7 +5,7 @@ using SnowPlow.Model.Map;
 
 namespace SnowPlow.Model.Tools
 {
-    class SweaperTool : IPlowTool
+    public class SweaperTool : IPlowTool
     {
         public SweaperTool() { }
         public void ApplyEffect(LaneSegment segment)

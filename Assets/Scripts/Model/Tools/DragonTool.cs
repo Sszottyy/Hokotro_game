@@ -6,7 +6,7 @@ using SnowPlow.Model.Tools;
 
 namespace SnowPlow.Model.Tools
 {
-    class DragonTool : IPlowTool
+    public class DragonTool : IPlowTool
     {
         private int fuel = 0;
         public int Fuel { get; private set; }
@@ -23,6 +23,12 @@ namespace SnowPlow.Model.Tools
                 laneSegment.RemoveAllSnow();
                 Fuel -= 1;
             }
+        }
+
+        public void AddFuel(int amount)
+        {
+            if (amount < 0) throw new ArgumentOutOfRangeException(" fuelamount should be bigger than 0");
+            Fuel += amount;
         }
 
         public PlowToolType Type() => PlowToolType.Dragon;

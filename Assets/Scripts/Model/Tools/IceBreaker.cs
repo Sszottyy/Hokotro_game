@@ -5,19 +5,19 @@ using SnowPlow.Model.Map;
 
 namespace SnowPlow.Model.Tools
 {
-    class IceBreaker : IPlowTool
+    public class IceBreaker : IPlowTool
     {
         public IceBreaker() { }
         public void ApplyEffect(LaneSegment segment)
         {
             if (segment != null)
             {
-                segment.SetIce(false);
-                segment.AddSnow(); // the broken ice will create a layer of snow on the lane}
+                segment?.SetIce(false);
+                segment?.AddSnow(); // the broken ice will create a layer of snow on the lane}
 
             }
         }
         
-        public PlowToolType Type() => PlowToolType.IceBraker;
+        public PlowToolType Type() => PlowToolType.IceBreaker;
     }
 }
