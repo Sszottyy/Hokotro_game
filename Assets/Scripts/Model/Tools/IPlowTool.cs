@@ -15,7 +15,7 @@ namespace SnowPlow.Model.Tools
     {
         Sweaper,
         Vomit,
-        IceBraker,
+        IceBreaker,
         Salt,
         Dragon
     }

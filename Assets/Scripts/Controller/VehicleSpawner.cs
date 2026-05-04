@@ -6,6 +6,7 @@ using SnowPlow.Model.Vehicles;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using SnowPlow.Model.Tools;
 using SnowPlowVehicle = SnowPlow.Model.Vehicles.SnowPlow;
 
 namespace SnowPlow.Controller.Spawning
@@ -45,6 +46,7 @@ namespace SnowPlow.Controller.Spawning
             if (carNpcPrefab == null) throw new InvalidOperationException("Car NPC prefab is missing.");
             if (snowPlowNpcPrefab == null) throw new InvalidOperationException("SnowPlow prefab is missing.");
             if (occupancyManager == null) throw new InvalidOperationException("VehicleOccupancyManager is missing.");
+            if (spawnPlayerSnowPlowOnStart && playerSnowPlowPrefab == null) throw new InvalidOperationException("Player SnowPlow prefab is missing.");
 
             mapData = data;
             mapVisualizer = visualizer;
@@ -62,8 +64,6 @@ namespace SnowPlow.Controller.Spawning
             {
                 SpawnCarNPC();
             }
-
-            SpawnSnowPlowNPC();
 
             if (spawnPlayerSnowPlowOnStart)
             {
@@ -110,9 +110,17 @@ namespace SnowPlow.Controller.Spawning
         // ezt majd a shop hivja, amikor veszunk egy NPC hokotrot
         public SnowPlowVehicle SpawnSnowPlowNPC()
         {
+            return SpawnSnowPlowNPC(new SweaperTool());
+        }
+
+        public SnowPlowVehicle SpawnSnowPlowNPC(IPlowTool tool)
+        {
             EnsureInitialized();
 
-            SnowPlowVehicle snowPlow = new();
+            if (tool == null)
+                throw new ArgumentNullException(nameof(tool));
+
+            SnowPlowVehicle snowPlow = new(tool);
             LanePosition startPosition = GetRandomFreePosition();
 
             snowPlow.CurrentPosition = startPosition;
@@ -132,6 +140,7 @@ namespace SnowPlow.Controller.Spawning
             {
                 sensor = instance.AddComponent<VehicleSegmentSensor>();
             }
+
             sensor.Initialize(snowPlow);
 
             behaviour.Initialize(snowPlow, mapData);
@@ -173,6 +182,11 @@ namespace SnowPlow.Controller.Spawning
             }
 
             sensor.Initialize(playerSnowPlow);
+
+            if (global::GameManager.Instance != null && global::GameManager.Instance.CurrentPlayer != null)
+            {
+                global::GameManager.Instance.CurrentPlayer.AddVehicle(playerSnowPlow);
+            }
 
             occupancyManager.RegisterVehicle(playerSnowPlow, startPosition);
 
