@@ -576,7 +576,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebf5a58ba614b1c4ebd1f1f3fff854ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SnowPlow.Controller.Traffic.VehicleOccupancyManager
---- !u!1 &148537736
+--- !u!1 &142402834
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -584,37 +584,40 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 148537738}
-  - component: {fileID: 148537737}
+  - component: {fileID: 142402836}
+  - component: {fileID: 142402835}
   m_Layer: 0
-  m_Name: Snowsystem
+  m_Name: ShopTester
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &148537737
+--- !u!114 &142402835
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 148537736}
+  m_GameObject: {fileID: 142402834}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb6e6878a50358c44bccacc73cbd938b, type: 3}
+  m_Script: {fileID: 11500000, guid: 4b82fe6150320724286a41cf7ba8cb91, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Assets.Scripts.Controller.SnowController
---- !u!4 &148537738
+  m_EditorClassIdentifier: Assembly-CSharp::ShopDebugTester
+  shopController: {fileID: 1001218456}
+  testMoney: 9999999
+  makeShopVisible: 1
+--- !u!4 &142402836
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 148537736}
+  m_GameObject: {fileID: 142402834}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.07945, y: -0.7712, z: 0}
+  m_LocalPosition: {x: 4.6564, y: -18.98561, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -8084,72 +8087,8 @@ MonoBehaviour:
 --- !u!222 &2066780634
 CanvasRenderer:
   m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 2052380798042489798, guid: bc62bf645b715b7419b3fced444bb2ba, type: 3}
-      propertyPath: vehicleSpawner
-      value: 
-      objectReference: {fileID: 161271741}
-    - target: {fileID: 3612334735104349980, guid: bc62bf645b715b7419b3fced444bb2ba, type: 3}
-      propertyPath: snowController
-      value: 
-      objectReference: {fileID: 148537737}
-    - target: {fileID: 4475072952249820817, guid: bc62bf645b715b7419b3fced444bb2ba, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 76.28773
-      objectReference: {fileID: 0}
-    - target: {fileID: 4475072952249820817, guid: bc62bf645b715b7419b3fced444bb2ba, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 15.21317
-      objectReference: {fileID: 0}
-    - target: {fileID: 4475072952249820817, guid: bc62bf645b715b7419b3fced444bb2ba, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4475072952249820817, guid: bc62bf645b715b7419b3fced444bb2ba, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4475072952249820817, guid: bc62bf645b715b7419b3fced444bb2ba, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4475072952249820817, guid: bc62bf645b715b7419b3fced444bb2ba, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4475072952249820817, guid: bc62bf645b715b7419b3fced444bb2ba, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4475072952249820817, guid: bc62bf645b715b7419b3fced444bb2ba, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4475072952249820817, guid: bc62bf645b715b7419b3fced444bb2ba, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4475072952249820817, guid: bc62bf645b715b7419b3fced444bb2ba, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5910904888134299972, guid: bc62bf645b715b7419b3fced444bb2ba, type: 3}
-      propertyPath: m_Name
-      value: MapMgr
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: bc62bf645b715b7419b3fced444bb2ba, type: 3}
---- !u!4 &1207485781 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 187066146964351974, guid: 165013df6444cc249ab8a7f1426058fb, type: 3}
-  m_PrefabInstance: {fileID: 356015007}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2066780628}
   m_CullTransparentMesh: 1
@@ -8676,4 +8615,8 @@ SceneRoots:
   - {fileID: 858317968}
   - {fileID: 3388257769702636784}
   - {fileID: 8825545291792986907}
-  - {fileID: 148537738}
+  - {fileID: 1001218457}
+  - {fileID: 2046102344}
+  - {fileID: 2131235585}
+  - {fileID: 1180278350}
+  - {fileID: 142402836}
