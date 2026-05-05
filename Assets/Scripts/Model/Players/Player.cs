@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using SnowPlow.Model.Vehicles;
 using SnowPlow.Model.Tools;
+using SnowPlowVehicle = SnowPlow.Model.Vehicles.SnowPlow;
 
 namespace SnowPlow.Model.Players
 {
@@ -34,12 +35,21 @@ namespace SnowPlow.Model.Players
         {
             Vehicles.Add(vehicle);
             _team?.AddVehicle(vehicle);
+            if (vehicle is SnowPlowVehicle snowPlow)
+            {
+                snowPlow.SnowCleared += HandleClearedSnow;
+            }
         }
+        
 
         public void RemoveVehicle(Vehicle vehicle)
         {
             Vehicles.Remove(vehicle);
             _team?.RemoveVehicle(vehicle);
+            if (vehicle is SnowPlowVehicle snowPlow)
+            {
+                snowPlow.SnowCleared -= HandleClearedSnow;
+            }
         }
         public Player() { }
 
@@ -48,6 +58,13 @@ namespace SnowPlow.Model.Players
             Name = name;
             Team = team;
         }
-
+        private void HandleClearedSnow()
+        {
+            Team.Money += 1; // Example reward for clearing snow
+        }
+        private void HandleBusEvent()
+        {
+            Team.Score += 1;
+        }
     }
 }

@@ -1,4 +1,5 @@
 using SnowPlow.Model.Map;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class VisualSegment : MonoBehaviour
@@ -18,6 +19,9 @@ public class VisualSegment : MonoBehaviour
 
     [Header("Snow visuals")]
     public Sprite[] snowSprites;
+
+    [Header("Ice visuals")]
+    public Sprite iceSprite;
 
     public void Initialize(
         Lane lane,
@@ -50,6 +54,7 @@ public class VisualSegment : MonoBehaviour
                 dashedDivider.SetActive(true);
             }
         }
+        iceOverlay.sprite = iceSprite;
         UpdateVisuals();
     }
 
