@@ -13,7 +13,6 @@ public class MapVisualizer : MonoBehaviour
     public float gridSpacing = 20f;
     public float laneWidth = 1.0f;
 
-    // A Járművek ezen keresztül tudják majd, hova kell menniük!
     public Dictionary<LaneSegment, VisualSegment> SegmentDirectory = new Dictionary<LaneSegment, VisualSegment>();
 
     private Dictionary<MapNode, Vector3> _nodePositions = new Dictionary<MapNode, Vector3>();
@@ -25,6 +24,8 @@ public class MapVisualizer : MonoBehaviour
         _visualNodes.Clear();
 
         GenerateGridPositions(data);
+
+        // VISSZAKAPCSOLVA: A szépítő gumi-fizika elrendezés!
         SolveLayout(data);
 
         foreach (var node in data.Nodes)
@@ -48,8 +49,6 @@ public class MapVisualizer : MonoBehaviour
         {
             vNode.BuildIntersectionWalls(_nodePositions, laneWidth);
         }
-
-        // AdjustCamera2D(data);
     }
 
     private void GenerateGridPositions(MapData data)
@@ -66,7 +65,8 @@ public class MapVisualizer : MonoBehaviour
 
     private void SolveLayout(MapData data, int iterations = 100)
     {
-        float unitPerSegment = 2.0f;
+        // 1.0f, mivel a generátorban 20-ra emeltük a SegmentsPerGridUnit számot
+        float unitPerSegment = 1.0f;
 
         for (int i = 0; i < iterations; i++)
         {
@@ -172,32 +172,6 @@ public class MapVisualizer : MonoBehaviour
                     SegmentDirectory.Add(logicSegment, visSeg);
                 }
             }
-        }
-    }
-
-    private void AdjustCamera2D(MapData data) //ez lehet fölösleges, de ha az egész mapot látni akarjuk akkor jól jöhet
-    {
-        if (data.Nodes.Count == 0) return;
-
-        Bounds bounds = new Bounds(_nodePositions[data.Nodes[0]], Vector3.zero);
-        foreach (var pos in _nodePositions.Values)
-        {
-            bounds.Encapsulate(pos);
-        }
-
-        Camera cam = Camera.main;
-        if (cam != null)
-        {
-            cam.orthographic = true;
-            cam.transform.position = new Vector3(bounds.center.x, bounds.center.y, -10f);
-            cam.transform.rotation = Quaternion.identity;
-
-            float screenRatio = (float)Screen.width / Screen.height;
-            float targetRatio = bounds.size.x / bounds.size.y;
-            float padding = 5f;
-
-            if (screenRatio >= targetRatio) cam.orthographicSize = (bounds.size.y / 2f) + padding;
-            else cam.orthographicSize = (bounds.size.x / 2f) / screenRatio + padding;
         }
     }
 }
