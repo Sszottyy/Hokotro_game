@@ -19,7 +19,6 @@ namespace Assets.Scripts.Controller
 
         void Update()
         {
-            if (snowSystem == null) return;
             snowSystem?.Update(Time.deltaTime);
         }
 
