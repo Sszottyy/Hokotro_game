@@ -1,6 +1,7 @@
+using System.Collections.Generic;
+using Assets.Scripts.Controller;
 using SnowPlow.Model.Map;
 using SnowPlow.Model.Map.Generator;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MapVisualizer : MonoBehaviour
@@ -13,6 +14,9 @@ public class MapVisualizer : MonoBehaviour
     public float gridSpacing = 20f;
     public float laneWidth = 1.0f;
 
+    [SerializeField] private SnowController snowController;
+
+    // A Járművek ezen keresztül tudják majd, hova kell menniük!
     public Dictionary<LaneSegment, VisualSegment> SegmentDirectory = new Dictionary<LaneSegment, VisualSegment>();
 
     private Dictionary<MapNode, Vector3> _nodePositions = new Dictionary<MapNode, Vector3>();
@@ -49,6 +53,10 @@ public class MapVisualizer : MonoBehaviour
         {
             vNode.BuildIntersectionWalls(_nodePositions, laneWidth);
         }
+        
+        InitSnowSystem(data);
+
+        // AdjustCamera2D(data);
     }
 
     private void GenerateGridPositions(MapData data)
@@ -174,4 +182,44 @@ public class MapVisualizer : MonoBehaviour
             }
         }
     }
+
+    private void AdjustCamera2D(MapData data) //ez lehet fölösleges, de ha az egész mapot látni akarjuk akkor jól jöhet
+    {
+        if (data.Nodes.Count == 0) return;
+
+        Bounds bounds = new Bounds(_nodePositions[data.Nodes[0]], Vector3.zero);
+        foreach (var pos in _nodePositions.Values)
+        {
+            bounds.Encapsulate(pos);
+        }
+
+        Camera cam = Camera.main;
+        if (cam != null)
+        {
+            cam.orthographic = true;
+            cam.transform.position = new Vector3(bounds.center.x, bounds.center.y, -10f);
+            cam.transform.rotation = Quaternion.identity;
+
+            float screenRatio = (float)Screen.width / Screen.height;
+            float targetRatio = bounds.size.x / bounds.size.y;
+            float padding = 5f;
+
+            if (screenRatio >= targetRatio) cam.orthographicSize = (bounds.size.y / 2f) + padding;
+            else cam.orthographicSize = (bounds.size.x / 2f) / screenRatio + padding;
+        }
+    }
+
+    private void InitSnowSystem(MapData data)
+    {
+        List<Lane> lanes = new List<Lane>();
+
+        foreach (var road in data.Roads)
+        {
+            lanes.AddRange(road.LanesTowardsA);
+            lanes.AddRange(road.LanesTowardsB);
+        }
+
+        snowController.Init(lanes);
+    }
+
 }
