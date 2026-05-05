@@ -528,6 +528,12 @@ MonoBehaviour:
   dashedDivider: {fileID: 5504621102761814262}
   snowOverlay: {fileID: 3388269693070573997}
   iceOverlay: {fileID: 4846577011363669547}
+  snowSprites:
+  - {fileID: 0}
+  - {fileID: 5251734906795025119, guid: 5809c2036b49dcf48bd62ed354ee4143, type: 3}
+  - {fileID: 5251734906795025119, guid: 5809c2036b49dcf48bd62ed354ee4143, type: 3}
+  - {fileID: 5251734906795025119, guid: 5809c2036b49dcf48bd62ed354ee4143, type: 3}
+  iceSprite: {fileID: -856085545168688419, guid: aae80519b9bdf2843b4bceb9fed2167b, type: 3}
   busStopPrefab: {fileID: 15953796789534625, guid: 0b7855b09db6e684f8266082e4790ca3, type: 3}
   passengerPrefabs:
   - {fileID: 4028533530101603263, guid: e4cfc2f8cccee9942ade1609efe5e35e, type: 3}
