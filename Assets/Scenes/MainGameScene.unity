@@ -565,17 +565,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &97474885 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5913831501275424017, guid: 24109d1be1029314ba2df5d8827c48c0, type: 3}
-  m_PrefabInstance: {fileID: 3388257769702636784}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ebf5a58ba614b1c4ebd1f1f3fff854ca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SnowPlow.Controller.Traffic.VehicleOccupancyManager
 --- !u!1 &142402834
 GameObject:
   m_ObjectHideFlags: 0
@@ -2762,6 +2751,63 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 742187692}
   m_CullTransparentMesh: 1
+--- !u!1001 &783163256
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3928666558380684791, guid: 24109d1be1029314ba2df5d8827c48c0, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3928666558380684791, guid: 24109d1be1029314ba2df5d8827c48c0, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3928666558380684791, guid: 24109d1be1029314ba2df5d8827c48c0, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3928666558380684791, guid: 24109d1be1029314ba2df5d8827c48c0, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3928666558380684791, guid: 24109d1be1029314ba2df5d8827c48c0, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3928666558380684791, guid: 24109d1be1029314ba2df5d8827c48c0, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3928666558380684791, guid: 24109d1be1029314ba2df5d8827c48c0, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3928666558380684791, guid: 24109d1be1029314ba2df5d8827c48c0, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3928666558380684791, guid: 24109d1be1029314ba2df5d8827c48c0, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3928666558380684791, guid: 24109d1be1029314ba2df5d8827c48c0, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5344828995350304734, guid: 24109d1be1029314ba2df5d8827c48c0, type: 3}
+      propertyPath: m_Name
+      value: VehicleOccupancyManager
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 24109d1be1029314ba2df5d8827c48c0, type: 3}
 --- !u!1 &793987222
 GameObject:
   m_ObjectHideFlags: 0
@@ -5213,22 +5259,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1207485781}
     m_Modifications:
-    - target: {fileID: 5414683899068368535, guid: f8ea9d655218d414c936b6e439db1ba5, type: 3}
-      propertyPath: m_MaxParticleSize
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 5414683899068368535, guid: f8ea9d655218d414c936b6e439db1ba5, type: 3}
-      propertyPath: m_MinParticleSize
-      value: 0.009
-      objectReference: {fileID: 0}
-    - target: {fileID: 5414683899068368535, guid: f8ea9d655218d414c936b6e439db1ba5, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: d87096e4c8f840a42a3d88f04d7f7ec2, type: 2}
-    - target: {fileID: 6408640374862521289, guid: f8ea9d655218d414c936b6e439db1ba5, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 76.28773
-      objectReference: {fileID: 0}
     - target: {fileID: 3928666558380684791, guid: 24109d1be1029314ba2df5d8827c48c0, type: 3}
       propertyPath: m_LocalPosition.y
       value: 15.21317
@@ -5268,6 +5298,22 @@ PrefabInstance:
     - target: {fileID: 5344828995350304734, guid: 24109d1be1029314ba2df5d8827c48c0, type: 3}
       propertyPath: m_Name
       value: VehicleOccupancyManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 5414683899068368535, guid: f8ea9d655218d414c936b6e439db1ba5, type: 3}
+      propertyPath: m_MaxParticleSize
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5414683899068368535, guid: f8ea9d655218d414c936b6e439db1ba5, type: 3}
+      propertyPath: m_MinParticleSize
+      value: 0.009
+      objectReference: {fileID: 0}
+    - target: {fileID: 5414683899068368535, guid: f8ea9d655218d414c936b6e439db1ba5, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d87096e4c8f840a42a3d88f04d7f7ec2, type: 2}
+    - target: {fileID: 6408640374862521289, guid: f8ea9d655218d414c936b6e439db1ba5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 76.28773
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -8525,10 +8571,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 5829326260946577903, guid: b4703d1fd1bd59a43b6fb4af496673f7, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 715672158}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b4703d1fd1bd59a43b6fb4af496673f7, type: 3}
 --- !u!1001 &8825545291792986907
 PrefabInstance:
@@ -8589,7 +8632,7 @@ PrefabInstance:
     - target: {fileID: 8338259273252699864, guid: c1f5a539f6f31a9498d758e22675aa8a, type: 3}
       propertyPath: occupancyManager
       value: 
-      objectReference: {fileID: 97474885}
+      objectReference: {fileID: 5913831501275424017, guid: 24109d1be1029314ba2df5d8827c48c0, type: 3}
     - target: {fileID: 8338259273252699864, guid: c1f5a539f6f31a9498d758e22675aa8a, type: 3}
       propertyPath: playerSnowPlowPrefab
       value: 
@@ -8620,3 +8663,4 @@ SceneRoots:
   - {fileID: 2131235585}
   - {fileID: 1180278350}
   - {fileID: 142402836}
+  - {fileID: 783163256}
