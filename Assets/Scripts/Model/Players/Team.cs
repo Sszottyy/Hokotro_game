@@ -14,26 +14,58 @@ namespace SnowPlow.Model.Players
 
         public int Score { get; set; }
 
-        public int Money { get; set; }
+        public int Money { get; private set; }
 
         public void AddPlayer(Player player)
         {
+            if (player == null) return;
+            if (Players.Contains(player)) return;
             Players.Add(player);
         }
 
         public void RemovePlayer(Player player)
         {
+            if (player == null) return;
             Players.Remove(player);
         }
         
         public void AddVehicle(Vehicle vehicle)
         {
+            if (vehicle == null) return;
+            if (Vehicles.Contains(vehicle)) return;
             Vehicles.Add(vehicle);
         }
 
         public void RemoveVehicle(Vehicle vehicle)
         {
+            if (vehicle == null) return;
             Vehicles.Remove(vehicle);
+        }
+
+        public bool CanAfford(int amount)
+        {
+            if (amount < 0)
+                throw new ArgumentOutOfRangeException(nameof(amount), "Amount cannot be negative.");
+
+            return Money >= amount;
+        }
+
+        public bool TrySpendMoney(int amount)
+        {
+            if (amount < 0)
+                throw new ArgumentOutOfRangeException(nameof(amount), "Amount cannot be negative.");
+
+            if (!CanAfford(amount)) return false;
+
+            Money -= amount;
+            return true;
+        }
+
+        public void AddMoney(int amount)
+        {
+            if (amount <= 0) return;
+
+            Money += amount;
         }
     }
 }

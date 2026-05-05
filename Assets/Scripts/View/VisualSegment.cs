@@ -6,6 +6,7 @@ public class VisualSegment : MonoBehaviour
 {
     public LaneSegment LogicSegment { get; private set; }
     public LanePosition LanePosition { get; private set; }
+    public BusStationPassengers StationPassengers { get; private set; }
 
     [Header("Vonalak")]
     public GameObject leftOuterLine;
@@ -23,6 +24,14 @@ public class VisualSegment : MonoBehaviour
     [Header("Ice visuals")]
     public Sprite iceSprite;
 
+    private bool _isLeftmost;
+    private bool _isRightmost;
+    [Header("Bus Station")]
+    public GameObject busStopPrefab;
+    public GameObject[] passengerPrefabs;
+    [Header("Bus Station")]
+    public SpriteRenderer stationOverlay;
+
     public void Initialize(
         Lane lane,
         int segmentIndex,
@@ -30,6 +39,9 @@ public class VisualSegment : MonoBehaviour
         bool isRightmost,
         bool isDirectionDivider)
     {
+        _isLeftmost = isLeftmost;
+        _isRightmost = isRightmost;
+
         if (lane == null)
         {
             LogicSegment = null;
@@ -104,5 +116,119 @@ public class VisualSegment : MonoBehaviour
     private void Update()
     {
         UpdateVisuals();
+
+    public void MarkAsStation()
+    {
+        // --- Hatch overlay ---
+        if (stationOverlay == null)
+        {
+            GameObject overlayObj = new GameObject("StationOverlay");
+            overlayObj.transform.SetParent(transform, false);
+            overlayObj.transform.localPosition = Vector3.zero;
+            overlayObj.transform.localRotation = Quaternion.identity;
+
+            // Match the segment's own size exactly instead of hardcoding Vector3.one
+            overlayObj.transform.localScale = Vector3.one;
+
+            stationOverlay = overlayObj.AddComponent<SpriteRenderer>();
+            stationOverlay.sortingLayerName = "Road";
+            stationOverlay.sortingOrder = 2;
+
+            // Clamp to prevent texture bleeding into neighboring segments
+            stationOverlay.drawMode = SpriteDrawMode.Sliced;
+            stationOverlay.size = new Vector2(1f, 1f); // 1x1 in local space = fills parent exactly
+        }
+
+        stationOverlay.sprite = GenerateHatchSprite(64, 64);
+        stationOverlay.gameObject.SetActive(true);
+
+        // --- Bus stop sign ---
+        if (busStopPrefab == null) return;
+
+        // Outward direction: perpendicular to the segment's forward, toward the outside of the road
+        Vector3 outwardDir = new Vector3(-transform.up.y, transform.up.x, 0).normalized;
+        outwardDir *= _isRightmost ? 1f : -1f;
+
+        // Use the outer line's position as the exact segment edge
+        GameObject outerLine = _isRightmost ? rightOuterLine : leftOuterLine;
+
+        Vector3 signOrigin;
+        if (outerLine != null)
+        {
+            signOrigin = outerLine.transform.position;
+        }
+        else
+        {
+            // Fallback to collider bounds if outer line is missing
+            Collider2D ownCollider = GetComponent<Collider2D>();
+            float extent = ownCollider != null ? Mathf.Abs(Vector3.Dot(ownCollider.bounds.extents, outwardDir)) : 0.5f;
+            signOrigin = transform.position + outwardDir * extent;
+        }
+
+        // Instantiate sign, upright, detached from segment rotation
+        GameObject stopSign = Instantiate(busStopPrefab, transform.parent);
+        stopSign.name = "BusStopSign";
+        stopSign.transform.rotation = Quaternion.identity;
+        stopSign.transform.position = signOrigin + outwardDir * 1.3f;
+
+        SpriteRenderer sr = stopSign.GetComponent<SpriteRenderer>();
+        if (sr != null)
+        {
+            sr.sortingLayerName = "Vehicles";
+            sr.sortingOrder = 9;
+        }
+
+        // Calculate the exact same position the sign was placed at
+        Vector3 signWorldPosition = signOrigin + outwardDir * 1.3f;
+        // Add passenger spawner to this segment
+        StationPassengers = gameObject.AddComponent<BusStationPassengers>();
+        StationPassengers.passengerPrefabs = passengerPrefabs;
+        StationPassengers.Initialize(signWorldPosition); // ← use sign position, not outerLine
+    }
+
+    private Sprite GenerateHatchSprite(int width, int height)
+    {
+        Texture2D tex = new Texture2D(width, height, TextureFormat.RGBA32, false);
+        Color transparent = new Color(0, 0, 0, 0);
+        Color yellow = new Color(1f, 0.85f, 0f, 0.85f);
+
+        // Fill transparent
+        for (int x = 0; x < width; x++)
+            for (int y = 0; y < height; y++)
+                tex.SetPixel(x, y, transparent);
+
+        int stripeSpacing = 10; // gap between stripes
+
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                // Diagonal stripe: /
+                int diag = (x + y) % stripeSpacing;
+                if (diag < 2)
+                {
+                    tex.SetPixel(x, y, yellow);
+                    continue;
+                }
+
+                // Vertical stripe: |
+                int col = x % stripeSpacing;
+                if (col == 0 || col == 1)
+                {
+                    tex.SetPixel(x, y, yellow);
+                }
+            }
+        }
+
+        tex.wrapMode = TextureWrapMode.Clamp; // add this before tex.Apply()
+        tex.filterMode = FilterMode.Point;
+        tex.Apply();
+
+        return Sprite.Create(
+            tex,
+            new Rect(0, 0, width, height),
+            new Vector2(0.5f, 0.5f),
+            width
+        );
     }
 }

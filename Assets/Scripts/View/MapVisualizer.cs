@@ -28,6 +28,8 @@ public class MapVisualizer : MonoBehaviour
         _visualNodes.Clear();
 
         GenerateGridPositions(data);
+
+        // VISSZAKAPCSOLVA: A szépítő gumi-fizika elrendezés!
         SolveLayout(data);
 
         foreach (var node in data.Nodes)
@@ -71,7 +73,8 @@ public class MapVisualizer : MonoBehaviour
 
     private void SolveLayout(MapData data, int iterations = 100)
     {
-        float unitPerSegment = 2.0f;
+        // 1.0f, mivel a generátorban 20-ra emeltük a SegmentsPerGridUnit számot
+        float unitPerSegment = 1.0f;
 
         for (int i = 0; i < iterations; i++)
         {

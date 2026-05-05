@@ -6,12 +6,12 @@ using SnowPlow.Model.Tools;
 
 namespace SnowPlow.Model.Tools
 {
-    class VomitTool : IPlowTool
+    public class VomitTool : IPlowTool
     {
         public VomitTool() { }
         public void ApplyEffect(LaneSegment segment)
         {
-            segment.RemoveAllSnow();
+            segment?.RemoveAllSnow();
         }
         public PlowToolType Type() => PlowToolType.Vomit;
     }

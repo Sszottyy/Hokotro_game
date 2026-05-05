@@ -1,29 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using SnowPlow.Model.Map;
+﻿using SnowPlow.Model.Map;
+using SnowPlow.Model.Vehicles;
 
-namespace SnowPlow.Model.Vehicles
+public class Bus : Vehicle
 {
-    public class Bus : Vehicle
+    public int CompletedTrips { get; set; }
+    public LaneSegment StationA { get; set; }
+    public LaneSegment StationB { get; set; }
+
+    public Bus()
     {
-        //stations and target moved to controller
-        public int CompletedTrips { get; set; }
+        CompletedTrips = 0;
+    }
 
-        public Bus()
+    public void BusOnSegment(LaneSegment segment)
+    {
+        if (segment.SnowLevel >= 3)
         {
-            CompletedTrips = 0;
-
-        }
-        public void BusOnSegment(LaneSegment segment)
-        {
-
-            if (segment.HasIce)
-            { }
-            if (segment.SnowLevel >= 3)
-            {
-                this.isBlocked = true;
-            }
+            this.isBlocked = true;
         }
     }
 }

@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 2474749158928714404}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.45, y: 0, z: 0}
+  m_LocalPosition: {x: -0.5, y: 0, z: 0}
   m_LocalScale: {x: 0.1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -117,7 +117,7 @@ Transform:
   m_GameObject: {fileID: 2635390785636509194}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.45, y: 0, z: 0}
+  m_LocalPosition: {x: 0.5, y: 0, z: 0}
   m_LocalScale: {x: 0.1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -299,7 +299,7 @@ Transform:
   m_GameObject: {fileID: 5504621102761814262}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.45, y: 0, z: 0}
+  m_LocalPosition: {x: -0.5, y: 0, z: 0}
   m_LocalScale: {x: 0.1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -534,6 +534,16 @@ MonoBehaviour:
   - {fileID: 5251734906795025119, guid: aa196525e7866844eb86790255952702, type: 3}
   - {fileID: 5251734906795025119, guid: aa196525e7866844eb86790255952702, type: 3}
   iceSprite: {fileID: -856085545168688419, guid: 39a49395c23caaa4abdea15666c5454e, type: 3}
+  busStopPrefab: {fileID: 15953796789534625, guid: 0b7855b09db6e684f8266082e4790ca3, type: 3}
+  passengerPrefabs:
+  - {fileID: 4028533530101603263, guid: e4cfc2f8cccee9942ade1609efe5e35e, type: 3}
+  - {fileID: 4028533530101603263, guid: ad0f2c36e4426994a99ebf41911134fb, type: 3}
+  - {fileID: 4028533530101603263, guid: 7079c33e73a6b1c4cb3ce2714696c06b, type: 3}
+  - {fileID: 4028533530101603263, guid: b7706d40cfc18a84786d0a8d2ba1f3a3, type: 3}
+  - {fileID: 4028533530101603263, guid: 0a19de2ba94951941abfddc20c44c255, type: 3}
+  - {fileID: 4028533530101603263, guid: 97de9a2af33fb1f43be9e7b4936502f1, type: 3}
+  - {fileID: 4028533530101603263, guid: dd2f55dce036fe847bb19847bc4a96be, type: 3}
+  stationOverlay: {fileID: 0}
 --- !u!114 &6964731117556563964
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -664,7 +674,7 @@ Transform:
   m_GameObject: {fileID: 7556926591274756349}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.45, y: 0, z: 0}
+  m_LocalPosition: {x: -0.5, y: 0, z: 0}
   m_LocalScale: {x: 0.1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
