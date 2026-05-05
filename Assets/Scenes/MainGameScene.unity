@@ -2751,6 +2751,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 742187692}
   m_CullTransparentMesh: 1
+--- !u!1 &761565361
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 761565363}
+  - component: {fileID: 761565362}
+  m_Layer: 0
+  m_Name: SnowSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &761565362
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 761565361}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb6e6878a50358c44bccacc73cbd938b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets.Scripts.Controller.SnowController
+--- !u!4 &761565363
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 761565361}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 76.28773, y: 15.21317, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &783163256
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3543,6 +3587,10 @@ PrefabInstance:
       propertyPath: vehicleSpawner
       value: 
       objectReference: {fileID: 161271741}
+    - target: {fileID: 3612334735104349980, guid: bc62bf645b715b7419b3fced444bb2ba, type: 3}
+      propertyPath: snowController
+      value: 
+      objectReference: {fileID: 761565362}
     - target: {fileID: 4475072952249820817, guid: bc62bf645b715b7419b3fced444bb2ba, type: 3}
       propertyPath: m_LocalPosition.x
       value: 76.28773
@@ -5259,6 +5307,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1207485781}
     m_Modifications:
+    - target: {fileID: 5414683899068368535, guid: f8ea9d655218d414c936b6e439db1ba5, type: 3}
+      propertyPath: m_MaxParticleSize
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5414683899068368535, guid: f8ea9d655218d414c936b6e439db1ba5, type: 3}
+      propertyPath: m_MinParticleSize
+      value: 0.009
+      objectReference: {fileID: 0}
+    - target: {fileID: 5414683899068368535, guid: f8ea9d655218d414c936b6e439db1ba5, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d87096e4c8f840a42a3d88f04d7f7ec2, type: 2}
+    - target: {fileID: 6408640374862521289, guid: f8ea9d655218d414c936b6e439db1ba5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 76.28773
+      objectReference: {fileID: 0}
     - target: {fileID: 3928666558380684791, guid: 24109d1be1029314ba2df5d8827c48c0, type: 3}
       propertyPath: m_LocalPosition.y
       value: 15.21317
@@ -5298,22 +5362,6 @@ PrefabInstance:
     - target: {fileID: 5344828995350304734, guid: 24109d1be1029314ba2df5d8827c48c0, type: 3}
       propertyPath: m_Name
       value: VehicleOccupancyManager
-      objectReference: {fileID: 0}
-    - target: {fileID: 5414683899068368535, guid: f8ea9d655218d414c936b6e439db1ba5, type: 3}
-      propertyPath: m_MaxParticleSize
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 5414683899068368535, guid: f8ea9d655218d414c936b6e439db1ba5, type: 3}
-      propertyPath: m_MinParticleSize
-      value: 0.009
-      objectReference: {fileID: 0}
-    - target: {fileID: 5414683899068368535, guid: f8ea9d655218d414c936b6e439db1ba5, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: d87096e4c8f840a42a3d88f04d7f7ec2, type: 2}
-    - target: {fileID: 6408640374862521289, guid: f8ea9d655218d414c936b6e439db1ba5, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 76.28773
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -8639,11 +8687,11 @@ PrefabInstance:
       objectReference: {fileID: 8883108311115965997, guid: 0db6188f99cb0fb44afd6e90ad1df495, type: 3}
     - target: {fileID: 8338259273252699864, guid: c1f5a539f6f31a9498d758e22675aa8a, type: 3}
       propertyPath: spawnPlayerBusOnStart
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8338259273252699864, guid: c1f5a539f6f31a9498d758e22675aa8a, type: 3}
       propertyPath: spawnPlayerSnowPlowOnStart
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -8664,3 +8712,4 @@ SceneRoots:
   - {fileID: 1180278350}
   - {fileID: 142402836}
   - {fileID: 783163256}
+  - {fileID: 761565363}

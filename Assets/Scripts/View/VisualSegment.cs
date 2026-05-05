@@ -17,6 +17,11 @@ public class VisualSegment : MonoBehaviour
     public SpriteRenderer snowOverlay;
     public SpriteRenderer iceOverlay;
 
+    [Header("Snow visuals")]
+    public Sprite[] snowSprites;
+
+    [Header("Ice visuals")]
+    public Sprite iceSprite;
 
     private bool _isLeftmost;
     private bool _isRightmost;
@@ -60,6 +65,7 @@ public class VisualSegment : MonoBehaviour
                 dashedDivider.SetActive(true);
             }
         }
+        iceOverlay.sprite = iceSprite;
 
         UpdateVisuals();
     }
@@ -67,7 +73,6 @@ public class VisualSegment : MonoBehaviour
     public void UpdateVisuals()
     {
         if (LogicSegment == null) return;
-
         if (LogicSegment.HasIce)
         {
             if (iceOverlay != null) iceOverlay.gameObject.SetActive(true);
@@ -79,10 +84,34 @@ public class VisualSegment : MonoBehaviour
 
             if (snowOverlay != null)
             {
-                float alpha = Mathf.Clamp01(LogicSegment.SnowLevel / 3f);
-                snowOverlay.color = new Color(1, 1, 1, alpha);
+                int index = Mathf.Clamp(LogicSegment.SnowLevel, 0, snowSprites.Length - 1);
+                if (index == 0)
+                {
+                    snowOverlay.gameObject.SetActive(false);
+                    return;
+                }
+
+                snowOverlay.gameObject.SetActive(true);
+                snowOverlay.sprite = snowSprites[index];
+                snowOverlay.gameObject.SetActive(index > 0);
+
+                float t = LogicSegment.SnowLevel / 3f;
+
+                Color snowColor = Color.Lerp(
+                    new Color(0.85f, 0.85f, 0.9f),
+                    Color.white,
+                    t
+                );
+
+                snowOverlay.color = snowColor;
+
+                snowOverlay.transform.localScale = Vector3.one * (1f + t * 0.1f);
             }
         }
+    }
+    private void Update()
+    {
+        UpdateVisuals();
     }
 
     public void MarkAsStation()

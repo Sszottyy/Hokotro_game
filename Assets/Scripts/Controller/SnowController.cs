@@ -13,12 +13,14 @@ namespace Assets.Scripts.Controller
 
         public void Init(List<Lane> lanes)
         {
+            
             snowSystem = new SnowSystem(lanes);
         }
 
 
         void Update()
         {
+            if (snowSystem == null) return;
             snowSystem?.Update(Time.deltaTime);
         }
 

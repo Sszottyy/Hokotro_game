@@ -1,6 +1,7 @@
+using System.Collections.Generic;
+using Assets.Scripts.Controller;
 using SnowPlow.Model.Map;
 using SnowPlow.Model.Map.Generator;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MapVisualizer : MonoBehaviour
@@ -12,6 +13,8 @@ public class MapVisualizer : MonoBehaviour
     [Header("City Settings")]
     public float gridSpacing = 20f;
     public float laneWidth = 1.0f;
+
+    [SerializeField] private SnowController snowController;
 
     public Dictionary<LaneSegment, VisualSegment> SegmentDirectory = new Dictionary<LaneSegment, VisualSegment>();
 
@@ -49,8 +52,21 @@ public class MapVisualizer : MonoBehaviour
         {
             vNode.BuildIntersectionWalls(_nodePositions, laneWidth);
         }
-    }
 
+        InitSnowSystem(data);
+    }
+    private void InitSnowSystem(MapData data)
+    {
+        List<Lane> lanes = new List<Lane>();
+
+        foreach (var road in data.Roads)
+        {
+            lanes.AddRange(road.LanesTowardsA);
+            lanes.AddRange(road.LanesTowardsB);
+        }
+
+        snowController.Init(lanes);
+    }
     private void GenerateGridPositions(MapData data)
     {
         _nodePositions.Clear();

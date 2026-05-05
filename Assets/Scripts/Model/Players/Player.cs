@@ -36,6 +36,10 @@ namespace SnowPlow.Model.Players
             if (vehicle == null) return;
             Vehicles.Add(vehicle);
             _team?.AddVehicle(vehicle);
+            if (vehicle is SnowPlowVehicle snowPlow)
+            {
+                snowPlow.SnowCleared += HandleClearedSnow;
+            }
         }
 
         public void RemoveVehicle(Vehicle vehicle)
@@ -43,6 +47,18 @@ namespace SnowPlow.Model.Players
             if (vehicle == null) return;
             Vehicles.Remove(vehicle);
             _team?.RemoveVehicle(vehicle);
+            if (vehicle is SnowPlowVehicle snowPlow)
+            {
+                snowPlow.SnowCleared -= HandleClearedSnow;
+            }
+        }
+        private void HandleClearedSnow()
+        {
+            Team.AddMoney(1); // Example reward for clearing snow
+        }
+        private void HandleBusEvent()
+        {
+            Team.Score += 1;
         }
 
         public SnowPlowVehicle GetOwnedSnowPlow()
