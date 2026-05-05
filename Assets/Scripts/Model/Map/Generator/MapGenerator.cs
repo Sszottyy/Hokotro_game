@@ -17,9 +17,8 @@ namespace SnowPlow.Model.Map.Generator
     {
         private readonly System.Random _rng;
 
-        // Hány szegmens jusson 1 logikai rácsegységre?
-        // Ha a Unity-ben a gridSpacing = 20, akkor ezzel 2.0 vizuális méretű lesz 1 szegmens!
-        private const int SegmentsPerGridUnit = 10;
+        // Kétszer olyan sűrű szegmensek a finomabb takarításért
+        private const int SegmentsPerGridUnit = 20;
 
         public MapGenerator(int seed)
         {
@@ -99,7 +98,6 @@ namespace SnowPlow.Model.Map.Generator
                 var (ax, ay) = gridCoords[a];
                 var (bx, by) = gridCoords[b];
 
-                // Int helyett most már float távolság az if-ben
                 int dx = Mathf.RoundToInt(Mathf.Abs(ax - bx));
                 int dy = Mathf.RoundToInt(Mathf.Abs(ay - by));
 
@@ -110,8 +108,12 @@ namespace SnowPlow.Model.Map.Generator
 
                 if ((dist == 2 && chance < 0.6) || (dist == 3 && chance < 0.25) || (dist == 4 && chance < 0.1))
                 {
-                    data.Roads.Add(CreateRoad(roadId++, a, b, gridCoords));
-                    placed++;
+                    // Csak akkor rajzolja be, ha legalább 40 fokos (szép átlós)
+                    if (!IsAngleTooSmall(data, a, b, gridCoords, 40f))
+                    {
+                        data.Roads.Add(CreateRoad(roadId++, a, b, gridCoords));
+                        placed++;
+                    }
                 }
             }
 
@@ -121,7 +123,6 @@ namespace SnowPlow.Model.Map.Generator
             return data;
         }
 
-        // AZ ÚJ SZÁMÍTÁS: Pitagorasz-tétel alapján mérjük a hosszt, és kerekítjük!
         private Road CreateRoad(int id, MapNode a, MapNode b, Dictionary<MapNode, (float x, float y)> gridCoords)
         {
             var posA = gridCoords[a];
@@ -131,7 +132,6 @@ namespace SnowPlow.Model.Map.Generator
             float dy = posA.y - posB.y;
             float gridDistance = (float)Math.Sqrt(dx * dx + dy * dy);
 
-            // Itt lőjük be, hogy minden logikai út tökéletes darabszámú szegmensből álljon:
             int segmentCount = Math.Max(1, (int)Math.Round(gridDistance * SegmentsPerGridUnit));
 
             int laneCountTowardsA = _rng.Next(1, 3);
@@ -145,6 +145,45 @@ namespace SnowPlow.Model.Map.Generator
             return a.ConnectedRoads.Any(r => (r.NodeA == a && r.NodeB == b) || (r.NodeA == b && r.NodeB == a));
         }
 
+        private float GetMinimumAngle(MapData data, MapNode a, MapNode b, Dictionary<MapNode, (float x, float y)> gridCoords)
+        {
+            Vector2 posA = new Vector2(gridCoords[a].x, gridCoords[a].y);
+            Vector2 posB = new Vector2(gridCoords[b].x, gridCoords[b].y);
+            Vector2 dirNewA = (posB - posA).normalized;
+            Vector2 dirNewB = (posA - posB).normalized;
+
+            float minFound = 180f;
+
+            foreach (var road in data.Roads)
+            {
+                if (road.NodeA == a || road.NodeB == a)
+                {
+                    var otherNode = road.NodeA == a ? road.NodeB : road.NodeA;
+                    Vector2 posOther = new Vector2(gridCoords[otherNode].x, gridCoords[otherNode].y);
+                    Vector2 dirExisting = (posOther - posA).normalized;
+                    float ang = Vector2.Angle(dirNewA, dirExisting);
+                    if (ang < minFound) minFound = ang;
+                }
+
+                if (road.NodeA == b || road.NodeB == b)
+                {
+                    var otherNode = road.NodeA == b ? road.NodeB : road.NodeA;
+                    Vector2 posOther = new Vector2(gridCoords[otherNode].x, gridCoords[otherNode].y);
+                    Vector2 dirExisting = (posOther - posB).normalized;
+                    float ang = Vector2.Angle(dirNewB, dirExisting);
+                    if (ang < minFound) minFound = ang;
+                }
+            }
+
+            return minFound;
+        }
+
+        private bool IsAngleTooSmall(MapData data, MapNode a, MapNode b, Dictionary<MapNode, (float x, float y)> gridCoords, float minAngle = 40f)
+        {
+            return GetMinimumAngle(data, a, b, gridCoords) < minAngle;
+        }
+
+        // Az okos, pontozásos túlélő modul!
         private void EnsureConnectivity(MapData data, Dictionary<MapNode, (float x, float y)> gridCoords, ref int roadId)
         {
             var visited = new HashSet<MapNode>();
@@ -176,9 +215,10 @@ namespace SnowPlow.Model.Map.Generator
 
             while (components.Count > 1)
             {
-                float bestDist = float.MaxValue;
+                float bestScore = float.MaxValue;
                 MapNode bestA = null, bestB = null;
                 int bestComponentIndex = -1;
+
                 var mainComponent = components[0];
 
                 for (int i = 1; i < components.Count; i++)
@@ -191,17 +231,29 @@ namespace SnowPlow.Model.Map.Generator
                             var (bx, by) = gridCoords[b];
                             float dist = Mathf.Abs(ax - bx) + Mathf.Abs(ay - by);
 
-                            if (dist < bestDist)
+                            float minAngle = GetMinimumAngle(data, a, b, gridCoords);
+
+                            // Ha a szög kisebb 40 foknál, büntetőpontokat kap az út
+                            float penalty = minAngle < 40f ? (40f - minAngle) * 50f : 0f;
+                            float score = dist + penalty;
+
+                            if (score < bestScore)
                             {
-                                bestDist = dist; bestA = a; bestB = b; bestComponentIndex = i;
+                                bestScore = score;
+                                bestA = a;
+                                bestB = b;
+                                bestComponentIndex = i;
                             }
                         }
                     }
                 }
 
-                data.Roads.Add(CreateRoad(roadId++, bestA, bestB, gridCoords));
-                mainComponent.AddRange(components[bestComponentIndex]);
-                components.RemoveAt(bestComponentIndex);
+                if (bestA != null)
+                {
+                    data.Roads.Add(CreateRoad(roadId++, bestA, bestB, gridCoords));
+                    mainComponent.AddRange(components[bestComponentIndex]);
+                    components.RemoveAt(bestComponentIndex);
+                }
             }
         }
     }
