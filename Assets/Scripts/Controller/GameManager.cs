@@ -31,7 +31,13 @@ public class GameManager : MonoBehaviour
 
     public void RemoveCurrentPlayer()
     {
-        Players.Remove(CurrentPlayer);
-        Debug.Log("Removed player:" + CurrentPlayer.Name + " from Lobby");
+        if (CurrentPlayer == null) return;
+
+        Player removedPlayer = CurrentPlayer;
+
+        Players.Remove(removedPlayer);
+        CurrentPlayer = null;
+
+        Debug.Log("Removed player: " + removedPlayer.Name + " from Lobby");
     }
 }
