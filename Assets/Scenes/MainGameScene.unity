@@ -4265,6 +4265,10 @@ MonoBehaviour:
   dragonStatusText: {fileID: 959627151}
   dragonFuelText: {fileID: 936345811}
   saltFuelText: {fileID: 1697941574}
+  npcSweaperImage: {fileID: 925060541}
+  npcIceBreakerImage: {fileID: 1499020074}
+  npcSweaperSoldSprite: {fileID: 7623272142668406578, guid: 86a4235c52dfb7d46b8669364dd09770, type: 3}
+  npcIceBreakerSoldSprite: {fileID: -6961320365225581863, guid: 8328cd5419b4bc248b61ee6f1e7f89b6, type: 3}
   buyNpcSweaperButton: {fileID: 2066780632}
   buyNpcIceBreakerButton: {fileID: 793987226}
   buySweaperButton: {fileID: 35900049}
