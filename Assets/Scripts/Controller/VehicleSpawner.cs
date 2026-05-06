@@ -185,7 +185,26 @@ namespace SnowPlow.Controller.Spawning
 
             if (global::GameManager.Instance != null && global::GameManager.Instance.CurrentPlayer != null)
             {
-                global::GameManager.Instance.CurrentPlayer.AddVehicle(playerSnowPlow);
+                var player = global::GameManager.Instance.CurrentPlayer;
+
+                IPlowTool sweaperTool = playerSnowPlow.EquippedTool;
+
+                if (sweaperTool == null || sweaperTool.Type() != PlowToolType.Sweaper)
+                {
+                    sweaperTool = new SweaperTool();
+                }
+
+                if (!player.HasTool(PlowToolType.Sweaper))
+                {
+                    player.AddPlowTool(sweaperTool);
+                }
+                else
+                {
+                    sweaperTool = player.FindOwnedTool(PlowToolType.Sweaper);
+                }
+
+                playerSnowPlow.EquippedTool = sweaperTool;
+                player.AddVehicle(playerSnowPlow);
             }
 
             occupancyManager.RegisterVehicle(playerSnowPlow, startPosition);

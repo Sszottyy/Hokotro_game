@@ -41,6 +41,19 @@ namespace SnowPlow.Controller.Shop
         [SerializeField] private TMP_Text dragonFuelText;
         [SerializeField] private TMP_Text saltFuelText;
 
+        [Header("NPC Images")]
+        [SerializeField] private Image npcSweaperImage;
+        [SerializeField] private Image npcIceBreakerImage;
+
+        [SerializeField] private Sprite npcSweaperSoldSprite;
+        [SerializeField] private Sprite npcIceBreakerSoldSprite;
+
+        private Sprite npcSweaperDefaultSprite;
+        private Sprite npcIceBreakerDefaultSprite;
+
+        private bool hasBoughtNpcSweaperSnowPlow;
+        private bool hasBoughtNpcIceBreakerSnowPlow;
+
         [Header("NPC Buttons")]
         [SerializeField] private Button buyNpcSweaperButton;
         [SerializeField] private Button buyNpcIceBreakerButton;
@@ -68,6 +81,7 @@ namespace SnowPlow.Controller.Shop
         private bool isVisibleForSnowPlowPlayer;
         private int lastDisplayedDragonFuel = int.MinValue;
         private int lastDisplayedSaltFuel = int.MinValue;
+        private int lastDisplayedMoney = int.MinValue;
 
         private void Start()
         {
@@ -105,13 +119,39 @@ namespace SnowPlow.Controller.Shop
 
         public void BuyNpcSweaperSnowPlow()
         {
-            BuyNpcSnowPlow(ShopCatalog.NpcSweaperSnowPlowPrice, new SweaperTool());
+            if (hasBoughtNpcSweaperSnowPlow)
+            {
+                Debug.LogWarning("Cannot buy NPC Sweaper SnowPlow: already sold.");
+                RefreshUI();
+                return;
+            }
+
+            bool bought = BuyNpcSnowPlow(ShopCatalog.NpcSweaperSnowPlowPrice, new SweaperTool());
+
+            if (bought)
+            {
+                hasBoughtNpcSweaperSnowPlow = true;
+            }
+
             RefreshUI();
         }
 
         public void BuyNpcIceBreakerSnowPlow()
         {
-            BuyNpcSnowPlow(ShopCatalog.NpcIceBreakerSnowPlowPrice, new IceBreaker());
+            if (hasBoughtNpcIceBreakerSnowPlow)
+            {
+                Debug.LogWarning("Cannot buy NPC IceBreaker SnowPlow: already sold.");
+                RefreshUI();
+                return;
+            }
+
+            bool bought = BuyNpcSnowPlow(ShopCatalog.NpcIceBreakerSnowPlowPrice, new IceBreaker());
+
+            if (bought)
+            {
+                hasBoughtNpcIceBreakerSnowPlow = true;
+            }
+
             RefreshUI();
         }
 
@@ -335,11 +375,13 @@ namespace SnowPlow.Controller.Shop
             bool canBuyNpcSweaper =
                 isVisibleForSnowPlowPlayer &&
                 hasTeam &&
+                !hasBoughtNpcSweaperSnowPlow &&
                 team.CanAfford(ShopCatalog.NpcSweaperSnowPlowPrice);
 
             bool canBuyNpcIceBreaker =
                 isVisibleForSnowPlowPlayer &&
                 hasTeam &&
+                !hasBoughtNpcIceBreakerSnowPlow &&
                 team.CanAfford(ShopCatalog.NpcIceBreakerSnowPlowPrice);
 
             if (buyNpcSweaperButton != null)
@@ -351,23 +393,27 @@ namespace SnowPlow.Controller.Shop
             {
                 buyNpcIceBreakerButton.interactable = canBuyNpcIceBreaker;
             }
+
+            lastDisplayedMoney = hasTeam ? team.Money : -1;
         }
 
-        private void BuyNpcSnowPlow(int price, IPlowTool tool)
+        private bool BuyNpcSnowPlow(int price, IPlowTool tool)
         {
-            if (!CanUseShop()) return;
+            if (!CanUseShop()) return false;
 
             if (vehicleSpawner == null)
             {
                 Debug.LogWarning("Cannot buy NPC SnowPlow: VehicleSpawner is missing.");
-                return;
+                return false;
             }
 
-            if (!TrySpendMoney(price)) return;
+            if (!TrySpendMoney(price)) return false;
 
             vehicleSpawner.SpawnSnowPlowNPC(tool);
 
             Debug.Log("Bought NPC SnowPlow with tool: " + tool.Type());
+
+            return true;
         }
 
         private void BuyPlayerTool(PlowToolType type, int price, IPlowTool tool)
@@ -430,13 +476,13 @@ namespace SnowPlow.Controller.Shop
         }
 
         private void RefreshToolRow(
-    PlowToolType type,
-    int price,
-    TMP_Text statusText,
-    Button buyButton,
-    Button equipButton,
-    Player player,
-    IPlowTool equippedTool)
+            PlowToolType type,
+            int price,
+            TMP_Text statusText,
+            Button buyButton,
+            Button equipButton,
+            Player player,
+            IPlowTool equippedTool)
         {
             bool hasPlayer = player != null;
             bool hasTeam = player?.Team != null;
@@ -619,14 +665,35 @@ namespace SnowPlow.Controller.Shop
         {
             if (npcSweaperPriceText != null)
             {
-                npcSweaperPriceText.text = $"{ShopCatalog.NpcSweaperSnowPlowPrice}$";
+                npcSweaperPriceText.text = hasBoughtNpcSweaperSnowPlow
+                    ? "SOLD"
+                    : $"{ShopCatalog.NpcSweaperSnowPlowPrice}$";
             }
 
             if (npcIceBreakerPriceText != null)
             {
-                npcIceBreakerPriceText.text = $"{ShopCatalog.NpcIceBreakerSnowPlowPrice}$";
+                npcIceBreakerPriceText.text = hasBoughtNpcIceBreakerSnowPlow
+                    ? "SOLD"
+                    : $"{ShopCatalog.NpcIceBreakerSnowPlowPrice}$";
+            }
+
+            if (npcSweaperImage != null)
+            {
+                npcSweaperImage.sprite =
+                    hasBoughtNpcSweaperSnowPlow && npcSweaperSoldSprite != null
+                        ? npcSweaperSoldSprite
+                        : npcSweaperDefaultSprite;
+            }
+
+            if (npcIceBreakerImage != null)
+            {
+                npcIceBreakerImage.sprite =
+                    hasBoughtNpcIceBreakerSnowPlow && npcIceBreakerSoldSprite != null
+                        ? npcIceBreakerSoldSprite
+                        : npcIceBreakerDefaultSprite;
             }
         }
+
         private void Update()
         {
             if (!isVisibleForSnowPlowPlayer) return;
@@ -634,10 +701,12 @@ namespace SnowPlow.Controller.Shop
             Player player = GetCurrentPlayerSilently();
             if (player == null) return;
 
+            int currentMoney = GetMoneyValue(player);
             int currentDragonFuel = GetFuelValue(player, PlowToolType.Dragon);
             int currentSaltFuel = GetFuelValue(player, PlowToolType.Salt);
 
-            if (currentDragonFuel != lastDisplayedDragonFuel ||
+            if (currentMoney != lastDisplayedMoney ||
+                currentDragonFuel != lastDisplayedDragonFuel ||
                 currentSaltFuel != lastDisplayedSaltFuel)
             {
                 RefreshUI();
@@ -660,6 +729,27 @@ namespace SnowPlow.Controller.Shop
             }
 
             return -1;
+        }
+
+        private int GetMoneyValue(Player player)
+        {
+            if (player == null) return -1;
+            if (player.Team == null) return -1;
+
+            return player.Team.Money;
+        }
+
+        private void Awake()
+        {
+            if (npcSweaperImage != null)
+            {
+                npcSweaperDefaultSprite = npcSweaperImage.sprite;
+            }
+
+            if (npcIceBreakerImage != null)
+            {
+                npcIceBreakerDefaultSprite = npcIceBreakerImage.sprite;
+            }
         }
     }
 }
