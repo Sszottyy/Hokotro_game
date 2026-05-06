@@ -428,5 +428,15 @@ namespace SnowPlow.Controller.Spawning
 
             return (bestA, bestB);
         }
+        public void ConfigurePlayerSpawn(bool spawnSnowPlow, bool spawnBus)
+        {
+            if (isInitialized)
+            {
+                throw new InvalidOperationException("Cannot configure player spawn after VehicleSpawner initialization.");
+            }
+
+            spawnPlayerSnowPlowOnStart = spawnSnowPlow;
+            spawnPlayerBusOnStart = spawnBus;
+        }
     }
 }

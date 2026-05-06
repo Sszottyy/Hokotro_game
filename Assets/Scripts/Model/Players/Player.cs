@@ -7,9 +7,17 @@ using SnowPlowVehicle = SnowPlow.Model.Vehicles.SnowPlow; //alias, mivel a names
 
 namespace SnowPlow.Model.Players
 {
+
+    public enum PlayerRole
+    {
+        None,
+        SnowPlowDriver,
+        BusDriver
+    }
     public class Player
     {
         public string Name { get; set; }
+        public PlayerRole Role { get; set; } = PlayerRole.None;
 
         private Team _team;
         public Team Team
@@ -54,7 +62,7 @@ namespace SnowPlow.Model.Players
         }
         private void HandleClearedSnow()
         {
-            Team.AddMoney(1); // Example reward for clearing snow
+            Team?.AddMoney(1); // Example reward for clearing snow
         }
         private void HandleBusEvent()
         {

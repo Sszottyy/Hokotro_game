@@ -66,6 +66,8 @@ namespace SnowPlow.Controller.Shop
         [SerializeField] private Button buySaltFuelButton;
 
         private bool isVisibleForSnowPlowPlayer;
+        private int lastDisplayedDragonFuel = int.MinValue;
+        private int lastDisplayedSaltFuel = int.MinValue;
 
         private void Start()
         {
@@ -190,6 +192,20 @@ namespace SnowPlow.Controller.Shop
                 return;
             }
 
+            if (dragonTool.Fuel >= dragonFuelDisplayMax)
+            {
+                Debug.LogWarning("Cannot buy Dragon fuel: fuel is already full.");
+                RefreshUI();
+                return;
+            }
+
+            if (dragonTool.Fuel + ShopCatalog.DragonFuelAmountPerPurchase > dragonFuelDisplayMax)
+            {
+                Debug.LogWarning("Cannot buy Dragon fuel: purchase would exceed max fuel.");
+                RefreshUI();
+                return;
+            }
+
             if (!TrySpendMoney(ShopCatalog.DragonFuelPrice))
             {
                 RefreshUI();
@@ -216,6 +232,20 @@ namespace SnowPlow.Controller.Shop
             if (tool is not SaltTool saltTool)
             {
                 Debug.LogWarning("Cannot buy Salt fuel: player does not own SaltTool.");
+                RefreshUI();
+                return;
+            }
+
+            if (saltTool.Fuel >= saltFuelDisplayMax)
+            {
+                Debug.LogWarning("Cannot buy Salt fuel: fuel is already full.");
+                RefreshUI();
+                return;
+            }
+
+            if (saltTool.Fuel + ShopCatalog.SaltFuelAmountPerPurchase > saltFuelDisplayMax)
+            {
+                Debug.LogWarning("Cannot buy Salt fuel: purchase would exceed max fuel.");
                 RefreshUI();
                 return;
             }
@@ -362,10 +392,23 @@ namespace SnowPlow.Controller.Shop
 
         private void EquipPlayerTool(PlowToolType type)
         {
-            if (!CanUseShop()) return;
+            Debug.Log("Equip requested: " + type);
+
+            if (!CanUseShop())
+            {
+                Debug.LogWarning("Equip failed: CanUseShop returned false.");
+                return;
+            }
 
             Player player = GetCurrentPlayer();
-            if (player == null) return;
+            if (player == null)
+            {
+                Debug.LogWarning("Equip failed: player is null.");
+                return;
+            }
+
+            Debug.Log("Player vehicle count: " + player.Vehicles.Count);
+            Debug.Log("Player owns tool: " + player.HasTool(type));
 
             SnowPlowVehicle snowPlow = player.GetOwnedSnowPlow();
             if (snowPlow == null)
@@ -487,6 +530,7 @@ namespace SnowPlow.Controller.Shop
                     isVisibleForSnowPlowPlayer &&
                     hasTeam &&
                     dragonTool != null &&
+                    dragonTool.Fuel + ShopCatalog.DragonFuelAmountPerPurchase <= dragonFuelDisplayMax &&
                     player.Team.CanAfford(ShopCatalog.DragonFuelPrice);
 
                 buyDragonFuelButton.interactable = canBuyDragonFuel;
@@ -499,11 +543,15 @@ namespace SnowPlow.Controller.Shop
                     isVisibleForSnowPlowPlayer &&
                     hasTeam &&
                     saltTool != null &&
+                    saltTool.Fuel + ShopCatalog.SaltFuelAmountPerPurchase <= saltFuelDisplayMax &&
                     player.Team.CanAfford(ShopCatalog.SaltFuelPrice);
 
                 buySaltFuelButton.interactable = canBuySaltFuel;
                 buySaltFuelButton.gameObject.SetActive(saltTool != null);
             }
+
+            lastDisplayedDragonFuel = dragonTool != null ? dragonTool.Fuel : -1;
+            lastDisplayedSaltFuel = saltTool != null ? saltTool.Fuel : -1;
         }
 
         private bool TrySpendMoney(int amount)
@@ -578,6 +626,40 @@ namespace SnowPlow.Controller.Shop
             {
                 npcIceBreakerPriceText.text = $"{ShopCatalog.NpcIceBreakerSnowPlowPrice}$";
             }
+        }
+        private void Update()
+        {
+            if (!isVisibleForSnowPlowPlayer) return;
+
+            Player player = GetCurrentPlayerSilently();
+            if (player == null) return;
+
+            int currentDragonFuel = GetFuelValue(player, PlowToolType.Dragon);
+            int currentSaltFuel = GetFuelValue(player, PlowToolType.Salt);
+
+            if (currentDragonFuel != lastDisplayedDragonFuel ||
+                currentSaltFuel != lastDisplayedSaltFuel)
+            {
+                RefreshUI();
+            }
+        }
+        private int GetFuelValue(Player player, PlowToolType type)
+        {
+            if (player == null) return -1;
+
+            IPlowTool tool = player.FindOwnedTool(type);
+
+            if (tool is DragonTool dragonTool)
+            {
+                return dragonTool.Fuel;
+            }
+
+            if (tool is SaltTool saltTool)
+            {
+                return saltTool.Fuel;
+            }
+
+            return -1;
         }
     }
 }
