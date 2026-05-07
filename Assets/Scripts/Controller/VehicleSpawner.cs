@@ -243,8 +243,8 @@ namespace SnowPlow.Controller.Spawning
             Debug.Log($"[Bus] Station B: {nameB} at {posB}");
             Debug.Log($"[Bus] Distance between stations: {Vector3.Distance(posA, posB):F1} units");
 
-            mapVisualizer.SegmentDirectory[stationA].MarkAsStation();
-            mapVisualizer.SegmentDirectory[stationB].MarkAsStation();
+            MarkStationWithNeighbors(stationA);
+            MarkStationWithNeighbors(stationB);
 
             GameObject instance = InstantiateVehiclePrefab(busPrefab, startPosition, "Bus");
 
@@ -282,7 +282,71 @@ namespace SnowPlow.Controller.Spawning
                 );
             }
 
+            if (global::GameManager.Instance != null &&
+                global::GameManager.Instance.CurrentPlayer != null)
+            {
+                global::GameManager.Instance.CurrentPlayer.AddVehicle(bus);
+            }
+
             return bus;
+        }
+
+
+        private void MarkStationWithNeighbors(LaneSegment stationSegment)
+        {
+            foreach (Road road in mapData.Roads)
+            {
+                foreach (Lane lane in road.LanesTowardsA)
+                {
+                    MarkLaneStationVisuals(lane, stationSegment);
+                }
+
+                foreach (Lane lane in road.LanesTowardsB)
+                {
+                    MarkLaneStationVisuals(lane, stationSegment);
+                }
+            }
+        }
+
+        private void MarkLaneStationVisuals(Lane lane, LaneSegment stationSegment)
+        {
+            int index = -1;
+
+            for (int i = 0; i < lane.Segments.Count; i++)
+            {
+                if (lane.Segments[i] == stationSegment)
+                {
+                    index = i;
+                    break;
+                }
+            }
+
+            if (index == -1)
+                return;
+
+            for (int offset = -1; offset <= 1; offset++)
+            {
+                int targetIndex = index + offset;
+
+                if (targetIndex < 0 || targetIndex >= lane.Segments.Count)
+                    continue;
+
+                LaneSegment segment = lane.Segments[targetIndex];
+
+                if (!mapVisualizer.SegmentDirectory.TryGetValue(segment, out VisualSegment visual))
+                    continue;
+
+                if (offset == 0)
+                {
+                    // Middle segment gets sign + lines
+                    visual.MarkAsStation();
+                }
+                else
+                {
+                    // Neighbor segments get only lines
+                    visual.MarkAsStationLine();
+                }
+            }
         }
 
         private GameObject InstantiateVehiclePrefab(GameObject prefab, LanePosition startPosition, string objectName)
@@ -410,7 +474,7 @@ namespace SnowPlow.Controller.Spawning
 
                 foreach (var (index, seg) in group)
                 {
-                    if (index >= 2 && index <= maxIndex - 2)
+                    if (index >= 6 && index <= maxIndex - 6)
                         validSegments.Add(seg);
                 }
             }
@@ -422,7 +486,7 @@ namespace SnowPlow.Controller.Spawning
             LaneSegment bestB = null;
             float bestDist = -1f;
 
-            int sampleSize = Mathf.Min(validSegments.Count, 150);
+            int sampleSize = Mathf.Min(validSegments.Count, 200);
 
             for (int i = 0; i < sampleSize; i++)
             {

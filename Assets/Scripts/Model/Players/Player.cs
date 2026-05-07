@@ -1,9 +1,10 @@
-﻿using System;
+﻿using SnowPlow.Model.Tools;
+using SnowPlow.Model.Vehicles;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using SnowPlow.Model.Vehicles;
-using SnowPlow.Model.Tools;
-using SnowPlowVehicle = SnowPlow.Model.Vehicles.SnowPlow; //alias, mivel a namespace es a jarmu is SnowPlow
+using UnityEngine; //alias, mivel a namespace es a jarmu is SnowPlow
+using SnowPlowVehicle = SnowPlow.Model.Vehicles.SnowPlow;
 
 namespace SnowPlow.Model.Players
 {
@@ -41,12 +42,19 @@ namespace SnowPlow.Model.Players
 
         public void AddVehicle(Vehicle vehicle)
         {
+
+            Debug.Log("AddVehicle called");
             if (vehicle == null) return;
             Vehicles.Add(vehicle);
             _team?.AddVehicle(vehicle);
             if (vehicle is SnowPlowVehicle snowPlow)
             {
                 snowPlow.SnowCleared += HandleClearedSnow;
+            }
+            if (vehicle is Bus bus)
+            {
+                bus.TripCompleted += HandleBusTripCompleted;
+                bus.PassengersDroppedOff += HandlePassengersDroppedOff;
             }
         }
 
@@ -59,14 +67,26 @@ namespace SnowPlow.Model.Players
             {
                 snowPlow.SnowCleared -= HandleClearedSnow;
             }
+            if (vehicle is Bus bus)
+            {
+                bus.TripCompleted -= HandleBusTripCompleted;
+                bus.PassengersDroppedOff -= HandlePassengersDroppedOff;
+            }
         }
         private void HandleClearedSnow()
         {
             Team?.AddMoney(1); // Example reward for clearing snow
         }
-        private void HandleBusEvent()
+        private void HandleBusTripCompleted(int score)
         {
-            Team.Score += 1;
+            Debug.Log($"Trip completed in time → +{score} score");
+            Team.Score += score;
+        }
+
+        private void HandlePassengersDroppedOff(int amount)
+        {
+            Debug.Log($"Passengers dropped off: +{amount} score");
+            Team.Score += amount;
         }
 
         public SnowPlowVehicle GetOwnedSnowPlow()

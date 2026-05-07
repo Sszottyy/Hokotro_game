@@ -6,6 +6,8 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
+    public bool GameEnded = false;
+
     public Player CurrentPlayer { get; private set; }
 
     public List<Player> Players { get; private set; } = new List<Player>();

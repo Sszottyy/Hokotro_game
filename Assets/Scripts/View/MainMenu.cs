@@ -7,6 +7,8 @@ public class MainMenu : MonoBehaviour
 {
     public TMP_InputField InputField;
     public Button[] buttons;
+    public GameObject endGamePanel;
+    public GameObject mainMenuPanel;
     public void PlayGame()
     {
         SceneManager.LoadScene("MainGameScene",LoadSceneMode.Single);
@@ -30,6 +32,15 @@ public class MainMenu : MonoBehaviour
     void Start()
     {
         CheckInput(InputField.text);
+        if (GameManager.Instance != null && GameManager.Instance.GameEnded)
+        {
+            ShowEndScreen();
+            GameManager.Instance.GameEnded = false;
+        }
+        else
+        {
+            ShowMainMenu();
+        }
     }
     public void Quitgame()
     {
@@ -42,5 +53,17 @@ public class MainMenu : MonoBehaviour
         if (text == null || text == "")
             return false;
         return true;
+    }
+
+    private void ShowEndScreen()
+    {
+        endGamePanel.SetActive(true);
+        mainMenuPanel.SetActive(false);
+    }
+
+    private void ShowMainMenu()
+    {
+        endGamePanel.SetActive(false);
+        mainMenuPanel.SetActive(true);
     }
 }

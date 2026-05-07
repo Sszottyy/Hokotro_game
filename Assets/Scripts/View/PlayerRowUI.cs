@@ -7,6 +7,25 @@ public class PlayerRowUI : MonoBehaviour
     public TextMeshProUGUI nameText;
     public TextMeshProUGUI vehiclesText;
 
+    private void Awake()
+    {
+        if (nameText == null)
+            nameText = transform.Find("NameText")?.GetComponent<TextMeshProUGUI>();
+
+        if (vehiclesText == null)
+            vehiclesText = transform.Find("VehiclesText")?.GetComponent<TextMeshProUGUI>();
+        if (nameText != null && nameText.font == null)
+        {
+            Debug.LogWarning("Fixing missing TMP font on nameText");
+            nameText.font = Resources.Load<TMPro.TMP_FontAsset>("ButtonStyle");
+        }
+
+        if (vehiclesText != null && vehiclesText.font == null)
+        {
+            Debug.LogWarning("Fixing missing TMP font on vehiclesText");
+            vehiclesText.font = Resources.Load<TMPro.TMP_FontAsset>("ButtonStyle");
+        }
+    }
     public void Setup(Player player)
     {
         Debug.Log($"Setup hívva. Player neve: '{player.Name}'");
