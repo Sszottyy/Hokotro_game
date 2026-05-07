@@ -114,30 +114,38 @@ public class VisualSegment : MonoBehaviour
         UpdateVisuals();
     }
 
-    public void MarkAsStation()
+    public void MarkAsStationLine()
     {
-        // --- Hatch overlay ---
+        // --- Hatch overlay only ---
         if (stationOverlay == null)
         {
             GameObject overlayObj = new GameObject("StationOverlay");
             overlayObj.transform.SetParent(transform, false);
             overlayObj.transform.localPosition = Vector3.zero;
             overlayObj.transform.localRotation = Quaternion.identity;
-
-            // Match the segment's own size exactly instead of hardcoding Vector3.one
             overlayObj.transform.localScale = Vector3.one;
 
             stationOverlay = overlayObj.AddComponent<SpriteRenderer>();
             stationOverlay.sortingLayerName = "Road";
             stationOverlay.sortingOrder = 2;
 
-            // Clamp to prevent texture bleeding into neighboring segments
             stationOverlay.drawMode = SpriteDrawMode.Sliced;
-            stationOverlay.size = new Vector2(1f, 1f); // 1x1 in local space = fills parent exactly
+            stationOverlay.size = new Vector2(1f, 1f);
         }
 
-        stationOverlay.sprite = GenerateHatchSprite(64, 64);
+        Vector3 worldPos = transform.position;
+
+        int offsetX = Mathf.RoundToInt(worldPos.x * 64);
+        int offsetY = Mathf.RoundToInt(worldPos.y * 64);
+
+        stationOverlay.sprite = GenerateHatchSprite(64, 64, offsetX, offsetY);
         stationOverlay.gameObject.SetActive(true);
+    }
+
+    public void MarkAsStation()
+    {
+        // Create hatch/line overlay
+        MarkAsStationLine();
 
         // --- Bus stop sign ---
         if (busStopPrefab == null) return;
@@ -183,7 +191,7 @@ public class VisualSegment : MonoBehaviour
         StationPassengers.Initialize(signWorldPosition); // ← use sign position, not outerLine
     }
 
-    private Sprite GenerateHatchSprite(int width, int height)
+    private Sprite GenerateHatchSprite(int width, int height, int offsetX, int offsetY)
     {
         Texture2D tex = new Texture2D(width, height, TextureFormat.RGBA32, false);
         Color transparent = new Color(0, 0, 0, 0);
@@ -194,23 +202,15 @@ public class VisualSegment : MonoBehaviour
             for (int y = 0; y < height; y++)
                 tex.SetPixel(x, y, transparent);
 
-        int stripeSpacing = 10; // gap between stripes
+        int stripeSpacing = 18; // gap between stripes
 
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
                 // Diagonal stripe: /
-                int diag = (x + y) % stripeSpacing;
-                if (diag < 2)
-                {
-                    tex.SetPixel(x, y, yellow);
-                    continue;
-                }
-
-                // Vertical stripe: |
-                int col = x % stripeSpacing;
-                if (col == 0 || col == 1)
+                int diag = (x + offsetX + y + offsetY) % stripeSpacing;
+                if (diag == 0)
                 {
                     tex.SetPixel(x, y, yellow);
                 }

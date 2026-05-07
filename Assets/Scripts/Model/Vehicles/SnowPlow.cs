@@ -17,6 +17,11 @@ namespace SnowPlow.Model.Vehicles
         }
         public SnowPlow() { }
 
+        public override string ToString()
+        {
+            return "SnowPlow";
+        }
+
         public SnowPlow(IPlowTool tool)
         {
             EquippedTool = tool;
