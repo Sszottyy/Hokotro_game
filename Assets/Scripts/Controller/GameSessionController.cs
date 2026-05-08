@@ -65,7 +65,7 @@ public class GameSessionController : MonoBehaviour
 
         if (GameManager.Instance.CurrentPlayer == null)
         {
-            GameManager.Instance.CreatePlayer(playerName);
+            GameManager.Instance.CreatePlayer(playerName,"Team A",PlayerRole.SnowPlowDriver);
         }
 
         Player player = GameManager.Instance.CurrentPlayer;

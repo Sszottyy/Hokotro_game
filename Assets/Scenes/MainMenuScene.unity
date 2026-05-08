@@ -6902,6 +6902,13 @@ MonoBehaviour:
   - {fileID: 1846416336}
   endGamePanel: {fileID: 369730751}
   mainMenuPanel: {fileID: 366956476}
+  teamToggle: {fileID: 1994622228}
+  vehicleToggle: {fileID: 1270857998}
+  hostJoinPanel: {fileID: 2141957304}
+  lobbyPanel: {fileID: 464453378}
+  playerRowPrefab: {fileID: 4731092233328871275, guid: 5702d5a0575883d48b7efd1bc6d7418a, type: 3}
+  playerListA: {fileID: 364765345}
+  playerListB: {fileID: 496307270}
 --- !u!224 &853793346
 RectTransform:
   m_ObjectHideFlags: 0
@@ -10773,6 +10780,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 894641893860645207, guid: 4bb7c15b807f45c43bd8b7d080fcf79e, type: 3}
   m_PrefabInstance: {fileID: 1834063784}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1270857998 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 894641893860645208, guid: 4bb7c15b807f45c43bd8b7d080fcf79e, type: 3}
+  m_PrefabInstance: {fileID: 1834063784}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50a84f1134d1a47469f7fb589a27a77c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1277032864
 GameObject:
   m_ObjectHideFlags: 0
@@ -16163,6 +16181,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 894641893860645207, guid: 4bb7c15b807f45c43bd8b7d080fcf79e, type: 3}
   m_PrefabInstance: {fileID: 444755009}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1994622228 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 894641893860645208, guid: 4bb7c15b807f45c43bd8b7d080fcf79e, type: 3}
+  m_PrefabInstance: {fileID: 444755009}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50a84f1134d1a47469f7fb589a27a77c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2005562312
 GameObject:
   m_ObjectHideFlags: 0
