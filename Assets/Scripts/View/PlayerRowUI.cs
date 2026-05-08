@@ -36,7 +36,8 @@ public class PlayerRowUI : MonoBehaviour
 
         nameText.text = player.Name;
         vehiclesText.text = player.Vehicles.Count > 0
-            ? player.Vehicles[0].GetType().ToString()
+            //? player.Vehicles[0].GetType().ToString()
+            ? player.Vehicles[0].GetType().Name
             : "Nincs jármű";
 
         nameText.enabled = true;
