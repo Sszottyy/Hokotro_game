@@ -46,4 +46,34 @@ public class PlayerRowUI : MonoBehaviour
         Debug.Log($"nameText.text beállítva: '{nameText.text}'");
         Debug.Log($"vehiclesText.text beállítva: '{vehiclesText.text}'");
     }
+
+
+    public void Setup(string playerName, PlayerRole role, string teamName)
+    {
+        Debug.Log($"Setup hívva string paraméterekkel. Player neve: '{playerName}', Role: {role}");
+
+        if (nameText == null || vehiclesText == null) return;
+
+        nameText.text = playerName;
+
+        // Jármű típusának meghatározása a role alapján
+        if (role == PlayerRole.SnowPlowDriver)
+        {
+            vehiclesText.text = "SnowPlow";
+        }
+        else if (role == PlayerRole.BusDriver)
+        {
+            vehiclesText.text = "Bus";
+        }
+        else
+        {
+            vehiclesText.text = "Nincs jármű";
+        }
+
+        nameText.enabled = true;
+        vehiclesText.enabled = true;
+
+        Debug.Log($"nameText.text beállítva: '{nameText.text}'");
+        Debug.Log($"vehiclesText.text beállítva: '{vehiclesText.text}'");
+    }
 }
