@@ -1,5 +1,8 @@
+using NUnit.Framework;
 using SnowPlow.Model.Players;
+using System.Collections.Generic;
 using TMPro;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -24,9 +27,33 @@ public class MainMenu : MonoBehaviour
     public Transform playerListA;      // A "PlayerListA" GameObject a Hierarchy-ból
     public Transform playerListB;
 
-    public void PlayGame()
+    void Awake()
+    {
+        // Csak annyit csináljunk, hogy ellenõrizzük a NetworkObject-ot
+        NetworkObject netObj = GetComponent<NetworkObject>();
+        if (netObj != null)
+        {
+            Debug.Log($"NetworkObject found on MainMenu. IsSpawned: {netObj.IsSpawned}");
+        }
+        else
+        {
+            Debug.LogWarning("No NetworkObject on MainMenu - RPCs won't work from this object");
+        }
+    }
+    /*public void PlayGame()
     {
         SceneManager.LoadScene("MainGameScene",LoadSceneMode.Single);
+    }*/
+    public void StartGameForAll() // ezt kösd a start gombhoz
+    {
+        if (NetworkManager.Singleton == null || !NetworkManager.Singleton.IsHost)
+        {
+            Debug.LogWarning("Only host can start the game!");
+            return;
+        }
+
+        // Hálózati szcénakezelõvel töltjük be a jelenetet minden kliensnek
+        NetworkManager.Singleton.SceneManager.LoadScene("MainGameScene", LoadSceneMode.Single);
     }
     /*public void CreatePlayerInstance()
     {
@@ -36,6 +63,32 @@ public class MainMenu : MonoBehaviour
 
     public void CreatePlayerInstance()
     {
+        Debug.Log("=== CreatePlayerInstance called ===");
+
+        if (NetworkManager.Singleton == null)
+        {
+            Debug.LogError("NetworkManager nincs a jelenetben!");
+            return;
+        }
+
+        Debug.Log($"IsHost: {NetworkManager.Singleton.IsHost}, IsClient: {NetworkManager.Singleton.IsClient}");
+
+        // CSAK akkor engedjük, ha host VAGY client vagyunk
+        if (!NetworkManager.Singleton.IsHost && !NetworkManager.Singleton.IsClient)
+        {
+            Debug.LogError("Még nem vagy host vagy client! Elõször indítsd el a StartHost vagy StartClient gombbal!");
+            return;
+        }
+        if (NetworkManager.Singleton == null)
+        {
+            Debug.LogError("NetworkManager nincs a jelenetben!");
+            return;
+        }
+        if (!NetworkManager.Singleton.IsHost && !NetworkManager.Singleton.IsClient)
+        {
+            Debug.LogError("Még nem vagy host vagy client! Elõször indítsd el a StartHost vagy StartClient gombbal!");
+            return;
+        }
         string playerName = InputField.text;
         if (string.IsNullOrEmpty(playerName))
         {
@@ -47,16 +100,126 @@ public class MainMenu : MonoBehaviour
 
         // Jármû/Szerepkör eldöntése (Toggle ON = BusDriver, Toggle OFF = SnowPlowDriver)
         PlayerRole selectedRole = (vehicleToggle != null && vehicleToggle.isOn) ? PlayerRole.BusDriver : PlayerRole.SnowPlowDriver;
-
+        Debug.Log($"Creating player: {playerName}, Team: {selectedTeam}, Role: {selectedRole}");
+        Debug.Log($"LobbyNetworkHandler.Instance is null? {LobbyNetworkHandler.Instance == null}");
         // Meghívjuk a GameManager frissített CreatePlayer függvényét
-        GameManager.Instance.CreatePlayer(playerName, selectedTeam, selectedRole);
-
+        //CreatePlayerInstanceServerRpc(playerName, selectedTeam, selectedRole);
+        // GameManager.Instance.CreatePlayer(playerName, selectedTeam, selectedRole);
+        if (LobbyNetworkHandler.Instance != null)
+        {
+            Debug.Log($"LobbyNetworkHandler Instance IsSpawned: {LobbyNetworkHandler.Instance.IsSpawned}");
+            LobbyNetworkHandler.Instance.CreatePlayerServerRpc(playerName, selectedTeam, selectedRole,
+                NetworkManager.Singleton.LocalClientId);
+        }
+        else
+        {
+            Debug.LogError("LobbyNetworkHandler.Instance is NULL! Make sure LobbyNetworkHandler GameObject exists in scene!");
+            return;
+        }
+        /*if (IsSpawned)  //  EZT ELLENÕRIZD!
+        {
+            CreatePlayerInstanceServerRpc(playerName, selectedTeam, selectedRole);
+        }
+        else
+        {
+            Debug.LogError("MainMenu nincs spawnolva! Ellenõrizd, hogy van-e rajta NetworkObject komponens!");
+            return;
+        }*/
+        /*if(!IsHost)
+        {
+            CreatePlayerInstanceServerRpc(playerName, selectedTeam, selectedRole);
+        }*/
         // Frissítjük a Lobby-ban lévõ szövegeket
-        UpdateLobbyUI();
+        //UpdateLobbyUI();
 
         // Átváltunk a Lobby képernyõre
         if (hostJoinPanel != null) hostJoinPanel.SetActive(false);
         if (lobbyPanel != null) lobbyPanel.SetActive(true);
+        Debug.Log("=== CreatePlayerInstance finished ===");
+    }
+    public void UpdateLobbyUIFromData(string name1, string name2, string name3, string name4,
+    string team1, string team2, string team3, string team4,
+    PlayerRole role1, PlayerRole role2, PlayerRole role3, PlayerRole role4,
+    int len)
+    {
+        // Ugyanaz a kód, mint a ClientRpc-ben
+        CleanList(playerListA);
+        CleanList(playerListB);
+
+        // 1. játékos
+        if (len > 0 && !string.IsNullOrEmpty(name1))
+        {
+            Transform targetParent = (team1 == "Team B") ? playerListB : playerListA;
+            if (targetParent != null && playerRowPrefab != null)
+            {
+                GameObject newRow = Instantiate(playerRowPrefab, targetParent);
+                PlayerRowUI rowUI = newRow.GetComponent<PlayerRowUI>();
+                rowUI?.Setup(name1, role1, team1);
+            }
+        }
+
+        // 2. játékos
+        if (len > 1 && !string.IsNullOrEmpty(name2))
+        {
+            Transform targetParent = (team2 == "Team B") ? playerListB : playerListA;
+            if (targetParent != null && playerRowPrefab != null)
+            {
+                GameObject newRow = Instantiate(playerRowPrefab, targetParent);
+                PlayerRowUI rowUI = newRow.GetComponent<PlayerRowUI>();
+                rowUI?.Setup(name2, role2, team2);
+            }
+        }
+
+        // 3. játékos
+        if (len > 2 && !string.IsNullOrEmpty(name3))
+        {
+            Transform targetParent = (team3 == "Team B") ? playerListB : playerListA;
+            if (targetParent != null && playerRowPrefab != null)
+            {
+                GameObject newRow = Instantiate(playerRowPrefab, targetParent);
+                PlayerRowUI rowUI = newRow.GetComponent<PlayerRowUI>();
+                rowUI?.Setup(name3, role3, team3);
+            }
+        }
+
+        // 4. játékos
+        if (len > 3 && !string.IsNullOrEmpty(name4))
+        {
+            Transform targetParent = (team4 == "Team B") ? playerListB : playerListA;
+            if (targetParent != null && playerRowPrefab != null)
+            {
+                GameObject newRow = Instantiate(playerRowPrefab, targetParent);
+                PlayerRowUI rowUI = newRow.GetComponent<PlayerRowUI>();
+                rowUI?.Setup(name4, role4, team4);
+            }
+        }
+        // ... a többi kód ...
+    }
+    [ServerRpc(RequireOwnership = false)]
+    public void CreatePlayerInstanceServerRpc(string playerName, string selectedTeam, PlayerRole selectedRole)
+    {
+        GameManager.Instance.CreatePlayer(playerName, selectedTeam, selectedRole);
+
+        // Frissítjük a lobby UI-t MINDEN kliensen
+        string[] name =new string[4];
+        string[] team =new string[4];
+        PlayerRole[] role =new PlayerRole[4];
+        for (int i = 0; i < GameManager.Instance.Players.Count; i++)
+        {
+            name[i]= GameManager.Instance.Players[i].Name;
+            team[i] = GameManager.Instance.Players[i].Team.Name;
+            role[i]= GameManager.Instance.Players[i].Role;
+        }
+
+        UpdateLobbyUIClientRpc(
+        name[0], name[1], name[2], name[3],
+        team[0], team[1], team[2], team[3],
+        role[0], role[1], role[2], role[3],
+        GameManager.Instance.Players.Count
+    );
+
+        // Hostnál is frissítsük a helyi UI-t
+        UpdateLobbyUI();
     }
 
     private void UpdateLobbyUI()
@@ -87,6 +250,72 @@ public class MainMenu : MonoBehaviour
                 }
             }
         }
+        if (playerListA != null)
+            LayoutRebuilder.ForceRebuildLayoutImmediate(playerListA as RectTransform);
+        if (playerListB != null)
+            LayoutRebuilder.ForceRebuildLayoutImmediate(playerListB as RectTransform);
+    }
+
+    [ClientRpc]
+    private void UpdateLobbyUIClientRpc(string name1, string name2, string name3, string name4,
+    string team1, string team2, string team3, string team4,
+    PlayerRole role1, PlayerRole role2, PlayerRole role3, PlayerRole role4,
+    int len)
+    {
+        CleanList(playerListA);
+        CleanList(playerListB);
+
+        // 1. játékos
+        if (len > 0 && !string.IsNullOrEmpty(name1))
+        {
+            Transform targetParent = (team1 == "Team B") ? playerListB : playerListA;
+            if (targetParent != null && playerRowPrefab != null)
+            {
+                GameObject newRow = Instantiate(playerRowPrefab, targetParent);
+                PlayerRowUI rowUI = newRow.GetComponent<PlayerRowUI>();
+                rowUI?.Setup(name1, role1, team1);
+            }
+        }
+
+        // 2. játékos
+        if (len > 1 && !string.IsNullOrEmpty(name2))
+        {
+            Transform targetParent = (team2 == "Team B") ? playerListB : playerListA;
+            if (targetParent != null && playerRowPrefab != null)
+            {
+                GameObject newRow = Instantiate(playerRowPrefab, targetParent);
+                PlayerRowUI rowUI = newRow.GetComponent<PlayerRowUI>();
+                rowUI?.Setup(name2, role2, team2);
+            }
+        }
+
+        // 3. játékos
+        if (len > 2 && !string.IsNullOrEmpty(name3))
+        {
+            Transform targetParent = (team3 == "Team B") ? playerListB : playerListA;
+            if (targetParent != null && playerRowPrefab != null)
+            {
+                GameObject newRow = Instantiate(playerRowPrefab, targetParent);
+                PlayerRowUI rowUI = newRow.GetComponent<PlayerRowUI>();
+                rowUI?.Setup(name3, role3, team3);
+            }
+        }
+
+        // 4. játékos
+        if (len > 3 && !string.IsNullOrEmpty(name4))
+        {
+            Transform targetParent = (team4 == "Team B") ? playerListB : playerListA;
+            if (targetParent != null && playerRowPrefab != null)
+            {
+                GameObject newRow = Instantiate(playerRowPrefab, targetParent);
+                PlayerRowUI rowUI = newRow.GetComponent<PlayerRowUI>();
+                rowUI?.Setup(name4, role4, team4);
+            }
+        }
+        if (playerListA != null)
+            LayoutRebuilder.ForceRebuildLayoutImmediate(playerListA as RectTransform);
+        if (playerListB != null)
+            LayoutRebuilder.ForceRebuildLayoutImmediate(playerListB as RectTransform);
     }
     private void CleanList(Transform parent)
     {
