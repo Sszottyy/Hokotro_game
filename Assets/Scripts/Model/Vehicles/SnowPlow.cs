@@ -12,8 +12,24 @@ namespace SnowPlow.Model.Vehicles
         public event Action SnowCleared;
         public void ApplyToolEffect(LaneSegment segment)
         {
-            EquippedTool?.ApplyEffect(segment);
-            SnowCleared?.Invoke();
+            if (segment == null) return;
+            if (EquippedTool == null) return;
+
+            int snowBefore = segment.SnowLevel;
+            bool iceBefore = segment.HasIce;
+            int saltBefore = segment.SaltPower;
+
+            EquippedTool.ApplyEffect(segment);
+
+            bool changed =
+                segment.SnowLevel != snowBefore ||
+                segment.HasIce != iceBefore ||
+                segment.SaltPower != saltBefore;
+
+            if (changed)
+            {
+                SnowCleared?.Invoke();
+            }
         }
         public SnowPlow() { }
 

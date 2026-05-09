@@ -103,15 +103,12 @@ namespace SnowPlow.Controller.Spawning
 
             sensor.Initialize(car);
 
+            behaviour.SetMapVisualizer(mapVisualizer);
             behaviour.Initialize(car, mapData);
             return car;
         }
 
         // ezt majd a shop hivja, amikor veszunk egy NPC hokotrot
-        public SnowPlowVehicle SpawnSnowPlowNPC()
-        {
-            return SpawnSnowPlowNPC(new SweaperTool());
-        }
 
         public SnowPlowVehicle SpawnSnowPlowNPC(IPlowTool tool)
         {
@@ -142,6 +139,11 @@ namespace SnowPlow.Controller.Spawning
             }
 
             sensor.Initialize(snowPlow);
+
+            if (global::GameManager.Instance != null && global::GameManager.Instance.CurrentPlayer != null)
+            {
+                global::GameManager.Instance.CurrentPlayer.AddVehicle(snowPlow);
+            }
 
             behaviour.Initialize(snowPlow, mapData);
 

@@ -4283,6 +4283,9 @@ MonoBehaviour:
   equipDragonButton: {fileID: 1494300536}
   buyDragonFuelButton: {fileID: 479135942}
   buySaltFuelButton: {fileID: 678184311}
+  konamiCheatEnabled: 1
+  konamiMoneyReward: 67000
+  konamiInputTimeoutSeconds: 3
 --- !u!4 &1001218457
 Transform:
   m_ObjectHideFlags: 0
@@ -7891,7 +7894,7 @@ MonoBehaviour:
   vehicleSpawner: {fileID: 161271741}
   playerName: Player
   playerRole: 1
-  startingMoney: 99999
+  startingMoney: 0
 --- !u!4 &2042722199
 Transform:
   m_ObjectHideFlags: 0
