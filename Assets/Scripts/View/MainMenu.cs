@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class MainMenu : NetworkBehaviour
+public class MainMenu : MonoBehaviour
 {
     public TMP_InputField InputField;
     public Button[] buttons;
@@ -40,9 +40,20 @@ public class MainMenu : NetworkBehaviour
             Debug.LogWarning("No NetworkObject on MainMenu - RPCs won't work from this object");
         }
     }
-    public void PlayGame()
+    /*public void PlayGame()
     {
         SceneManager.LoadScene("MainGameScene",LoadSceneMode.Single);
+    }*/
+    public void StartGameForAll() // ezt kösd a start gombhoz
+    {
+        if (NetworkManager.Singleton == null || !NetworkManager.Singleton.IsHost)
+        {
+            Debug.LogWarning("Only host can start the game!");
+            return;
+        }
+
+        // Hálózati szcénakezelõvel töltjük be a jelenetet minden kliensnek
+        NetworkManager.Singleton.SceneManager.LoadScene("MainGameScene", LoadSceneMode.Single);
     }
     /*public void CreatePlayerInstance()
     {
@@ -239,6 +250,10 @@ public class MainMenu : NetworkBehaviour
                 }
             }
         }
+        if (playerListA != null)
+            LayoutRebuilder.ForceRebuildLayoutImmediate(playerListA as RectTransform);
+        if (playerListB != null)
+            LayoutRebuilder.ForceRebuildLayoutImmediate(playerListB as RectTransform);
     }
 
     [ClientRpc]
@@ -297,6 +312,10 @@ public class MainMenu : NetworkBehaviour
                 rowUI?.Setup(name4, role4, team4);
             }
         }
+        if (playerListA != null)
+            LayoutRebuilder.ForceRebuildLayoutImmediate(playerListA as RectTransform);
+        if (playerListB != null)
+            LayoutRebuilder.ForceRebuildLayoutImmediate(playerListB as RectTransform);
     }
     private void CleanList(Transform parent)
     {
