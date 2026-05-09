@@ -43,6 +43,8 @@ public class LobbyManager : MonoBehaviour
         if (player.Team == null)
             return playerListA;
 
-        return player.Team.Name == "B" ? playerListB : playerListA;
+        return player.Team.Name == "Team B"
+       ? playerListB
+       : playerListA;
     }
 }
