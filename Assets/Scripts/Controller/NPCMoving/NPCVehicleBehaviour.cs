@@ -121,7 +121,14 @@ namespace SnowPlow.Controller.NPCMovement
 
             // ha a sensor szerint mar elertunk egy path elemet,
             // akkor a mover ne akarjon visszamenni oda
+
             mover.SyncWithCurrentPosition(vehicle.CurrentPosition);
+
+            if (mover.IsStunned)
+            {
+                occupancyManager.ClearReservation(vehicle);
+                return;
+            }
 
             // ha celba ert, akkor uj celt keres
             if (HasReachedDestination())

@@ -18,6 +18,12 @@ namespace SnowPlow.Controller.NPCMovement
         [SerializeField] private float rotationSpeed = 12f;
         [SerializeField] private float reachDistance = 0.05f;
 
+        [Header("Stun")]
+        [SerializeField] private float stunDuration = 5f;
+
+        private float stunTimer;
+        public bool IsStunned => stunTimer > 0f;
+
         private readonly List<LanePosition> path = new();
         private int pathIndex;
         private bool isPaused;
@@ -26,6 +32,12 @@ namespace SnowPlow.Controller.NPCMovement
 
         private void Update()
         {
+            if (stunTimer > 0f)
+            {
+                stunTimer -= Time.deltaTime;
+                return;
+            }
+
             if (isPaused) return;
             if (!HasPath) return;
             if (mapVisualizer == null) return;
@@ -168,6 +180,39 @@ namespace SnowPlow.Controller.NPCMovement
             worldPosition.z = transform.position.z;
 
             return true;
+        }
+
+        public void Stun()
+        {
+            Stun(stunDuration);
+        }
+
+        public void Stun(float duration)
+        {
+            if (duration <= 0f) return;
+
+            stunTimer = Mathf.Max(stunTimer, duration);
+        }
+
+        private void OnTriggerEnter2D(Collider2D other)
+        {
+            if (!other.CompareTag("Vehicle")) return;
+
+            NPCVehicleMover otherNpcMover = other.GetComponentInParent<NPCVehicleMover>();
+            if (otherNpcMover != null && otherNpcMover != this)
+            {
+                Stun();
+                otherNpcMover.Stun();
+                return;
+            }
+
+            global::BusMovement otherBusMovement = other.GetComponentInParent<global::BusMovement>();
+            if (otherBusMovement != null)
+            {
+                Stun();
+                otherBusMovement.Stun();
+                return;
+            }
         }
     }
 }

@@ -1,6 +1,8 @@
-using UnityEngine;
+using SnowPlow.Controller.NPCMovement;
 using SnowPlow.Controller.Pathfinding;
 using SnowPlow.Model.Map;
+using SnowPlow.Controller.NPCMovement;
+using UnityEngine;
 
 public class BusMovement : MonoBehaviour
 {
@@ -67,8 +69,15 @@ public class BusMovement : MonoBehaviour
         if (other.CompareTag("Vehicle"))
         {
             Debug.Log("[Bus] Vehicle hit! Starting stun.");
-            stunTimer = StunDuration;
-            myRigidBody2D.linearVelocity = Vector2.zero;
+
+            Stun();
+
+            NPCVehicleMover otherNpcMover = other.GetComponentInParent<NPCVehicleMover>();
+            if (otherNpcMover != null)
+            {
+                otherNpcMover.Stun();
+            }
+
             return;
         }
 
@@ -262,5 +271,16 @@ public class BusMovement : MonoBehaviour
 
         if (boxCollider != null)
             boxCollider.size = isSideView ? horizontalSize : verticalSize;
+    }
+
+    public void Stun()
+    {
+        stunTimer = StunDuration;
+
+        if (myRigidBody2D != null)
+        {
+            myRigidBody2D.linearVelocity = Vector2.zero;
+            myRigidBody2D.angularVelocity = 0f;
+        }
     }
 }
