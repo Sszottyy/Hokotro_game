@@ -5,25 +5,25 @@ namespace SnowPlow.Model.Map
 {
     public class LaneSegment
     {
-        //NEW! - kesobb valtoztathato, a celja, hogy ne lehessen tulsagosan stackelni
         public const int MaxSaltPower = 12;
         //New! - áthaladt autók száma
         private int _vehicleCount = 0;
         public int VehicleCount { 
-            get { return _vehicleCount; }
+            get { return _vehicleCount; }   
             set { 
                 _vehicleCount = value; 
                 if(_vehicleCount > 3) // Példa küszöbérték, igény szerint módosítható
                 {
-                    HasAccident = true;
+                    //HasAccident = true; //kikommentelve, mivel sosincs visszteve false-ra
                 }
             }
         }
         private int _snowLevel;
         public int SnowLevel { 
             get { return _snowLevel; }
-            set { _snowLevel = value; 
-                if(_snowLevel == 0) {
+            set { //_snowLevel = Math.Min(value, 2); //npc debugra hasznaltam, ha elfelejtettem torolni, nyugodtan tedd meg 
+                _snowLevel = value;
+                if (_snowLevel == 0) {
                     VehicleCount = 0; // A hó eltűntével visszaállítjuk a járművek számát, hogy újra lehessen számolni
                 }
             }
@@ -31,10 +31,8 @@ namespace SnowPlow.Model.Map
         public bool HasIce { get; private set; }
         public bool HasAccident { get; private set; }
 
-        //NEW!
         public int SaltPower { get; private set; }
 
-        //NEW! - adjusted to salt
         public LaneSegment(int snowLevel = 0, bool hasIce = false, bool hasAccident = false, int saltpower = 0)
         {
             if (snowLevel < 0) throw new ArgumentOutOfRangeException(nameof(snowLevel), "Snow level cannot be negative.");
@@ -60,7 +58,6 @@ namespace SnowPlow.Model.Map
             AddSnow(1);
         }
 
-        //NEW!
         public void RemoveSnow(int amount)
         {
             if (amount < 0) throw new ArgumentOutOfRangeException(nameof(amount), "Snow amount cannot be negative.");
@@ -69,7 +66,6 @@ namespace SnowPlow.Model.Map
             SnowLevel = Math.Max(0, SnowLevel - amount);
         }
 
-        //NEW!
         public void RemoveSnow()
         {
             RemoveSnow(1);
@@ -95,7 +91,6 @@ namespace SnowPlow.Model.Map
             HasAccident = value;
         }
 
-        //NEW!
         public void AddSaltPower(int amount)
         {
             if (amount < 0) throw new ArgumentOutOfRangeException(nameof(amount), "Salt power amount cannot be negative.");
@@ -104,7 +99,6 @@ namespace SnowPlow.Model.Map
             SaltPower = Math.Min(MaxSaltPower, SaltPower + amount);
         }
 
-        //NEW!
         public void ConsumeSaltPower(int amount)
         {
             if (amount < 0) throw new ArgumentOutOfRangeException(nameof(amount), "Salt power amount cannot be negative.");
@@ -113,13 +107,11 @@ namespace SnowPlow.Model.Map
             SaltPower = Math.Max(0, SaltPower - amount);
         }
 
-        //NEW!
         public void ConsumeSaltPower()
         {
             ConsumeSaltPower(1);
         }
 
-        //NEW!
         public bool HasSalt()
         {
             return SaltPower > 0;
@@ -138,6 +130,5 @@ namespace SnowPlow.Model.Map
         {
             return SnowLevel > 3; // Példa küszöbérték, igény szerint módosítható
         }
-        //REMOVED: public bool IsBlocked() - a kocsi es a hokotro szamara mast jelent -> controller kezeli
     }
 }
