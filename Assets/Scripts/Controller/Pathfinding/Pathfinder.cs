@@ -89,16 +89,39 @@ namespace SnowPlow.Controller.Pathfinding
                 }
             }
 
-            //ha a sav utolso szegmensen vagyunk -> keresztezodesbol uj ut valasztasa
+            // ha a sav utolso szegmensen vagyunk -> keresztezodesbol uj ut valasztasa
             if (currentIndex == lastIndex)
             {
-                MapNode node = currentLane.EndNode; //keresztezodes, amihez erkezett
+                MapNode node = currentLane.EndNode;
 
-                foreach(Lane outgoing in GetOutGoingLanes(node))
+                List<Lane> outgoingLanes = new();
+
+                foreach (Lane outgoing in GetOutGoingLanes(node))
+                {
+                    outgoingLanes.Add(outgoing);
+                }
+
+                List<Lane> nonUTurnLanes = new();
+
+                foreach (Lane outgoing in outgoingLanes)
+                {
+                    if (!IsImmediateUTurn(currentLane, outgoing))
+                    {
+                        nonUTurnLanes.Add(outgoing);
+                    }
+                }
+
+                IReadOnlyList<Lane> lanesToUse =
+                    nonUTurnLanes.Count > 0 ? nonUTurnLanes : outgoingLanes;
+
+                foreach (Lane outgoing in lanesToUse)
                 {
                     LanePosition nextLaneStart = new(outgoing, 0);
 
-                    if(policy.CanTransition(current,nextLaneStart)) neighbors.Add(nextLaneStart); // ha ra szabad menni, akkor hozzaadjuk
+                    if (policy.CanTransition(current, nextLaneStart))
+                    {
+                        neighbors.Add(nextLaneStart);
+                    }
                 }
             }
             return neighbors;
@@ -158,6 +181,16 @@ namespace SnowPlow.Controller.Pathfinding
 
         private static float Heuristic(LanePosition start, LanePosition end) {
             return 0f;
+        }
+
+        private static bool IsImmediateUTurn(Lane fromLane, Lane toLane)
+        {
+            if (fromLane == null) return false;
+            if (toLane == null) return false;
+
+            return fromLane.ParentRoad == toLane.ParentRoad
+                && fromLane.StartNode == toLane.EndNode
+                && fromLane.EndNode == toLane.StartNode;
         }
     }
 }

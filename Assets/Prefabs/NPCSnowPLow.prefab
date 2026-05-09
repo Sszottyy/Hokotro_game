@@ -112,6 +112,7 @@ MonoBehaviour:
   moveSpeed: 4
   rotationSpeed: 12
   reachDistance: 0.05
+  stunDuration: 5
 --- !u!114 &3645938327403318716
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -128,6 +129,7 @@ MonoBehaviour:
   occupancyManager: {fileID: 0}
   repathInterval: 0.5
   repathIfNextSegmentBlocked: 1
+  mapVisualizer: {fileID: 0}
 --- !u!61 &7624515332961784184
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -194,7 +196,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5901069089339179808}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -212,4 +214,4 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4

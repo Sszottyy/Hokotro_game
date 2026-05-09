@@ -4658,6 +4658,9 @@ MonoBehaviour:
   equipDragonButton: {fileID: 1494300536}
   buyDragonFuelButton: {fileID: 479135942}
   buySaltFuelButton: {fileID: 678184311}
+  konamiCheatEnabled: 1
+  konamiMoneyReward: 670000
+  konamiInputTimeoutSeconds: 3
 --- !u!4 &1001218457
 Transform:
   m_ObjectHideFlags: 0
@@ -8711,8 +8714,8 @@ MonoBehaviour:
   shopController: {fileID: 1001218456}
   vehicleSpawner: {fileID: 161271741}
   playerName: Player
-  playerRole: 2
-  startingMoney: 99999
+  playerRole: 1
+  startingMoney: 0
   timerText: {fileID: 1035969286}
   scoreText: {fileID: 795824757}
 --- !u!4 &2042722199
@@ -9588,6 +9591,10 @@ PrefabInstance:
       propertyPath: busPrefab
       value: 
       objectReference: {fileID: 4312103084254756940, guid: c285ca9ee1ec27b4f998fbf32ef0f7b3, type: 3}
+    - target: {fileID: 8338259273252699864, guid: c1f5a539f6f31a9498d758e22675aa8a, type: 3}
+      propertyPath: initialCarCount
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 8338259273252699864, guid: c1f5a539f6f31a9498d758e22675aa8a, type: 3}
       propertyPath: occupancyManager
       value: 

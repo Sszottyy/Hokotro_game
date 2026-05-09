@@ -32,11 +32,11 @@ namespace SnowPlow.Controller.NPCTargetSelection
                 LanePosition current = queue.Dequeue();
 
                 // ha ez mar egy megfelelo cel, keszen vagyunk - BFS miatt ez a legkozelebbi
-                if (IsRelevantTarget(current, head))
+                if (!current.Equals(start) && IsRelevantTarget(current, head))
                 {
                     return current;
                 }
-                
+
                 foreach (LanePosition neighbor in Pathfinder.GetNeighbors(current, policy))
                 {
                     // ha mar jartunk itt, kihagyjuk
@@ -46,7 +46,7 @@ namespace SnowPlow.Controller.NPCTargetSelection
                     queue.Enqueue(neighbor);
                 }
             }
-            return start;
+            return null;
         }
 
         private static bool IsRelevantTarget(LanePosition current, IPlowTool head)
