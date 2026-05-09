@@ -1,14 +1,21 @@
 using SnowPlow.Model.Players;
 using System.Collections.Generic;
+using SnowPlowVehicle = SnowPlow.Model.Vehicles.SnowPlow;
+using SnowPlow.Model.Vehicles;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
+    public bool GameEnded = false;
+
     public Player CurrentPlayer { get; private set; }
 
     public List<Player> Players { get; private set; } = new List<Player>();
+    //ket csapat
+    public Team TeamA { get; private set; } = new Team() { Name = "Team A" };
+    public Team TeamB { get; private set; } = new Team() { Name = "Team B" };
 
     void Awake()
     {
@@ -21,9 +28,21 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    public void CreatePlayer(string name)
+    public void CreatePlayer(string name, string teamName, PlayerRole role)
     {
-        Player newPlayer = new Player(name, team: null);
+        Team selectedTeam = (teamName == "Team A") ? TeamA : TeamB;
+        Player newPlayer = new Player(name, selectedTeam);
+        newPlayer.Role = role;
+        if (role == PlayerRole.SnowPlowDriver)
+        {
+            SnowPlowVehicle plow = new SnowPlowVehicle();
+            newPlayer.AddVehicle(plow);
+        }
+        else if (role == PlayerRole.BusDriver)
+        {
+            Bus bus = new Bus();
+            newPlayer.AddVehicle(bus);
+        }
         Players.Add(newPlayer);
         CurrentPlayer = newPlayer;
         Debug.Log($"Player created: {newPlayer.Name}");
@@ -34,7 +53,7 @@ public class GameManager : MonoBehaviour
         if (CurrentPlayer == null) return;
 
         Player removedPlayer = CurrentPlayer;
-
+        removedPlayer.Team = null;
         Players.Remove(removedPlayer);
         CurrentPlayer = null;
 

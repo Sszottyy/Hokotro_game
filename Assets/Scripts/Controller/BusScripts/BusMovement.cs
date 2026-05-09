@@ -22,8 +22,8 @@ public class BusMovement : MonoBehaviour
 
     [Header("Collider")]
     public BoxCollider2D boxCollider;
-    public Vector2 horizontalSize = new Vector2(6f, 3f);
-    public Vector2 verticalSize = new Vector2(3f, 6f);
+    public Transform colliderPivot;
+    public Vector2 colliderSize = new Vector2(6.0f, 3.0f);
 
     [Header("Station Logic")]
     public VisualSegment stationA;
@@ -39,10 +39,11 @@ public class BusMovement : MonoBehaviour
     private float blockCooldown = 0f;
     private const float BlockCooldownTime = 0.1f;
     private float stunTimer = 0f;
-    private const float StunDuration = 5f;
+    private const float StunDuration = 2f;
     private bool isOnIce = false;
     private const float IceFriction = 0.995f;    // how little it slows down (closer to 1 = more slippery)
     private const float IceControlMultiplier = 0.15f; // how much control the player has on ice
+    private float tripStartTime = 0f;
 
     // --- TRIP TRACKING VARIABLES ---
     private VisualSegment tripOriginStation = null; // The station where the round trip started
@@ -54,6 +55,13 @@ public class BusMovement : MonoBehaviour
     {
         busModel = model;
     }
+
+    void Awake()
+    {
+        myRigidBody2D.freezeRotation = true;
+        if (boxCollider != null)
+            boxCollider.size = colliderSize;
+    }
     public void SetStations(VisualSegment a, VisualSegment b)
     {
         stationA = a;
@@ -61,11 +69,8 @@ public class BusMovement : MonoBehaviour
     }
     void OnTriggerEnter2D(Collider2D other)
     {
-        //Debug.Log($"[Bus] Trigger entered: {other.gameObject.name} tag={other.gameObject.tag}");
-
         if (other.CompareTag("Road")) touchingRoads++;
 
-        // Vehicle collision check — no cooldown needed, stun handles it
         if (other.CompareTag("Vehicle"))
         {
             Debug.Log("[Bus] Vehicle hit! Starting stun.");
@@ -86,8 +91,6 @@ public class BusMovement : MonoBehaviour
         VisualSegment vs = other.GetComponent<VisualSegment>();
         if (vs != null && vs.LanePosition != null)
         {
-
-            // Ice check
             isOnIce = vs.LanePosition.Lane[vs.LanePosition.SegmentIndex].HasIce;
 
             if (!traversalPolicy.CanEnterSegment(vs.LanePosition))
@@ -102,7 +105,6 @@ public class BusMovement : MonoBehaviour
             }
         }
 
-        // Station detection
         if (vs != null)
         {
             if (vs == stationA || vs == stationB)
@@ -118,6 +120,7 @@ public class BusMovement : MonoBehaviour
         }
     }
 
+
     private void HandleTripCounter(VisualSegment arrivedStation)
     {
         // 1. If we don't have an origin yet, set it.
@@ -125,6 +128,7 @@ public class BusMovement : MonoBehaviour
         {
             tripOriginStation = arrivedStation;
             hasReachedMidpoint = false;
+            tripStartTime = Time.time;                          // ← start timer
             Debug.Log($"[Bus] Trip started at {arrivedStation.gameObject.name}");
         }
         // 2. If we are at the OTHER station, we've reached the midpoint.
@@ -136,33 +140,27 @@ public class BusMovement : MonoBehaviour
         // 3. If we return to the ORIGIN after reaching the midpoint, trip is complete.
         else if (arrivedStation == tripOriginStation && hasReachedMidpoint)
         {
+            float elapsed = Time.time - tripStartTime;
             if (busModel != null)
             {
-                busModel.CompletedTrips++;
-                Debug.Log($"[Bus] Full trip complete! Total: {busModel.CompletedTrips}");
+                busModel.IncreaseTripCount(elapsed);            // ← pass elapsed
+                Debug.Log($"[Bus] Full trip complete in {elapsed:F1}s! Total: {busModel.CompletedTrips}");
             }
-
-            // Reset for the next round trip
-            // Option A: Start new trip from here immediately
             hasReachedMidpoint = false;
-            // Note: tripOriginStation remains the same, so it's always A->B->A
+            tripStartTime = Time.time;                          // ← reset for next trip
         }
     }
 
     void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("Road")) touchingRoads--;
+        if (other.CompareTag("Road"))
+            touchingRoads = Mathf.Max(0, touchingRoads - 1); // ← Bug 3 fix, was: touchingRoads--
 
-        // Clear block when fully leaving the blocked segment
         VisualSegment vs = other.GetComponent<VisualSegment>();
         if (vs != null && vs.LanePosition != null)
         {
-            if (!traversalPolicy.CanEnterSegment(vs.LanePosition))
-            {
-                isBlocked = false;
-            }
+            isBlocked = false; // ← Bug 2 fix, was: if (!traversalPolicy.CanEnterSegment(...)) isBlocked = false;
 
-            // Clear ice when leaving the segment
             if (vs.LanePosition.Lane[vs.LanePosition.SegmentIndex].HasIce)
             {
                 isOnIce = false;
@@ -190,7 +188,11 @@ public class BusMovement : MonoBehaviour
         }
 
         if (blockCooldown > 0f)
+        {
             blockCooldown -= Time.fixedDeltaTime;
+            if (blockCooldown <= 0f)
+                isBlocked = false; // ← Bug 1 fix, auto-release if exit trigger was missed
+        }
 
         if (touchingRoads <= 0)
         {
@@ -200,7 +202,6 @@ public class BusMovement : MonoBehaviour
 
         if (isBlocked) return;
 
-        // On ice: reduced control, velocity barely decays
         float controlMultiplier = isOnIce ? IceControlMultiplier : 1f;
 
         if (Input.GetKey(KeyCode.W))
@@ -215,7 +216,6 @@ public class BusMovement : MonoBehaviour
         if (Input.GetKey(KeyCode.D))
             myRigidBody2D.linearVelocity += Vector2.right * speedMultiplyer * controlMultiplier * Time.fixedDeltaTime;
 
-        // On ice: preserve momentum; on road: let Unity's drag handle it naturally
         if (isOnIce)
             myRigidBody2D.linearVelocity *= IceFriction;
 
@@ -224,7 +224,6 @@ public class BusMovement : MonoBehaviour
             float angle = Mathf.Atan2(myRigidBody2D.linearVelocity.y, myRigidBody2D.linearVelocity.x) * Mathf.Rad2Deg;
             UpdateSprite(angle);
         }
-
     }
 
     private void Update()
@@ -241,6 +240,7 @@ public class BusMovement : MonoBehaviour
             {
                 passengers.DropOffPassengers(passengersOnBoard);
                 Debug.Log($"[Bus] Dropped off {passengersOnBoard} passengers at {currentStation.gameObject.name}.");
+                busModel.IncreasePassangers(passengersOnBoard);
                 passengersOnBoard = 0;
                 pickupStation = null;
             }
@@ -258,19 +258,21 @@ public class BusMovement : MonoBehaviour
     {
         if (angle < 0) angle += 360f;
 
-        bool isSideView = false;
+        if (angle >= 337.5f || angle < 22.5f) spriteRenderer.sprite = iso_Right;
+        else if (angle >= 22.5f && angle < 67.5f) spriteRenderer.sprite = iso_UpRight;
+        else if (angle >= 67.5f && angle < 112.5f) spriteRenderer.sprite = iso_Up;
+        else if (angle >= 112.5f && angle < 157.5f) spriteRenderer.sprite = iso_UpLeft;
+        else if (angle >= 157.5f && angle < 202.5f) spriteRenderer.sprite = iso_Left;
+        else if (angle >= 202.5f && angle < 247.5f) spriteRenderer.sprite = iso_DownLeft;
+        else if (angle >= 247.5f && angle < 292.5f) spriteRenderer.sprite = iso_Down;
+        else if (angle >= 292.5f && angle < 337.5f) spriteRenderer.sprite = iso_DownRight;
 
-        if (angle >= 337.5f || angle < 22.5f) { spriteRenderer.sprite = iso_Right; isSideView = true; }
-        else if (angle >= 22.5f && angle < 67.5f) { spriteRenderer.sprite = iso_UpRight; isSideView = false; }
-        else if (angle >= 67.5f && angle < 112.5f) { spriteRenderer.sprite = iso_Up; isSideView = false; }
-        else if (angle >= 112.5f && angle < 157.5f) { spriteRenderer.sprite = iso_UpLeft; isSideView = false; }
-        else if (angle >= 157.5f && angle < 202.5f) { spriteRenderer.sprite = iso_Left; isSideView = true; }
-        else if (angle >= 202.5f && angle < 247.5f) { spriteRenderer.sprite = iso_DownLeft; isSideView = false; }
-        else if (angle >= 247.5f && angle < 292.5f) { spriteRenderer.sprite = iso_Down; isSideView = false; }
-        else if (angle >= 292.5f && angle < 337.5f) { spriteRenderer.sprite = iso_DownRight; isSideView = false; }
-
-        if (boxCollider != null)
-            boxCollider.size = isSideView ? horizontalSize : verticalSize;
+        // Snap to nearest 45° and apply to the collider child
+        if (colliderPivot != null)
+        {
+            float snapped = Mathf.Round(angle / 45f) * 45f;
+            colliderPivot.localRotation = Quaternion.Euler(0f, 0f, snapped - 90f);
+        }
     }
 
     public void Stun()
