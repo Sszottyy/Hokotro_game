@@ -1,6 +1,7 @@
 ﻿using SnowPlow.Model.Map;
 using SnowPlow.Model.Vehicles;
 using UnityEngine;
+using UnityEngine.UIElements;
 using SnowPlowVehicle = SnowPlow.Model.Vehicles.SnowPlow;
 
 public static class SegmentHandler
@@ -25,7 +26,7 @@ public static class SegmentHandler
 
         if (vehicle is SnowPlowVehicle snowPlow)
         {
-            snowPlow.ApplyToolEffect(segment);
+            snowPlow.ApplyToolEffect(position);
         }
 
         visual?.UpdateVisuals();
@@ -45,28 +46,6 @@ public static class SegmentHandler
             case Bus bus:
                 bus.isBlocked = false;
                 break;
-        }
-
-        visual?.UpdateVisuals();
-    }
-
-    public static void OnVehicleEnterSegment(
-        Vehicle vehicle,
-        LaneSegment segment,
-        VisualSegment visual = null)
-    {
-        if (vehicle == null || segment == null) return;
-
-        segment.VehicleCount++;
-
-        if (vehicle is Bus bus)
-        {
-            bus.BusOnSegment(segment);
-        }
-
-        if (vehicle is SnowPlowVehicle snowPlow)
-        {
-            snowPlow.ApplyToolEffect(segment);
         }
 
         visual?.UpdateVisuals();

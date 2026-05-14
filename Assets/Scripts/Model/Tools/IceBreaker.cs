@@ -8,12 +8,12 @@ namespace SnowPlow.Model.Tools
     public class IceBreaker : IPlowTool
     {
         public IceBreaker() { }
-        public void ApplyEffect(LaneSegment segment)
+        public void ApplyEffect(LanePosition pos)
         {
-            if (segment != null)
+            if (pos.Lane[pos.SegmentIndex] != null)
             {
-                segment?.SetIce(false);
-                segment?.AddSnow(); // the broken ice will create a layer of snow on the lane}
+                pos.Lane[pos.SegmentIndex]?.SetIce(false);
+                pos.Lane[pos.SegmentIndex]?.AddSnow(); // the broken ice will create a layer of snow on the lane}
 
             }
         }

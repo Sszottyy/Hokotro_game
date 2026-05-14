@@ -23,12 +23,12 @@ namespace SnowPlow.Model.Tools
             if (amount < 0) throw new ArgumentOutOfRangeException("Salt amount should be bigger than 0");
             Fuel += amount;
         }
-        public void ApplyEffect(LaneSegment laneSegment)
+        public void ApplyEffect(LanePosition pos)
         {
 
-            if (laneSegment != null && Fuel > 0)
+            if (pos.Lane[pos.SegmentIndex] != null && Fuel > 0)
             {
-                laneSegment.AddSaltPower(1);
+                pos.Lane[pos.SegmentIndex].AddSaltPower(1); //ugyanaz maradt, csak most a lanepositionbol ki kell nyerni a szegmenst
                 Fuel -= 1;
             }
         }

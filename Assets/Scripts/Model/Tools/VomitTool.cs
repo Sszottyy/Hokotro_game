@@ -9,9 +9,9 @@ namespace SnowPlow.Model.Tools
     public class VomitTool : IPlowTool
     {
         public VomitTool() { }
-        public void ApplyEffect(LaneSegment segment)
+        public void ApplyEffect(LanePosition pos)
         {
-            segment?.RemoveAllSnow();
+            pos.Lane[pos.SegmentIndex]?.RemoveAllSnow(); //ugyanaz maradt, csak most a lanepositionbol ki kell nyerni a szegmenst
         }
         public PlowToolType Type() => PlowToolType.Vomit;
     }
