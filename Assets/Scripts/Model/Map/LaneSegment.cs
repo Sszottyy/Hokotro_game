@@ -6,25 +6,16 @@ namespace SnowPlow.Model.Map
     public class LaneSegment
     {
         public const int MaxSaltPower = 12;
-        //New! - áthaladt autók száma
-        private int _vehicleCount = 0;
-        public int VehicleCount { 
-            get { return _vehicleCount; }   
-            set { 
-                _vehicleCount = value; 
-                if(_vehicleCount > 3) // Példa küszöbérték, igény szerint módosítható
-                {
-                    //HasAccident = true; //kikommentelve, mivel sosincs visszteve false-ra
-                }
-            }
-        }
+        public const int IceFormationVehicleThreshold = 3;
+
+        public int PassedVehicleCount {  get; private set; }
         private int _snowLevel;
         public int SnowLevel { 
             get { return _snowLevel; }
             set { //_snowLevel = Math.Min(value, 2); //npc debugra hasznaltam, ha elfelejtettem torolni, nyugodtan tedd meg 
                 _snowLevel = value;
                 if (_snowLevel == 0) {
-                    VehicleCount = 0; // A hó eltűntével visszaállítjuk a járművek számát, hogy újra lehessen számolni
+                    PassedVehicleCount = 0; // A hó eltűntével visszaállítjuk a járművek számát, hogy újra lehessen számolni
                 }
             }
         }
@@ -83,6 +74,26 @@ namespace SnowPlow.Model.Map
             if (HasIce)
             {
                 SnowLevel = 0;
+            }
+        }
+
+        public void RegisterVehiclePassForIceFormation()
+        {
+            if (HasIce) return;
+
+            if (SaltPower > 0) return;
+
+            if (SnowLevel <= 0)
+            {
+                PassedVehicleCount = 0;
+                return;
+            }
+
+            PassedVehicleCount++;
+
+            if (PassedVehicleCount >= IceFormationVehicleThreshold)
+            {
+                SetIce(true);
             }
         }
 
