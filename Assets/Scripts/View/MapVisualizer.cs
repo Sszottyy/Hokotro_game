@@ -13,6 +13,12 @@ public class MapVisualizer : MonoBehaviour
     [Header("City Settings")]
     public float gridSpacing = 20f;
     public float laneWidth = 1.0f;
+    //segment azonositas onlinehoz
+    private Dictionary<(int roadId, int laneId, int segmentIndex), LaneSegment>
+    segmentLookup = new();
+
+    private Dictionary<(int roadId, int laneId, int segmentIndex), VisualSegment>
+        visualLookup = new();
 
     [SerializeField] private SnowController snowController;
 
@@ -173,6 +179,7 @@ public class MapVisualizer : MonoBehaviour
 
                 VisualSegment visSeg = segmentObj.GetComponent<VisualSegment>();
 
+
                 visSeg.Initialize(
                     logicLane,
                     s,
@@ -180,6 +187,14 @@ public class MapVisualizer : MonoBehaviour
                     true,
                     true
                 );
+
+                var key = (
+                logicLane.ParentRoad.Id,
+                logicLane.Id,
+                s);
+
+                segmentLookup[key] = logicLane[s];
+                visualLookup[key] = visSeg;
 
                 LaneSegment logicSegment = logicLane.Segments[s];
 
@@ -189,5 +204,20 @@ public class MapVisualizer : MonoBehaviour
                 }
             }
         }
+    }
+    public LaneSegment GetSegment(
+    int roadId,
+    int laneId,
+    int segmentIndex)
+    {
+        return segmentLookup[(roadId, laneId, segmentIndex)];
+    }
+
+    public VisualSegment GetVisual(
+        int roadId,
+        int laneId,
+        int segmentIndex)
+    {
+        return visualLookup[(roadId, laneId, segmentIndex)];
     }
 }

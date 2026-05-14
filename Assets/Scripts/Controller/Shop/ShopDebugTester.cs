@@ -70,7 +70,7 @@ public class ShopDebugTester : MonoBehaviour
 
         if (GameManager.Instance.CurrentPlayer == null)
         {
-            GameManager.Instance.CreatePlayer("ShopTestPlayer","Team A",PlayerRole.SnowPlowDriver);
+            GameManager.Instance.CreatePlayer("ShopTestPlayer","Team A",PlayerRole.SnowPlowDriver, 1);
         }
 
         Player player = GameManager.Instance.CurrentPlayer;

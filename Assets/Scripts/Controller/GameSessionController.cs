@@ -44,6 +44,7 @@ public class GameSessionController : MonoBehaviour
             int score = GameManager.Instance?.CurrentPlayer?.Team?.Score ?? 0;
             scoreText.text = $"{score}";
         }
+        
     }
 
     private void EndGame()
@@ -65,7 +66,7 @@ public class GameSessionController : MonoBehaviour
 
         if (GameManager.Instance.CurrentPlayer == null)
         {
-            GameManager.Instance.CreatePlayer(playerName,"Team A",PlayerRole.SnowPlowDriver);
+            GameManager.Instance.CreatePlayer(playerName,"Team A",PlayerRole.SnowPlowDriver,1);
         }
 
         Player player = GameManager.Instance.CurrentPlayer;

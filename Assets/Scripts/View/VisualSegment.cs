@@ -109,10 +109,10 @@ public class VisualSegment : MonoBehaviour
             }
         }
     }
-    private void Update()
+    /*private void Update()
     {
         UpdateVisuals();
-    }
+    }*/
 
     public void MarkAsStationLine()
     {

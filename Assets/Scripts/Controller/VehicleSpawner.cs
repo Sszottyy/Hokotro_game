@@ -2,11 +2,12 @@ using SnowPlow.Controller.NPCMovement;
 using SnowPlow.Controller.Traffic;
 using SnowPlow.Model.Map;
 using SnowPlow.Model.Map.Generator;
+using SnowPlow.Model.Tools;
 using SnowPlow.Model.Vehicles;
 using System;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
-using SnowPlow.Model.Tools;
 using SnowPlowVehicle = SnowPlow.Model.Vehicles.SnowPlow;
 
 namespace SnowPlow.Controller.Spawning
@@ -14,7 +15,7 @@ namespace SnowPlow.Controller.Spawning
     // ez a class felel a jarmuvek spawnolasert
     // nem pathfindingol, nem mozgat, nem valaszt celt
     // csak letrehozza a modelt + a prefab GameObjectet, es osszekoti oket
-    public class VehicleSpawner : MonoBehaviour
+    public class VehicleSpawner : NetworkBehaviour
     {
         [Header("Prefabs")]
         [SerializeField] private GameObject carNpcPrefab;
@@ -51,8 +52,50 @@ namespace SnowPlow.Controller.Spawning
             mapData = data;
             mapVisualizer = visualizer;
             isInitialized = true;
+            //SpawnInitialVehicles();
+            if (IsServer)
+            {
+                SpawnInitialVehicles();
+            }
+            //SpawnPlayerSnowPlow(NetworkManager.Singleton.LocalClientId);
+        }
 
-            SpawnInitialVehicles();
+        public override void OnNetworkSpawn()
+        {
+            if (!IsServer)
+                return;
+
+            NetworkManager.OnClientConnectedCallback += OnClientConnected;
+            //SpawnPlayerSnowPlow(NetworkManager.ServerClientId);
+            StartCoroutine(WaitForInitialization());
+        }
+        private System.Collections.IEnumerator WaitForInitialization()
+        {
+            while (!isInitialized)
+            {
+                yield return null;
+            }
+
+            Debug.Log("VehicleSpawner initialized, spawning players...");
+
+            foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)
+            {
+                SpawnPlayerSnowPlow(clientId);
+            }
+        }
+
+        private void OnClientConnected(ulong clientId)
+        {
+            StartCoroutine(SpawnClientWhenReady(clientId));
+        }
+        private System.Collections.IEnumerator SpawnClientWhenReady(ulong clientId)
+        {
+            while (!isInitialized)
+            {
+                yield return null;
+            }
+
+            SpawnPlayerSnowPlow(clientId);
         }
 
         // jatek eleji spawn
@@ -60,15 +103,15 @@ namespace SnowPlow.Controller.Spawning
         // NPC hokotro alapbol NEM spawnol, azt majd shop hivja
         private void SpawnInitialVehicles()
         {
+            //csak a host
+            if (!IsServer)
+                return;
+
             for (int i = 0; i < initialCarCount; i++)
             {
                 SpawnCarNPC();
             }
 
-            if (spawnPlayerSnowPlowOnStart)
-            {
-                SpawnPlayerSnowPlow();
-            }
             if (spawnPlayerBusOnStart)
             {
                 SpawnBus();
@@ -150,7 +193,7 @@ namespace SnowPlow.Controller.Spawning
             return snowPlow;
         }
 
-        public SnowPlowVehicle SpawnPlayerSnowPlow()
+        public SnowPlowVehicle SpawnPlayerSnowPlow(ulong clientId)
         {
             EnsureInitialized();
 
@@ -162,7 +205,8 @@ namespace SnowPlow.Controller.Spawning
             GameObject instance = InstantiateVehiclePrefab(
                 playerSnowPlowPrefab,
                 startPosition,
-                "PlayerCar"
+                "PlayerCar",
+                clientId
             );
 
             NPCVehicleBehaviour npcBehaviour = instance.GetComponent<NPCVehicleBehaviour>();
@@ -211,11 +255,11 @@ namespace SnowPlow.Controller.Spawning
 
             occupancyManager.RegisterVehicle(playerSnowPlow, startPosition);
 
-            CameraFollow cameraFollow = Camera.main.GetComponent<CameraFollow>();
+            /*CameraFollow cameraFollow = Camera.main.GetComponent<CameraFollow>();
             if (cameraFollow != null)
             {
                 cameraFollow.SetTarget(instance.transform);
-            }
+            }*/
 
             return playerSnowPlow;
         }
@@ -293,7 +337,6 @@ namespace SnowPlow.Controller.Spawning
             return bus;
         }
 
-
         private void MarkStationWithNeighbors(LaneSegment stationSegment)
         {
             foreach (Road road in mapData.Roads)
@@ -351,7 +394,12 @@ namespace SnowPlow.Controller.Spawning
             }
         }
 
-        private GameObject InstantiateVehiclePrefab(GameObject prefab, LanePosition startPosition, string objectName)
+        private GameObject InstantiateVehiclePrefab(
+            GameObject prefab,
+            LanePosition startPosition,
+            string objectName,
+            ulong? ownerClientId = null
+        )
         {
             Vector3 worldPosition = GetWorldPosition(startPosition);
 
@@ -363,6 +411,26 @@ namespace SnowPlow.Controller.Spawning
             );
 
             instance.name = objectName;
+
+            //Networkon is spawnoljon, ne csak local
+            NetworkObject networkObject = instance.GetComponent<NetworkObject>();
+
+            if (networkObject != null)
+            {
+                if (ownerClientId.HasValue)
+                {
+                    networkObject.SpawnWithOwnership(ownerClientId.Value);
+                }
+                else
+                {
+                    networkObject.Spawn();
+                }
+            }
+            else
+            {
+                Debug.LogError($"{objectName} prefab missing NetworkObject!");
+            }
+
             return instance;
         }
 
@@ -415,6 +483,7 @@ namespace SnowPlow.Controller.Spawning
                 result.Add(new LanePosition(lane, i));
             }
         }
+
         [SerializeField] private float vehicleZOffset = -1f;
 
         private Vector3 GetWorldPosition(LanePosition position)
@@ -513,6 +582,7 @@ namespace SnowPlow.Controller.Spawning
 
             return (bestA, bestB);
         }
+
         public void ConfigurePlayerSpawn(bool spawnSnowPlow, bool spawnBus)
         {
             if (isInitialized)

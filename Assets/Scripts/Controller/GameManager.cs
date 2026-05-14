@@ -28,11 +28,12 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    public void CreatePlayer(string name, string teamName, PlayerRole role)
+    public void CreatePlayer(string name, string teamName, PlayerRole role, ulong clientId)
     {
         Team selectedTeam = (teamName == "Team A") ? TeamA : TeamB;
         Player newPlayer = new Player(name, selectedTeam);
         newPlayer.Role = role;
+        newPlayer.OwnerClientId = clientId;
         if (role == PlayerRole.SnowPlowDriver)
         {
             SnowPlowVehicle plow = new SnowPlowVehicle();
@@ -58,5 +59,16 @@ public class GameManager : MonoBehaviour
         CurrentPlayer = null;
 
         Debug.Log("Removed player: " + removedPlayer.Name + " from Lobby");
+    }
+    public void RemovePlayerByClientId(ulong clientId)
+    {
+        Player playerToRemove = Players.Find(p => p.OwnerClientId == clientId);
+
+        if (playerToRemove != null)
+        {
+            Players.Remove(playerToRemove);
+
+            Debug.Log($"Removed player: {playerToRemove.Name}");
+        }
     }
 }

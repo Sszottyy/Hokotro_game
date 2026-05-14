@@ -453,7 +453,7 @@ namespace SnowPlow.Controller.Shop
                 return;
             }
 
-            Debug.Log("Player vehicle count: " + player.Vehicles.Count);
+            
             Debug.Log("Player owns tool: " + player.HasTool(type));
 
             SnowPlowVehicle snowPlow = player.GetOwnedSnowPlow();
@@ -713,6 +713,7 @@ namespace SnowPlow.Controller.Shop
             }
 
             HandleKonamiCheatInput();
+            Debug.Log("Player vehicle count: " + player.Vehicles.Count);
         }
 
 

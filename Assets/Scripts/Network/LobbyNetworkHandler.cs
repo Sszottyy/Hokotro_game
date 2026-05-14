@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using SnowPlow.Model.Players;
 using Unity.Netcode;
 using UnityEngine;
@@ -14,6 +15,7 @@ public class LobbyNetworkHandler : NetworkBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+
             Debug.Log("LobbyNetworkHandler Instance set");
         }
         else
@@ -27,10 +29,13 @@ public class LobbyNetworkHandler : NetworkBehaviour
     {
         Debug.Log($"LobbyNetworkHandler Start - IsSpawned: {IsSpawned}");
 
-        // Ha szerver vagy és nincs spawnolva, spawnold be
-        if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer && !IsSpawned)
+        // Host/server esetén spawnoljuk be
+        if (NetworkManager.Singleton != null &&
+            NetworkManager.Singleton.IsServer &&
+            !IsSpawned)
         {
             Debug.Log("Spawning LobbyNetworkHandler...");
+
             GetComponent<NetworkObject>().Spawn();
         }
     }
@@ -38,51 +43,187 @@ public class LobbyNetworkHandler : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
+
         Debug.Log($"LobbyNetworkHandler OnNetworkSpawn - IsServer: {IsServer}, IsClient: {IsClient}, IsHost: {IsHost}");
+
+        // Ha valaki disconnectel
+        if (IsServer)
+        {
+            NetworkManager.OnClientDisconnectCallback += OnClientDisconnected;
+        }
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    public void CreatePlayerServerRpc(string playerName, string selectedTeam, PlayerRole selectedRole, ulong clientId)
+    public override void OnNetworkDespawn()
     {
-        Debug.Log($"CreatePlayerServerRpc called on server. Player: {playerName}, Team: {selectedTeam}, Role: {selectedRole}");
+        base.OnNetworkDespawn();
 
-        GameManager.Instance.CreatePlayer(playerName, selectedTeam, selectedRole);
-
-        // Adatok elõkészítése
-        string[] name = new string[4];
-        string[] team = new string[4];
-        PlayerRole[] role = new PlayerRole[4];
-
-        int playerCount = GameManager.Instance.Players.Count;
-        for (int i = 0; i < playerCount && i < 4; i++)
+        if (NetworkManager != null)
         {
-            name[i] = GameManager.Instance.Players[i].Name;
-            team[i] = GameManager.Instance.Players[i].Team.Name;
-            role[i] = GameManager.Instance.Players[i].Role;
+            NetworkManager.OnClientDisconnectCallback -= OnClientDisconnected;
+        }
+    }
+
+    // =========================
+    // PLAYER CREATE
+    // =========================
+
+    [ServerRpc(RequireOwnership = false)]
+    public void CreatePlayerServerRpc(
+        string playerName,
+        string selectedTeam,
+        PlayerRole selectedRole,
+        ulong clientId)
+    {
+        Debug.Log($"CreatePlayerServerRpc called. Player: {playerName}");
+
+        // Duplikáció védelem
+        foreach (Player p in GameManager.Instance.Players)
+        {
+            if (p.OwnerClientId == clientId)
+            {
+                Debug.LogWarning($"Client {clientId} already has a player!");
+                return;
+            }
         }
 
-        // Minden kliensnek elküldjük
+        GameManager.Instance.CreatePlayer(
+            playerName,
+            selectedTeam,
+            selectedRole,
+            clientId);
+
+        SendLobbyUpdate();
+    }
+
+    // =========================
+    // PLAYER REMOVE
+    // =========================
+
+    [ServerRpc(RequireOwnership = false)]
+    public void RemovePlayerServerRpc(ulong clientId)
+    {
+        Debug.Log($"RemovePlayerServerRpc: {clientId}");
+
+        RemovePlayer(clientId);
+
+        SendLobbyUpdate();
+    }
+
+    private void OnClientDisconnected(ulong clientId)
+    {
+        Debug.Log($"Client disconnected: {clientId}");
+
+        RemovePlayer(clientId);
+
+        SendLobbyUpdate();
+    }
+
+    private void RemovePlayer(ulong clientId)
+    {
+        List<Player> players = GameManager.Instance.Players;
+
+        Player playerToRemove = null;
+
+        foreach (Player p in players)
+        {
+            if (p.OwnerClientId == clientId)
+            {
+                playerToRemove = p;
+                break;
+            }
+        }
+
+        if (playerToRemove != null)
+        {
+            Debug.Log($"Removing player: {playerToRemove.Name}");
+
+            players.Remove(playerToRemove);
+        }
+    }
+
+    // =========================
+    // LOBBY UPDATE
+    // =========================
+
+    private void SendLobbyUpdate()
+    {
+        string[] names = new string[4];
+        string[] teams = new string[4];
+        PlayerRole[] roles = new PlayerRole[4];
+
+        int count = Mathf.Min(GameManager.Instance.Players.Count, 4);
+
+        for (int i = 0; i < count; i++)
+        {
+            Player p = GameManager.Instance.Players[i];
+
+            names[i] = p.Name;
+            teams[i] = p.Team.Name;
+            roles[i] = p.Role;
+        }
+
         UpdateLobbyUIClientRpc(
-            name[0], name[1], name[2], name[3],
-            team[0], team[1], team[2], team[3],
-            role[0], role[1], role[2], role[3],
-            playerCount);
+            names[0],
+            names[1],
+            names[2],
+            names[3],
+
+            teams[0],
+            teams[1],
+            teams[2],
+            teams[3],
+
+            roles[0],
+            roles[1],
+            roles[2],
+            roles[3],
+
+            count
+        );
     }
 
     [ClientRpc]
-    public void UpdateLobbyUIClientRpc(string name1, string name2, string name3, string name4,
-        string team1, string team2, string team3, string team4,
-        PlayerRole role1, PlayerRole role2, PlayerRole role3, PlayerRole role4,
+    public void UpdateLobbyUIClientRpc(
+        string name1,
+        string name2,
+        string name3,
+        string name4,
+
+        string team1,
+        string team2,
+        string team3,
+        string team4,
+
+        PlayerRole role1,
+        PlayerRole role2,
+        PlayerRole role3,
+        PlayerRole role4,
+
         int len)
     {
         Debug.Log($"UpdateLobbyUIClientRpc called. Player count: {len}");
 
         MainMenu mainMenu = FindObjectOfType<MainMenu>(true);
+
         if (mainMenu != null)
         {
-            mainMenu.UpdateLobbyUIFromData(name1, name2, name3, name4,
-                team1, team2, team3, team4,
-                role1, role2, role3, role4, len);
+            mainMenu.UpdateLobbyUIFromData(
+                name1,
+                name2,
+                name3,
+                name4,
+
+                team1,
+                team2,
+                team3,
+                team4,
+
+                role1,
+                role2,
+                role3,
+                role4,
+
+                len);
         }
         else
         {

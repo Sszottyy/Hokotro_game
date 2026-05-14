@@ -21,6 +21,7 @@ namespace SnowPlow.Model.Players
         public PlayerRole Role { get; set; } = PlayerRole.None;
 
         private Team _team;
+        public ulong OwnerClientId { get; set; }
         public Team Team
         {
             get

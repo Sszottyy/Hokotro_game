@@ -30,7 +30,7 @@ public class MainMenu : MonoBehaviour
     void Awake()
     {
         // Csak annyit csináljunk, hogy ellenõrizzük a NetworkObject-ot
-        NetworkObject netObj = GetComponent<NetworkObject>();
+        /*NetworkObject netObj = GetComponent<NetworkObject>();
         if (netObj != null)
         {
             Debug.Log($"NetworkObject found on MainMenu. IsSpawned: {netObj.IsSpawned}");
@@ -38,7 +38,7 @@ public class MainMenu : MonoBehaviour
         else
         {
             Debug.LogWarning("No NetworkObject on MainMenu - RPCs won't work from this object");
-        }
+        }*/
     }
     /*public void PlayGame()
     {
@@ -195,7 +195,7 @@ public class MainMenu : MonoBehaviour
         }
         // ... a többi kód ...
     }
-    [ServerRpc(RequireOwnership = false)]
+    /*[ServerRpc(RequireOwnership = false)]
     public void CreatePlayerInstanceServerRpc(string playerName, string selectedTeam, PlayerRole selectedRole)
     {
         GameManager.Instance.CreatePlayer(playerName, selectedTeam, selectedRole);
@@ -220,7 +220,7 @@ public class MainMenu : MonoBehaviour
 
         // Hostnál is frissítsük a helyi UI-t
         UpdateLobbyUI();
-    }
+    }*/
 
     private void UpdateLobbyUI()
     {

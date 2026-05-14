@@ -8,6 +8,7 @@ namespace SnowPlow.Controller
 {
     public class SnowSystem
     {
+        private readonly System.Random rng = new();
         public List<Lane> Lanes { get; set;  } = new List<Lane>();
 
         public float SnowFallRate { get; set; } = 5f; // másodpercenkénti hóesés gyakorisága (kezdetben 5 másodperc)
@@ -15,9 +16,11 @@ namespace SnowPlow.Controller
 
         private float dt { get; set; } = 0;
         private float saltTimer { get; set; } = 0;
-        public SnowSystem(List<Lane> lanes)
+        private SnowNetworkSync snowSync;
+        public SnowSystem(List<Lane> lanes, SnowNetworkSync sync)
         {
             this.Lanes = lanes;
+            snowSync = sync;
         }
 
         public void Update(float deltaTime)
@@ -32,12 +35,22 @@ namespace SnowPlow.Controller
 
                 foreach (var lane in Lanes)
                 {
+                    int i = 0;
                     foreach (var segment in lane.Segments)
                     {
-                        if (new Random().NextDouble() < SnowChance)
+                        if (rng.NextDouble() < SnowChance)
                         {
                             segment.AddSnow();
+
+                            snowSync.UpdateSnowClientRpc(
+                                lane.ParentRoad.Id,
+                                lane.Id,
+                                i,
+                                segment.SnowLevel,
+                                segment.HasIce
+                            );
                         }
+                        i++;
                     }
                 }
                 if (SnowChance < 0.8f)
