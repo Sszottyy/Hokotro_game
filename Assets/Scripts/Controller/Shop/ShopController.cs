@@ -473,6 +473,15 @@ namespace SnowPlow.Controller.Shop
             snowPlow.EquippedTool = ownedTool;
 
             Debug.Log("Equipped tool: " + type);
+
+            snowPlow.EquippedTool = ownedTool;
+
+            snowPlow.EquippedTool = ownedTool;
+
+            Debug.Log("SHOP equipped requested: " + type);
+            Debug.Log("SHOP snowPlow instance: " + snowPlow.GetHashCode());
+            Debug.Log("SHOP equipped actual class: " + snowPlow.EquippedTool.GetType().Name);
+            Debug.Log("SHOP equipped enum: " + snowPlow.EquippedTool.Type());
         }
 
         private void RefreshToolRow(
