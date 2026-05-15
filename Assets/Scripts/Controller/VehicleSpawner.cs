@@ -191,6 +191,12 @@ namespace SnowPlow.Controller.Spawning
 
             behaviour.Initialize(snowPlow, mapData);
 
+            NPCPlowVisuals npcVisuals = instance.GetComponent<NPCPlowVisuals>();
+            if (npcVisuals != null)
+            {
+                npcVisuals.SetPlowModel(snowPlow);
+            }
+
             return snowPlow;
         }
 
@@ -259,6 +265,12 @@ namespace SnowPlow.Controller.Spawning
                 playerSnowPlow,
                 startPosition
             );
+
+            PlowMovement plowMovement = instance.GetComponent<PlowMovement>();
+            if (plowMovement != null)
+            {
+                plowMovement.SetPlowModel(playerSnowPlow);
+            }
 
             return playerSnowPlow;
         }

@@ -478,10 +478,24 @@ namespace SnowPlow.Controller.Shop
 
             Debug.Log("Equipped tool: " + type);
 
-            lobbyNetworkHandler.EquipToolServerRpc(
-                NetworkManager.Singleton.LocalClientId,
-                (int)type
-            );
+snowPlow.EquippedTool = ownedTool;
+
+PlowMovement[] allPlowsOnMap = FindObjectsByType<PlowMovement>(FindObjectsSortMode.None);
+
+foreach (PlowMovement movementScript in allPlowsOnMap)
+{
+    if (movementScript.GetPlowModel() == snowPlow)
+    {
+        movementScript.UpdateEquippedToolVisual();
+        Debug.Log("Updated visual on the exact player's screen for: " + type);
+        break;
+    }
+}
+
+lobbyNetworkHandler.EquipToolServerRpc(
+    NetworkManager.Singleton.LocalClientId,
+    (int)type
+);
 
             Debug.Log("SHOP equipped requested: " + type);
             Debug.Log("SHOP snowPlow instance: " + snowPlow.GetHashCode());
