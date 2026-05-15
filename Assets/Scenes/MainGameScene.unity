@@ -8724,7 +8724,7 @@ MonoBehaviour:
   shopController: {fileID: 1001218456}
   vehicleSpawner: {fileID: 161271741}
   playerName: Player
-  playerRole: 1
+  playerRole: 2
   startingMoney: 0
   timerText: {fileID: 1035969286}
   scoreText: {fileID: 795824757}

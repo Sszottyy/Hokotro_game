@@ -102,6 +102,12 @@ public class BusMovement : MonoBehaviour
             else
             {
                 isBlocked = false;
+
+                LaneSegment segment = vs.LanePosition.Lane[vs.LanePosition.SegmentIndex];
+
+                segment.RegisterVehiclePassForIceFormation();
+
+                vs.UpdateVisuals();
             }
         }
 
