@@ -530,10 +530,10 @@ MonoBehaviour:
   iceOverlay: {fileID: 4846577011363669547}
   snowSprites:
   - {fileID: 0}
-  - {fileID: 5251734906795025119, guid: 5809c2036b49dcf48bd62ed354ee4143, type: 3}
-  - {fileID: 5251734906795025119, guid: 5809c2036b49dcf48bd62ed354ee4143, type: 3}
-  - {fileID: 5251734906795025119, guid: 5809c2036b49dcf48bd62ed354ee4143, type: 3}
-  iceSprite: {fileID: -856085545168688419, guid: aae80519b9bdf2843b4bceb9fed2167b, type: 3}
+  - {fileID: -5509972280288357552, guid: 97e2b1cda7548f445a2cfa808b03064c, type: 3}
+  - {fileID: -3388665465978218530, guid: 5eee591b5c5a10c4cb616a3fb8ae165b, type: 3}
+  - {fileID: -6792852087848429965, guid: 7f75008084b538042b2f9c9085a21934, type: 3}
+  iceSprite: {fileID: -5444621366356976902, guid: 608522ef28485724db829699b2a738e0, type: 3}
   busStopPrefab: {fileID: 15953796789534625, guid: 0b7855b09db6e684f8266082e4790ca3, type: 3}
   passengerPrefabs:
   - {fileID: 4028533530101603263, guid: e4cfc2f8cccee9942ade1609efe5e35e, type: 3}

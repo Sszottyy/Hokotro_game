@@ -16,11 +16,12 @@ namespace SnowPlow.Model.Tools
         {
             Fuel = fuel;
         }
-        public void ApplyEffect(LaneSegment laneSegment)
+        public void ApplyEffect(LanePosition pos)
         {
-            if (laneSegment != null && Fuel > 0)
+            if (pos.Lane[pos.SegmentIndex] != null && Fuel > 0)
             {
-                laneSegment.RemoveAllSnow();
+                pos.Lane[pos.SegmentIndex].RemoveAllSnow();
+                pos.Lane[pos.SegmentIndex].SetIce(false);
                 Fuel -= 1;
             }
         }

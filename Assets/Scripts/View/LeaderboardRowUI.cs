@@ -16,7 +16,7 @@ public class LeaderboardRowUI : MonoBehaviour
         nameText.text = player.Name;
         teamText.text = player.Team != null ? player.Team.Name : "-";
         vehicleText.text = player.Vehicles.Count > 0
-            ? player.Vehicles[0].GetType().ToString()
+            ? player.Vehicles[0].ToString()
             : "-";
 
         // Score a csapatból jön, ha van csapata

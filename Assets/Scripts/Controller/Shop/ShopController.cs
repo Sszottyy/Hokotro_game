@@ -487,6 +487,14 @@ namespace SnowPlow.Controller.Shop
                     break; // Megtaláltuk a saját kocsinkat, abba is hagyhatjuk a keresést!
                 }
             }
+
+
+            snowPlow.EquippedTool = ownedTool;
+
+            Debug.Log("SHOP equipped requested: " + type);
+            Debug.Log("SHOP snowPlow instance: " + snowPlow.GetHashCode());
+            Debug.Log("SHOP equipped actual class: " + snowPlow.EquippedTool.GetType().Name);
+            Debug.Log("SHOP equipped enum: " + snowPlow.EquippedTool.Type());
         }
 
         private void RefreshToolRow(
@@ -725,7 +733,11 @@ namespace SnowPlow.Controller.Shop
             {
                 RefreshUI();
             }
+
+            HandleKonamiCheatInput();
         }
+
+
         private int GetFuelValue(Player player, PlowToolType type)
         {
             if (player == null) return -1;
@@ -765,5 +777,92 @@ namespace SnowPlow.Controller.Shop
                 npcIceBreakerDefaultSprite = npcIceBreakerImage.sprite;
             }
         }
+
+        #region Konami Money Cheat
+
+        [Header("Konami Cheat")]
+        [SerializeField] private bool konamiCheatEnabled = true;
+        [SerializeField] private int konamiMoneyReward = 670000;
+        [SerializeField] private float konamiInputTimeoutSeconds = 3f;
+
+        private readonly KeyCode[] konamiCode =
+        {
+            KeyCode.UpArrow,
+            KeyCode.UpArrow,
+            KeyCode.DownArrow,
+            KeyCode.DownArrow,
+            KeyCode.LeftArrow,
+            KeyCode.RightArrow,
+            KeyCode.LeftArrow,
+            KeyCode.RightArrow,
+            KeyCode.B,
+            KeyCode.A
+};
+
+        private int konamiCurrentIndex;
+        private float konamiLastInputTime;
+
+        private void HandleKonamiCheatInput()
+        {
+            if (!konamiCheatEnabled) return;
+
+            if (Time.time - konamiLastInputTime > konamiInputTimeoutSeconds)
+            {
+                konamiCurrentIndex = 0;
+            }
+
+            if (!Input.anyKeyDown) return;
+
+            konamiLastInputTime = Time.time;
+
+            KeyCode expectedKey = konamiCode[konamiCurrentIndex];
+
+            if (Input.GetKeyDown(expectedKey))
+            {
+                konamiCurrentIndex++;
+
+                if (konamiCurrentIndex >= konamiCode.Length)
+                {
+                    ActivateKonamiMoneyCheat();
+                    konamiCurrentIndex = 0;
+                }
+
+                return;
+            }
+
+            if (Input.GetKeyDown(konamiCode[0]))
+            {
+                konamiCurrentIndex = 1;
+            }
+            else
+            {
+                konamiCurrentIndex = 0;
+            }
+        }
+
+        private void ActivateKonamiMoneyCheat()
+        {
+            Player player = GetCurrentPlayerSilently();
+
+            if (player == null)
+            {
+                Debug.LogWarning("Konami cheat failed: CurrentPlayer is missing.");
+                return;
+            }
+
+            if (player.Team == null)
+            {
+                Debug.LogWarning("Konami cheat failed: CurrentPlayer has no Team.");
+                return;
+            }
+
+            player.Team.AddMoney(konamiMoneyReward);
+
+            RefreshUI();
+
+            Debug.Log($"Konami Code activated. Added {konamiMoneyReward}$.");
+        }
+
+        #endregion
     }
 }
