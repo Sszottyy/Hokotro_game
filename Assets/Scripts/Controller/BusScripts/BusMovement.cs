@@ -1,7 +1,8 @@
 using SnowPlow.Controller.NPCMovement;
+using SnowPlow.Controller.NPCMovement;
 using SnowPlow.Controller.Pathfinding;
 using SnowPlow.Model.Map;
-using SnowPlow.Controller.NPCMovement;
+using Unity.Netcode;
 using UnityEngine;
 
 public class BusMovement : MonoBehaviour
@@ -69,6 +70,7 @@ public class BusMovement : MonoBehaviour
     }
     void OnTriggerEnter2D(Collider2D other)
     {
+        Debug.Log($"TRIGGER with: {other.name} | tag: {other.tag}");
         if (other.CompareTag("Road")) touchingRoads++;
 
         if (other.CompareTag("Vehicle"))
@@ -88,7 +90,16 @@ public class BusMovement : MonoBehaviour
 
         if (blockCooldown > 0f) return;
 
-        VisualSegment vs = other.GetComponent<VisualSegment>();
+        //VisualSegment vs = other.GetComponent<VisualSegment>();
+        VisualSegment vs = other.GetComponentInParent<VisualSegment>();
+        if (vs != null)
+        {
+            Debug.Log($"FOUND VisualSegment: {vs.gameObject.name}");
+        }
+        else
+        {
+            Debug.Log("NO VisualSegment FOUND");
+        }
         if (vs != null && vs.LanePosition != null)
         {
             isOnIce = vs.LanePosition.Lane[vs.LanePosition.SegmentIndex].HasIce;
@@ -156,7 +167,21 @@ public class BusMovement : MonoBehaviour
         if (other.CompareTag("Road"))
             touchingRoads = Mathf.Max(0, touchingRoads - 1); // ← Bug 3 fix, was: touchingRoads--
 
-        VisualSegment vs = other.GetComponent<VisualSegment>();
+        //VisualSegment vs = other.GetComponent<VisualSegment>();
+        VisualSegment vs = other.GetComponentInParent<VisualSegment>();
+        if (vs != null)
+        {
+            Debug.Log($"Triggered: {vs.gameObject.name}");
+
+            if (stationA != null)
+                Debug.Log($"stationA: {stationA.gameObject.name}");
+
+            if (stationB != null)
+                Debug.Log($"stationB: {stationB.gameObject.name}");
+
+            Debug.Log($"vs == stationA ? {vs == stationA}");
+            Debug.Log($"vs == stationB ? {vs == stationB}");
+        }
         if (vs != null && vs.LanePosition != null)
         {
             isBlocked = false; // ← Bug 2 fix, was: if (!traversalPolicy.CanEnterSegment(...)) isBlocked = false;
@@ -180,6 +205,10 @@ public class BusMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        NetworkObject netObj = GetComponent<NetworkObject>();
+
+        if (netObj != null && !netObj.IsOwner)
+            return;
         if (stunTimer > 0f)
         {
             stunTimer -= Time.fixedDeltaTime;
@@ -231,6 +260,12 @@ public class BusMovement : MonoBehaviour
         // Station interaction
         if (Input.GetKeyDown(KeyCode.Space) && currentStation != null && myRigidBody2D.linearVelocity.magnitude < 0.1f)
         {
+            Debug.Log($"SPACE pressed | station: {currentStation != null} | speed: {myRigidBody2D.linearVelocity.magnitude}");
+            if (currentStation == null)
+            {
+                Debug.Log("No current station!");
+                return;
+            }
             BusStationPassengers passengers = currentStation.StationPassengers;
             if (passengers == null) return;
 

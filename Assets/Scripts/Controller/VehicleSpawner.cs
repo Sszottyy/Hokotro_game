@@ -2,6 +2,7 @@ using SnowPlow.Controller.NPCMovement;
 using SnowPlow.Controller.Traffic;
 using SnowPlow.Model.Map;
 using SnowPlow.Model.Map.Generator;
+using SnowPlow.Model.Players;
 using SnowPlow.Model.Tools;
 using SnowPlow.Model.Vehicles;
 using System;
@@ -80,7 +81,7 @@ namespace SnowPlow.Controller.Spawning
 
             foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)
             {
-                SpawnPlayerSnowPlow(clientId);
+                SpawnPlayerVehicle(clientId);
             }
         }
 
@@ -95,7 +96,7 @@ namespace SnowPlow.Controller.Spawning
                 yield return null;
             }
 
-            SpawnPlayerSnowPlow(clientId);
+            SpawnPlayerVehicle(clientId);
         }
 
         // jatek eleji spawn
@@ -197,7 +198,26 @@ namespace SnowPlow.Controller.Spawning
         {
             EnsureInitialized();
 
-            SnowPlowVehicle playerSnowPlow = new();
+            Player player =
+                GameManager.Instance.Players.Find(
+                    p => p.OwnerClientId == clientId
+                );
+
+            if (player == null)
+            {
+                Debug.LogError($"No player found for client {clientId}");
+                return null;
+            }
+
+            SnowPlowVehicle playerSnowPlow =
+                player.GetOwnedSnowPlow();
+
+            if (playerSnowPlow == null)
+            {
+                Debug.LogError($"Player {player.Name} has no SnowPlow!");
+                return null;
+            }
+
             LanePosition startPosition = GetRandomFreePosition();
 
             playerSnowPlow.CurrentPosition = startPosition;
@@ -209,19 +229,25 @@ namespace SnowPlow.Controller.Spawning
                 clientId
             );
 
-            NPCVehicleBehaviour npcBehaviour = instance.GetComponent<NPCVehicleBehaviour>();
+            NPCVehicleBehaviour npcBehaviour =
+                instance.GetComponent<NPCVehicleBehaviour>();
+
             if (npcBehaviour != null)
             {
                 npcBehaviour.enabled = false;
             }
 
-            NPCVehicleMover npcMover = instance.GetComponent<NPCVehicleMover>();
+            NPCVehicleMover npcMover =
+                instance.GetComponent<NPCVehicleMover>();
+
             if (npcMover != null)
             {
                 npcMover.enabled = false;
             }
 
-            VehicleSegmentSensor sensor = instance.GetComponent<VehicleSegmentSensor>();
+            VehicleSegmentSensor sensor =
+                instance.GetComponent<VehicleSegmentSensor>();
+
             if (sensor == null)
             {
                 sensor = instance.AddComponent<VehicleSegmentSensor>();
@@ -229,40 +255,15 @@ namespace SnowPlow.Controller.Spawning
 
             sensor.Initialize(playerSnowPlow);
 
-            if (global::GameManager.Instance != null && global::GameManager.Instance.CurrentPlayer != null)
-            {
-                var player = global::GameManager.Instance.CurrentPlayer;
-
-                IPlowTool sweaperTool = playerSnowPlow.EquippedTool;
-
-                if (sweaperTool == null || sweaperTool.Type() != PlowToolType.Sweaper)
-                {
-                    sweaperTool = new SweaperTool();
-                }
-
-                if (!player.HasTool(PlowToolType.Sweaper))
-                {
-                    player.AddPlowTool(sweaperTool);
-                }
-                else
-                {
-                    sweaperTool = player.FindOwnedTool(PlowToolType.Sweaper);
-                }
-
-                playerSnowPlow.EquippedTool = sweaperTool;
-                player.AddVehicle(playerSnowPlow);
-            }
-
-            occupancyManager.RegisterVehicle(playerSnowPlow, startPosition);
-
-            /*CameraFollow cameraFollow = Camera.main.GetComponent<CameraFollow>();
-            if (cameraFollow != null)
-            {
-                cameraFollow.SetTarget(instance.transform);
-            }*/
+            occupancyManager.RegisterVehicle(
+                playerSnowPlow,
+                startPosition
+            );
 
             return playerSnowPlow;
         }
+
+
 
         public Bus SpawnBus()
         {
@@ -339,6 +340,7 @@ namespace SnowPlow.Controller.Spawning
 
         private void MarkStationWithNeighbors(LaneSegment stationSegment)
         {
+            Debug.Log("MarkStationWithNeighbors CALLED");
             foreach (Road road in mapData.Roads)
             {
                 foreach (Lane lane in road.LanesTowardsA)
@@ -509,7 +511,7 @@ namespace SnowPlow.Controller.Spawning
         }
 
         // Picks the two segments with the greatest world-space distance between them
-        private (LaneSegment, LaneSegment) GetTwoFarStations()
+        /*private (LaneSegment, LaneSegment) GetTwoFarStations()
         {
             // Group segments by their lane prefix (e.g. "Segment_3_Lane2")
             // to determine which is the first and last per lane
@@ -581,6 +583,82 @@ namespace SnowPlow.Controller.Spawning
             }
 
             return (bestA, bestB);
+        }*/
+        private (LaneSegment, LaneSegment) GetTwoFarStations()
+        {
+            List<LaneSegment> validSegments = new();
+
+            foreach (Road road in mapData.Roads)
+            {
+                List<Lane> allLanes = new();
+
+                allLanes.AddRange(road.LanesTowardsA);
+                allLanes.AddRange(road.LanesTowardsB);
+
+                foreach (Lane lane in allLanes)
+                {
+                    for (int i = 0; i < lane.Segments.Count; i++)
+                    {
+                        LaneSegment segment = lane.Segments[i];
+
+                        if (!mapVisualizer.SegmentDirectory.TryGetValue(segment, out VisualSegment visual))
+                            continue;
+
+                        bool isOuter =
+                            visual.IsLeftmost ||
+                            visual.IsRightmost;
+
+                        if (!isOuter)
+                            continue;
+
+                        // Skip first 2 and last 2 segments
+                        if (i < 3)
+                            continue;
+
+                        if (i >= lane.Segments.Count - 3)
+                            continue;
+
+                        validSegments.Add(segment);
+                    }
+                }
+            }
+
+            if (validSegments.Count < 2)
+                throw new InvalidOperationException("Not enough outer-lane segments.");
+
+            LaneSegment stationA =
+                validSegments[rng.Next(validSegments.Count)];
+
+            Vector3 posA =
+                mapVisualizer.SegmentDirectory[stationA].transform.position;
+
+            List<LaneSegment> farEnough = new();
+
+            foreach (LaneSegment seg in validSegments)
+            {
+                Vector3 pos =
+                    mapVisualizer.SegmentDirectory[seg].transform.position;
+
+                float dist = Vector3.Distance(posA, pos);
+
+                if (dist > 40f)
+                {
+                    farEnough.Add(seg);
+                }
+            }
+
+            if (farEnough.Count == 0)
+            {
+                LaneSegment fallback =
+                    validSegments[rng.Next(validSegments.Count)];
+
+                return (stationA, fallback);
+            }
+
+            LaneSegment stationB =
+                farEnough[rng.Next(farEnough.Count)];
+
+            return (stationA, stationB);
         }
 
         public void ConfigurePlayerSpawn(bool spawnSnowPlow, bool spawnBus)
@@ -592,6 +670,145 @@ namespace SnowPlow.Controller.Spawning
 
             spawnPlayerSnowPlowOnStart = spawnSnowPlow;
             spawnPlayerBusOnStart = spawnBus;
+        }
+        private void SpawnPlayerVehicle(ulong clientId)
+        {
+            Player player =
+                GameManager.Instance.Players.Find(
+                    p => p.OwnerClientId == clientId);
+
+            if (player == null)
+            {
+                Debug.LogError($"No player found for client {clientId}");
+                return;
+            }
+
+            switch (player.Role)
+            {
+                case PlayerRole.SnowPlowDriver:
+                    SpawnPlayerSnowPlow(clientId);
+                    break;
+
+                case PlayerRole.BusDriver:
+                    SpawnPlayerBus(clientId);
+                    break;
+
+                default:
+                    Debug.LogWarning($"Unsupported role: {player.Role}");
+                    break;
+            }
+        }
+        public Bus SpawnPlayerBus(ulong clientId)
+        {
+            EnsureInitialized();
+
+            Player player =
+                GameManager.Instance.Players.Find(
+                    p => p.OwnerClientId == clientId
+                );
+
+            if (player == null)
+            {
+                Debug.LogError($"No player found for client {clientId}");
+                return null;
+            }
+
+            Bus playerBus = null;
+
+            foreach (Vehicle vehicle in player.Vehicles)
+            {
+                if (vehicle is Bus bus)
+                {
+                    playerBus = bus;
+                    break;
+                }
+            }
+
+            if (playerBus == null)
+            {
+                Debug.LogError($"Player {player.Name} has no Bus!");
+                return null;
+            }
+
+            LanePosition startPosition = GetRandomFreePosition();
+
+            playerBus.CurrentPosition = startPosition;
+            (LaneSegment stationA, LaneSegment stationB) = GetTwoFarStations();
+
+            playerBus.StationA = stationA;
+            playerBus.StationB = stationB;
+
+            MarkStationWithNeighbors(stationA);
+            MarkStationWithNeighbors(stationB);
+
+            GameObject instance = InstantiateVehiclePrefab(
+                busPrefab,
+                startPosition,
+                "PlayerBus",
+                clientId
+            );
+
+            NPCVehicleBehaviour npcBehaviour =
+                instance.GetComponent<NPCVehicleBehaviour>();
+
+            if (npcBehaviour != null)
+            {
+                npcBehaviour.enabled = false;
+            }
+
+            NPCVehicleMover npcMover =
+                instance.GetComponent<NPCVehicleMover>();
+
+            if (npcMover != null)
+            {
+                npcMover.enabled = false;
+            }
+
+            VehicleSegmentSensor sensor =
+                instance.GetComponent<VehicleSegmentSensor>();
+
+            if (sensor == null)
+            {
+                sensor = instance.AddComponent<VehicleSegmentSensor>();
+            }
+
+            sensor.Initialize(playerBus);
+
+            occupancyManager.RegisterVehicle(
+                playerBus,
+                startPosition
+            );
+
+            CameraFollow cameraFollow =Camera.main.GetComponent<CameraFollow>();
+
+            if (cameraFollow != null)
+            {
+                cameraFollow.SetTarget(instance.transform);
+            }
+
+            BusMovement busMovement = instance.GetComponent<BusMovement>();
+
+            if (busMovement != null)
+            {
+                busMovement.SetStations(
+                    mapVisualizer.SegmentDirectory[stationA],
+                    mapVisualizer.SegmentDirectory[stationB]
+                );
+
+                busMovement.SetBusModel(playerBus);
+            }
+            StationArrowIndicator arrowIndicator =
+    instance.GetComponent<StationArrowIndicator>();
+
+            if (arrowIndicator != null)
+            {
+                arrowIndicator.SetStations(
+                    mapVisualizer.SegmentDirectory[stationA],
+                    mapVisualizer.SegmentDirectory[stationB]
+                );
+            }
+
+            return playerBus;
         }
     }
 }

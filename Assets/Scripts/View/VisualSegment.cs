@@ -3,9 +3,12 @@ using UnityEngine;
 
 public class VisualSegment : MonoBehaviour
 {
+
     public LaneSegment LogicSegment { get; private set; }
     public LanePosition LanePosition { get; private set; }
     public BusStationPassengers StationPassengers { get; private set; }
+    public bool IsLeftmost => _isLeftmost;
+    public bool IsRightmost => _isRightmost;
 
     [Header("Vonalak")]
     public GameObject leftOuterLine;
@@ -109,6 +112,7 @@ public class VisualSegment : MonoBehaviour
             }
         }
     }
+    
     /*private void Update()
     {
         UpdateVisuals();
@@ -144,18 +148,34 @@ public class VisualSegment : MonoBehaviour
 
     public void MarkAsStation()
     {
+        Debug.Log($"busStopPrefab null? {busStopPrefab == null}");
+        Debug.Log($"MarkAsStation called on {gameObject.name}");
         // Create hatch/line overlay
         MarkAsStationLine();
 
         // --- Bus stop sign ---
         if (busStopPrefab == null) return;
 
-        // Outward direction: perpendicular to the segment's forward, toward the outside of the road
+        /*// Outward direction: perpendicular to the segment's forward, toward the outside of the road
         Vector3 outwardDir = new Vector3(-transform.up.y, transform.up.x, 0).normalized;
         outwardDir *= _isRightmost ? 1f : -1f;
 
         // Use the outer line's position as the exact segment edge
+        GameObject outerLine = _isRightmost ? rightOuterLine : leftOuterLine;*/
+        // Use the outer line's position as the exact segment edge
         GameObject outerLine = _isRightmost ? rightOuterLine : leftOuterLine;
+
+        // Calculate outward direction based on actual outer line position
+        Vector3 outwardDir;
+
+        if (outerLine != null)
+        {
+            outwardDir = (outerLine.transform.position - transform.position).normalized;
+        }
+        else
+        {
+            outwardDir = Vector3.right;
+        }
 
         Vector3 signOrigin;
         if (outerLine != null)
@@ -172,6 +192,7 @@ public class VisualSegment : MonoBehaviour
 
         // Instantiate sign, upright, detached from segment rotation
         GameObject stopSign = Instantiate(busStopPrefab, transform.parent);
+        Debug.Log($"STOP SIGN SPAWNED at {stopSign.transform.position}");
         stopSign.name = "BusStopSign";
         stopSign.transform.rotation = Quaternion.identity;
         stopSign.transform.position = signOrigin + outwardDir * 1.3f;

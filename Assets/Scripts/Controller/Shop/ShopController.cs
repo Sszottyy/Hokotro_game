@@ -2,11 +2,12 @@ using SnowPlow.Controller.Spawning;
 using SnowPlow.Model.Players;
 using SnowPlow.Model.Shop;
 using SnowPlow.Model.Tools;
-using SnowPlowVehicle = SnowPlow.Model.Vehicles.SnowPlow;
+using System.Collections;
 using TMPro;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
+using SnowPlowVehicle = SnowPlow.Model.Vehicles.SnowPlow;
 
 namespace SnowPlow.Controller.Shop
 {
@@ -77,6 +78,9 @@ namespace SnowPlow.Controller.Shop
         [Header("Fuel Buttons")]
         [SerializeField] private Button buyDragonFuelButton;
         [SerializeField] private Button buySaltFuelButton;
+
+        [SerializeField]
+        private LobbyNetworkHandler lobbyNetworkHandler;
 
         private bool isVisibleForSnowPlowPlayer;
         private int lastDisplayedDragonFuel = int.MinValue;
@@ -470,13 +474,14 @@ namespace SnowPlow.Controller.Shop
                 return;
             }
 
-            snowPlow.EquippedTool = ownedTool;
+
 
             Debug.Log("Equipped tool: " + type);
 
-            snowPlow.EquippedTool = ownedTool;
-
-            snowPlow.EquippedTool = ownedTool;
+            lobbyNetworkHandler.EquipToolServerRpc(
+                NetworkManager.Singleton.LocalClientId,
+                (int)type
+            );
 
             Debug.Log("SHOP equipped requested: " + type);
             Debug.Log("SHOP snowPlow instance: " + snowPlow.GetHashCode());
@@ -722,7 +727,7 @@ namespace SnowPlow.Controller.Shop
             }
 
             HandleKonamiCheatInput();
-            Debug.Log("Player vehicle count: " + player.Vehicles.Count);
+            
         }
 
 
@@ -763,6 +768,11 @@ namespace SnowPlow.Controller.Shop
             if (npcIceBreakerImage != null)
             {
                 npcIceBreakerDefaultSprite = npcIceBreakerImage.sprite;
+            }
+            if (lobbyNetworkHandler == null)
+            {
+                lobbyNetworkHandler =
+                    FindObjectOfType<LobbyNetworkHandler>();
             }
         }
 

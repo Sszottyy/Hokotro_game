@@ -99,6 +99,10 @@ namespace SnowPlow.Model.Map
 
             SaltPower = Math.Min(MaxSaltPower, SaltPower + amount);
         }
+        public void SetSaltPower(int value)
+        {
+            SaltPower = Mathf.Clamp(value, 0, MaxSaltPower);
+        }
 
         public void ConsumeSaltPower(int amount)
         {

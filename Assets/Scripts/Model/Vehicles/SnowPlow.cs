@@ -40,6 +40,22 @@ namespace SnowPlow.Model.Vehicles
             Debug.Log("APPLY snowPlow instance: " + GetHashCode());
             Debug.Log("APPLY equipped class: " + EquippedTool.GetType().Name);
             Debug.Log("APPLY equipped enum: " + EquippedTool.Type());
+            var sync =
+    UnityEngine.Object.FindObjectOfType<SnowNetworkSync>();
+
+            if (sync != null)
+            {
+                LaneSegment segment =
+                    pos.Lane[pos.SegmentIndex];
+
+                sync.UpdateSnowClientRpc(
+                    pos.Lane.ParentRoad.Id,
+                    pos.Lane.Id,
+                    pos.SegmentIndex,
+                    segment.SnowLevel,
+                    segment.HasIce,
+                    segment.SaltPower);
+            }
         }
         public SnowPlow() { }
 

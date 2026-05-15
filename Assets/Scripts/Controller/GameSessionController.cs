@@ -66,7 +66,8 @@ public class GameSessionController : MonoBehaviour
 
         if (GameManager.Instance.CurrentPlayer == null)
         {
-            GameManager.Instance.CreatePlayer(playerName,"Team A",PlayerRole.SnowPlowDriver,1);
+            Debug.LogError("CurrentPlayer NULL in GameScene!");
+            return;
         }
 
         Player player = GameManager.Instance.CurrentPlayer;
@@ -77,7 +78,7 @@ public class GameSessionController : MonoBehaviour
             return;
         }
 
-        player.Role = playerRole;
+        //player.Role = playerRole;
 
         if (player.Team == null)
         {
@@ -123,7 +124,10 @@ public class GameSessionController : MonoBehaviour
             return;
         }
 
-        bool isSnowPlowPlayer = playerRole == PlayerRole.SnowPlowDriver;
+        //bool isSnowPlowPlayer = playerRole == PlayerRole.SnowPlowDriver;
+        bool isSnowPlowPlayer =
+        GameManager.Instance.CurrentPlayer.Role
+        == PlayerRole.SnowPlowDriver;
 
         shopController.SetVisibleForSnowPlowPlayer(isSnowPlowPlayer);
         shopController.RefreshUI();

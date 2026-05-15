@@ -43,6 +43,40 @@ namespace SnowPlow.Model.Tools
 
             // A modell szabályait követjük: AddSnow kezeli a sózott/jeges eseteket.
             targetSegment.AddSnow(snowToMove);
+            var sync =
+    UnityEngine.Object.FindObjectOfType<SnowNetworkSync>();
+
+            if (sync != null)
+            {
+                sync.UpdateSnowClientRpc(
+                    sourceLane.ParentRoad.Id,
+                    sourceLane.Id,
+                    segmentIndex,
+                    sourceSegment.SnowLevel,
+                    sourceSegment.HasIce,
+                    sourceSegment.SaltPower);
+
+                sync.UpdateSnowClientRpc(
+                    rightLane.ParentRoad.Id,
+                    rightLane.Id,
+                    segmentIndex,
+                    targetSegment.SnowLevel,
+                    targetSegment.HasIce,
+                    targetSegment.SaltPower);
+            }
+            if (MapVisualizer.Instance.SegmentDirectory.TryGetValue(
+                    targetSegment,
+                    out VisualSegment targetVisual))
+            {
+                targetVisual.UpdateVisuals();
+            }
+
+            if (MapVisualizer.Instance.SegmentDirectory.TryGetValue(
+                    sourceSegment,
+                    out VisualSegment sourceVisual))
+            {
+                sourceVisual.UpdateVisuals();
+            }
         }
 
         private Lane GetRightLane(Lane lane)

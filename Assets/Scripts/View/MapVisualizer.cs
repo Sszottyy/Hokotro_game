@@ -26,7 +26,12 @@ public class MapVisualizer : MonoBehaviour
 
     private Dictionary<MapNode, Vector3> _nodePositions = new Dictionary<MapNode, Vector3>();
     private Dictionary<MapNode, NodeVisualData> _visualNodes = new Dictionary<MapNode, NodeVisualData>();
+    public static MapVisualizer Instance { get; private set; }
 
+    private void Awake()
+    {
+        Instance = this;
+    }
     public void Visualize(MapData data)
     {
         SegmentDirectory.Clear();

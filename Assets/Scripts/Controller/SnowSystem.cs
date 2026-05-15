@@ -25,6 +25,7 @@ namespace SnowPlow.Controller
 
         public void Update(float deltaTime)
         {
+            return;//-------------------------------------------------------------
             dt += deltaTime;
             saltTimer += deltaTime;
 
@@ -47,7 +48,8 @@ namespace SnowPlow.Controller
                                 lane.Id,
                                 i,
                                 segment.SnowLevel,
-                                segment.HasIce
+                                segment.HasIce,
+                                 segment.SaltPower
                             );
                         }
                         i++;

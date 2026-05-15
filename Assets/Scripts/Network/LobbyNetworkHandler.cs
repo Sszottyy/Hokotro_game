@@ -1,5 +1,6 @@
-using System.Collections.Generic;
 using SnowPlow.Model.Players;
+using SnowPlow.Model.Tools;
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -229,5 +230,44 @@ public class LobbyNetworkHandler : NetworkBehaviour
         {
             Debug.LogError("MainMenu not found in scene!");
         }
+    }
+    [ServerRpc(RequireOwnership = false)]
+    public void EquipToolServerRpc(
+    ulong clientId,
+    int toolType)
+    {
+        Player player =
+            GameManager.Instance.Players.Find(
+                p => p.OwnerClientId == clientId);
+
+        if (player == null)
+        {
+            Debug.LogWarning("Player not found.");
+            return;
+        }
+
+        var snowPlow = player.GetOwnedSnowPlow();
+
+        if (snowPlow == null)
+        {
+            Debug.LogWarning("Snowplow not found.");
+            return;
+        }
+
+        var tool =
+            player.FindOwnedTool(
+                (PlowToolType)toolType);
+
+        if (tool == null)
+        {
+            Debug.LogWarning("Tool not owned.");
+            return;
+        }
+
+        snowPlow.EquippedTool = tool;
+
+        Debug.Log(
+            "SERVER equipped tool: " +
+            tool.Type());
     }
 }

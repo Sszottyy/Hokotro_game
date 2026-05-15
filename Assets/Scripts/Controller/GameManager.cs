@@ -60,6 +60,10 @@ public class GameManager : MonoBehaviour
 
         Debug.Log("Removed player: " + removedPlayer.Name + " from Lobby");
     }
+    public Player GetPlayer(ulong clientId)
+    {
+        return Players.Find(p => p.OwnerClientId == clientId);
+    }
     public void RemovePlayerByClientId(ulong clientId)
     {
         Player playerToRemove = Players.Find(p => p.OwnerClientId == clientId);
