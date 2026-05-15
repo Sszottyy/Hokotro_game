@@ -473,6 +473,20 @@ namespace SnowPlow.Controller.Shop
             snowPlow.EquippedTool = ownedTool;
 
             Debug.Log("Equipped tool: " + type);
+
+            PlowMovement[] allPlowsOnMap = FindObjectsOfType<PlowMovement>(); //deprecated, ceréljük le?
+
+            foreach (PlowMovement movementScript in allPlowsOnMap)
+            {
+                // Ha a pályán lévő test "Agya" (modellje) megegyezik a vásárló játékos "Agyával"
+                if (movementScript.GetPlowModel() == snowPlow)
+                {
+                    // Ráparancsolunk a Unity-s modellre, hogy rajzolja újra magát az új eszközzel!
+                    movementScript.UpdateEquippedToolVisual();
+                    Debug.Log("Updated visual on the exact player's screen for: " + type);
+                    break; // Megtaláltuk a saját kocsinkat, abba is hagyhatjuk a keresést!
+                }
+            }
         }
 
         private void RefreshToolRow(
