@@ -18,6 +18,21 @@ namespace SnowPlow.Controller.NPCMovement
         [SerializeField] private float rotationSpeed = 12f;
         [SerializeField] private float reachDistance = 0.05f;
 
+        [Header("Ice slide visual")]
+        [SerializeField] private Transform visualRoot;
+        [SerializeField] private float iceMoveSpeedMultiplier = 0.9f;
+        [SerializeField] private float iceRotationSpeedMultiplier = 0.35f;
+        [SerializeField] private float iceSlideDuration = 0.45f;
+        [SerializeField] private float iceSlideOffset = 0.25f;
+        [SerializeField] private float iceSlideAngle = 15f;
+
+        private Vector3 visualRootStartLocalPosition;
+        private Quaternion visualRootStartLocalRotation;
+
+        private float iceSlideTimer;
+        private float iceSlideDirection = 1f;
+        private int lastIceSlidePathIndex = -1;
+
         [Header("Stun")]
         [SerializeField] private float stunDuration = 5f;
 
@@ -50,7 +65,16 @@ namespace SnowPlow.Controller.NPCMovement
                 return;
             }
 
-            MoveTowards(targetWorldPosition);
+            bool affectedByIce = IsAffectedByIce(targetPosition);
+
+            if (affectedByIce && lastIceSlidePathIndex != pathIndex)
+            {
+                StartIceSlide();
+                lastIceSlidePathIndex = pathIndex;
+            }
+
+            MoveTowards(targetWorldPosition, affectedByIce);
+            UpdateIceSlideVisual();
 
             if (Vector3.Distance(transform.position, targetWorldPosition) <= reachDistance)
             {
@@ -68,6 +92,7 @@ namespace SnowPlow.Controller.NPCMovement
             path.Clear();
             pathIndex = 0;
             isPaused = false;
+            lastIceSlidePathIndex = -1;
 
             if (newPath == null || newPath.Count == 0) return;
 
@@ -92,6 +117,7 @@ namespace SnowPlow.Controller.NPCMovement
             path.Clear();
             pathIndex = 0;
             isPaused = false;
+            lastIceSlidePathIndex = -1;
         }
 
         public void PauseMovement()
@@ -123,37 +149,45 @@ namespace SnowPlow.Controller.NPCMovement
             }
         }
 
-        private void MoveTowards(Vector3 targetWorldPosition)
+        private void MoveTowards(Vector3 targetWorldPosition, bool affectedByIce)
         {
             Vector3 currentWorldPosition = transform.position;
+
+            float currentMoveSpeed = affectedByIce
+                ? moveSpeed * iceMoveSpeedMultiplier
+                : moveSpeed;
 
             Vector3 nextWorldPosition = Vector3.MoveTowards(
                 currentWorldPosition,
                 targetWorldPosition,
-                moveSpeed * Time.deltaTime
+                currentMoveSpeed * Time.deltaTime
             );
 
             Vector3 movementDirection = nextWorldPosition - currentWorldPosition;
 
             if (movementDirection.sqrMagnitude > 0.0001f)
             {
-                RotateTowards(movementDirection);
+                RotateTowards(movementDirection, affectedByIce);
             }
 
             transform.position = nextWorldPosition;
         }
 
-        private void RotateTowards(Vector3 direction)
+        private void RotateTowards(Vector3 direction, bool affectedByIce)
         {
             Quaternion targetRotation = Quaternion.LookRotation(
                 Vector3.forward,
                 direction.normalized
             );
 
+            float currentRotationSpeed = affectedByIce
+                ? rotationSpeed * iceRotationSpeedMultiplier
+                : rotationSpeed;
+
             transform.rotation = Quaternion.Lerp(
                 transform.rotation,
                 targetRotation,
-                rotationSpeed * Time.deltaTime
+                currentRotationSpeed * Time.deltaTime
             );
         }
 
@@ -213,6 +247,83 @@ namespace SnowPlow.Controller.NPCMovement
                 otherBusMovement.Stun();
                 return;
             }
+        }
+
+        private void Awake()
+        {
+            if (visualRoot != null)
+            {
+                visualRootStartLocalPosition = visualRoot.localPosition;
+                visualRootStartLocalRotation = visualRoot.localRotation;
+            }
+        }
+
+        private bool IsAffectedByIce(LanePosition targetPosition)
+        {
+            if (IsIcy(targetPosition))
+            {
+                return true;
+            }
+
+            if (pathIndex > 0 && IsIcy(path[pathIndex - 1]))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool IsIcy(LanePosition position)
+        {
+            if (position == null) return false;
+            if (position.Lane == null) return false;
+            if (position.SegmentIndex < 0) return false;
+            if (position.SegmentIndex >= position.Lane.Segments.Count) return false;
+
+            return position.Lane[position.SegmentIndex].HasIce;
+        }
+
+        private void StartIceSlide()
+        {
+            if (visualRoot == null) return;
+
+            iceSlideTimer = iceSlideDuration;
+            iceSlideDirection = UnityEngine.Random.value < 0.5f ? -1f : 1f;
+        }
+
+        private void UpdateIceSlideVisual()
+        {
+            if (visualRoot == null) return;
+
+            if (iceSlideTimer > 0f)
+            {
+                iceSlideTimer -= Time.deltaTime;
+
+                float progress = 1f - Mathf.Clamp01(iceSlideTimer / iceSlideDuration);
+                float intensity = Mathf.Sin(progress * Mathf.PI);
+
+                visualRoot.localPosition =
+                    visualRootStartLocalPosition +
+                    Vector3.right * iceSlideDirection * iceSlideOffset * intensity;
+
+                visualRoot.localRotation =
+                    visualRootStartLocalRotation *
+                    Quaternion.Euler(0f, 0f, -iceSlideDirection * iceSlideAngle * intensity);
+
+                return;
+            }
+
+            visualRoot.localPosition = Vector3.Lerp(
+                visualRoot.localPosition,
+                visualRootStartLocalPosition,
+                12f * Time.deltaTime
+            );
+
+            visualRoot.localRotation = Quaternion.Lerp(
+                visualRoot.localRotation,
+                visualRootStartLocalRotation,
+                12f * Time.deltaTime
+            );
         }
     }
 }
