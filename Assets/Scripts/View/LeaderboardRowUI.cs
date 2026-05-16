@@ -31,7 +31,7 @@ public class LeaderboardRowUI : MonoBehaviour
                 UnityEngine.Localization.Settings.LocalizationSettings
                 .StringDatabase
                 .GetLocalizedString(
-                    "UI_Texts",
+                    "UI_Table",
                     localizationKey);
         }
         else
@@ -40,7 +40,7 @@ public class LeaderboardRowUI : MonoBehaviour
                 UnityEngine.Localization.Settings.LocalizationSettings
                 .StringDatabase
                 .GetLocalizedString(
-                    "UI_Texts",
+                    "UI_Table",
                     "lobby_novehicle");
         }
         // Score a csapatból jön, ha van csapata

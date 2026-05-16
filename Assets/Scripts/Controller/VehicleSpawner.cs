@@ -30,6 +30,10 @@ namespace SnowPlow.Controller.Spawning
         [SerializeField] private bool spawnPlayerSnowPlowOnStart = true;
         [SerializeField] private bool spawnPlayerBusOnStart = false;
 
+        [Header("Location Markers")]
+        [SerializeField] private GameObject[] homePrefabs; // Change from homeMarkerPrefab
+        [SerializeField] private GameObject[] workPrefabs; // Change from workMarkerPrefab
+
         private readonly System.Random rng = new();
 
         private MapData mapData;
@@ -47,6 +51,9 @@ namespace SnowPlow.Controller.Spawning
             if (snowPlowNpcPrefab == null) throw new InvalidOperationException("SnowPlow prefab is missing.");
             if (occupancyManager == null) throw new InvalidOperationException("VehicleOccupancyManager is missing.");
             if (spawnPlayerSnowPlowOnStart && playerSnowPlowPrefab == null) throw new InvalidOperationException("Player SnowPlow prefab is missing.");
+
+            // --- CLEAR OLD HOUSE POSITIONS HERE ---
+            HouseSpawner.ClearRegistry();
 
             mapData = data;
             mapVisualizer = visualizer;
@@ -105,6 +112,28 @@ namespace SnowPlow.Controller.Spawning
 
             behaviour.SetMapVisualizer(mapVisualizer);
             behaviour.Initialize(car, mapData);
+
+            GameObject selectedHomePrefab = null;
+            if (homePrefabs != null && homePrefabs.Length > 0)
+            {
+                selectedHomePrefab = homePrefabs[rng.Next(homePrefabs.Length)];
+            }
+
+            GameObject selectedWorkPrefab = null;
+            if (workPrefabs != null && workPrefabs.Length > 0)
+            {
+                selectedWorkPrefab = workPrefabs[rng.Next(workPrefabs.Length)];
+            }
+
+            var markerSpawner = instance.AddComponent<HouseSpawner>();
+            markerSpawner.Initialize(
+                car,
+                mapVisualizer,
+                selectedHomePrefab,
+                selectedWorkPrefab,
+                vehicleZOffset - 0.5f
+            );
+
             return car;
         }
 
@@ -146,6 +175,12 @@ namespace SnowPlow.Controller.Spawning
             }
 
             behaviour.Initialize(snowPlow, mapData);
+
+            NPCPlowVisuals npcVisuals = instance.GetComponent<NPCPlowVisuals>();
+            if (npcVisuals != null)
+            {
+                npcVisuals.SetPlowModel(snowPlow);
+            }
 
             return snowPlow;
         }
@@ -215,6 +250,12 @@ namespace SnowPlow.Controller.Spawning
             if (cameraFollow != null)
             {
                 cameraFollow.SetTarget(instance.transform);
+            }
+
+            PlowMovement plowMovement = instance.GetComponent<PlowMovement>();
+            if (plowMovement != null)
+            {
+                plowMovement.SetPlowModel(playerSnowPlow);
             }
 
             return playerSnowPlow;

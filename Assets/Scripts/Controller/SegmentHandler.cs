@@ -1,14 +1,15 @@
 ﻿using SnowPlow.Model.Map;
 using SnowPlow.Model.Vehicles;
 using UnityEngine;
+using UnityEngine.UIElements;
 using SnowPlowVehicle = SnowPlow.Model.Vehicles.SnowPlow;
 
 public static class SegmentHandler
 {
     public static void OnVehicleEnterSegment(
-        Vehicle vehicle,
-        LanePosition position,
-        VisualSegment visual = null)
+    Vehicle vehicle,
+    LanePosition position,
+    VisualSegment visual = null)
     {
         if (vehicle == null || position == null) return;
 
@@ -16,16 +17,25 @@ public static class SegmentHandler
 
         vehicle.CurrentPosition = position;
 
-        segment.VehicleCount++;
+        bool shouldRegisterIceFormation = true;
 
         if (vehicle is Bus bus)
         {
             bus.BusOnSegment(segment);
+
+            // A busz jégképződését nem itt kezeljük,
+            // mert itt még nem biztos, hogy ténylegesen be tudott menni a szegmensre.
+            shouldRegisterIceFormation = false;
         }
 
         if (vehicle is SnowPlowVehicle snowPlow)
         {
-            snowPlow.ApplyToolEffect(segment);
+            snowPlow.ApplyToolEffect(position);
+        }
+
+        if (shouldRegisterIceFormation)
+        {
+            segment.RegisterVehiclePassForIceFormation();
         }
 
         visual?.UpdateVisuals();
@@ -45,28 +55,6 @@ public static class SegmentHandler
             case Bus bus:
                 bus.isBlocked = false;
                 break;
-        }
-
-        visual?.UpdateVisuals();
-    }
-
-    public static void OnVehicleEnterSegment(
-        Vehicle vehicle,
-        LaneSegment segment,
-        VisualSegment visual = null)
-    {
-        if (vehicle == null || segment == null) return;
-
-        segment.VehicleCount++;
-
-        if (vehicle is Bus bus)
-        {
-            bus.BusOnSegment(segment);
-        }
-
-        if (vehicle is SnowPlowVehicle snowPlow)
-        {
-            snowPlow.ApplyToolEffect(segment);
         }
 
         visual?.UpdateVisuals();
