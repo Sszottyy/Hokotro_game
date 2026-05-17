@@ -28,6 +28,8 @@ public class VisualSegment : MonoBehaviour
 
     private bool _isLeftmost;
     private bool _isRightmost;
+    public bool IsLeftmost => _isLeftmost;
+    public bool IsRightmost => _isRightmost;
     [Header("Bus Station")]
     public GameObject busStopPrefab;
     public GameObject[] passengerPrefabs;

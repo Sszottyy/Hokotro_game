@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &5901069089339179808
+--- !u!1 &784133899131900277
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -18,35 +18,35 @@ GameObject:
   - component: {fileID: -1546074660386737675}
   - component: {fileID: 2842813437379279843}
   m_Layer: 0
-  m_Name: NPCCar
-  m_TagString: Vehicle
+  m_Name: CarSprite
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &5939759915685429333
+--- !u!4 &2802093465851043414
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5901069089339179808}
+  m_GameObject: {fileID: 784133899131900277}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.8, z: 1}
+  m_LocalScale: {x: 0.3, y: 0.3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 3401389720122810773}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &2802093465851043414
+--- !u!212 &3977714808170049037
 SpriteRenderer:
   serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5901069089339179808}
+  m_GameObject: {fileID: 784133899131900277}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -88,8 +88,8 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 8
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0, g: 0, b: 1, a: 1}
+  m_Sprite: {fileID: -7169196490320452264, guid: 0373d02a061632d4481e20087086ace9, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -98,6 +98,78 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1 &2924709254437990238
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3401389720122810773}
+  m_Layer: 0
+  m_Name: VisualRoot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3401389720122810773
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2924709254437990238}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2802093465851043414}
+  m_Father: {fileID: 5939759915685429333}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5901069089339179808
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5939759915685429333}
+  - component: {fileID: 1950606406105961326}
+  - component: {fileID: 3645938327403318716}
+  - component: {fileID: 7624515332961784184}
+  - component: {fileID: -6811955804837982777}
+  - component: {fileID: 7941620378525498911}
+  - component: {fileID: 3903064076928508158}
+  - component: {fileID: -1546074660386737675}
+  - component: {fileID: 2842813437379279843}
+  m_Layer: 0
+  m_Name: NPCCar
+  m_TagString: Vehicle
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5939759915685429333
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5901069089339179808}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.5, y: 0.8, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 3401389720122810773}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1950606406105961326
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -114,6 +186,12 @@ MonoBehaviour:
   moveSpeed: 4
   rotationSpeed: 12
   reachDistance: 0.05
+  visualRoot: {fileID: 3401389720122810773}
+  iceMoveSpeedMultiplier: 0.9
+  iceRotationSpeedMultiplier: 0.35
+  iceSlideDuration: 0.45
+  iceSlideOffset: 0.25
+  iceSlideAngle: 15
   stunDuration: 5
 --- !u!114 &3645938327403318716
 MonoBehaviour:
@@ -217,6 +295,47 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &3903064076928508158
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5901069089339179808}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6168391c9dc832242b4452f41ab1421c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NPCCarVisuals
+  spriteRenderer: {fileID: 3977714808170049037}
+  carLooks:
+  - name: Green
+    iso_UpRight: {fileID: -6834260957516894815, guid: ce5004f796d061d4dbf367ed7d4c55ab, type: 3}
+    iso_UpLeft: {fileID: 1887155248225186168, guid: 2e15741d65d0f6a4984c4321ea7f7add, type: 3}
+    iso_DownRight: {fileID: -2943658869624750443, guid: 72af171c674496d4da04d0366176dde5, type: 3}
+    iso_DownLeft: {fileID: -7169196490320452264, guid: 19cb47f5fe2591b4a93e79a502b09764, type: 3}
+    iso_Right: {fileID: -4345969612696422427, guid: 93bc845d2b7daea48a88bc4b2704d86c, type: 3}
+    iso_Left: {fileID: -2208510542369132325, guid: 6981805ab3fca0943a26d3e2cf7a50db, type: 3}
+    iso_Up: {fileID: -4571828015118065507, guid: 99d6c6cf58a409e4b9712d936676006f, type: 3}
+    iso_Down: {fileID: -2690792559708188323, guid: c06a77f56d13d8844b17f85c74856d40, type: 3}
+  - name: Police
+    iso_UpRight: {fileID: -6834260957516894815, guid: c2f6d01903555b44e9fae7ffcdb15411, type: 3}
+    iso_UpLeft: {fileID: 1887155248225186168, guid: 27769d48a01d23b4bbb25c1d76398b69, type: 3}
+    iso_DownRight: {fileID: -2943658869624750443, guid: dc92373cbc383a240a6f688b24b82ed3, type: 3}
+    iso_DownLeft: {fileID: -7169196490320452264, guid: 5d377a5d4eccb024093514bae55119b3, type: 3}
+    iso_Right: {fileID: -4345969612696422427, guid: 939671f8afbd34249ac33c24db38015c, type: 3}
+    iso_Left: {fileID: -2208510542369132325, guid: 20b73ba8eae4c2647a36cc760c2956d5, type: 3}
+    iso_Up: {fileID: -4571828015118065507, guid: de23e726d52b1ee45948bc8c2d87004c, type: 3}
+    iso_Down: {fileID: -2690792559708188323, guid: 4e9eec2cf5ceed4468d0e4d07f26d528, type: 3}
+  - name: Red
+    iso_UpRight: {fileID: -6834260957516894815, guid: fb21861bfd701f54c9f8cac8714ccbeb, type: 3}
+    iso_UpLeft: {fileID: 1887155248225186168, guid: c496aac2240d14e42b7db899924583ba, type: 3}
+    iso_DownRight: {fileID: -2943658869624750443, guid: 085bdefec59a90d42b88e4ce4b31911f, type: 3}
+    iso_DownLeft: {fileID: -7169196490320452264, guid: 0373d02a061632d4481e20087086ace9, type: 3}
+    iso_Right: {fileID: -4345969612696422427, guid: 4ad03098c3520444f82d5af839387d55, type: 3}
+    iso_Left: {fileID: -2208510542369132325, guid: 810808a59805ad046905332bbbc002cf, type: 3}
+    iso_Up: {fileID: -4571828015118065507, guid: 49925570d676c8e4dbce62670f8a69b1, type: 3}
+    iso_Down: {fileID: -2690792559708188323, guid: 56c52aca14fa1644898a873faf8fbda3, type: 3}
 --- !u!114 &-1546074660386737675
 MonoBehaviour:
   m_ObjectHideFlags: 0
