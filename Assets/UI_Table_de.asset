@@ -1,0 +1,188 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: UI_Table_de
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: de
+  m_SharedData: {fileID: 11400000, guid: 63b6b282ab320654e8be243551f5dc7c, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 543396192256
+    m_Localized: Spielen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 640657907712
+    m_Localized: Einstellungen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1729742495744
+    m_Localized: Eintreten
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1869144383488
+    m_Localized: Schreib hier deinen Namen...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2286418911232
+    m_Localized: Spiel allein
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3980431187968
+    m_Localized: Punkte
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4140796207104
+    m_Localized: Zeit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4354873483264
+    m_Localized: Werkzeuge
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4627801038848
+    m_Localized: Gehilfe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1146969120768
+    m_Localized: "Tonst\xE4rke"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1237712887808
+    m_Localized: Sprache
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1311129985024
+    m_Localized: Graphics
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1391849365504
+    m_Localized: Resolution
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1531913953280
+    m_Localized: "Zur\xFCck"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 806546825216
+    m_Localized: Host
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1081059827712
+    m_Localized: Credits
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240216248934400
+    m_Localized: Verlassen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 245980787105792
+    m_Localized: Team A
+    m_Metadata:
+      m_Items: []
+  - m_Id: 246294290358272
+    m_Localized: Team B
+    m_Metadata:
+      m_Items: []
+  - m_Id: 246626252742656
+    m_Localized: Bus
+    m_Metadata:
+      m_Items: []
+  - m_Id: 246707920035840
+    m_Localized: Schneepflug
+    m_Metadata:
+      m_Items: []
+  - m_Id: 246962564620288
+    m_Localized: Anfangen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 248049988263936
+    m_Localized: Name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249202016772096
+    m_Localized: "W\xE4hle dein Team"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249245746585600
+    m_Localized: "W\xE4hle dein Fahrzeug"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249336402272256
+    m_Localized: Anzahl der Rundverkehren
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249412675690496
+    m_Localized: Schliessen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249447148675072
+    m_Localized: Eintreten
+    m_Metadata:
+      m_Items: []
+  - m_Id: 250153368805376
+    m_Localized: Gib eine IP Adresse an
+    m_Metadata:
+      m_Items: []
+  - m_Id: 250215993958400
+    m_Localized: Z. B. 192.168.0.14
+    m_Metadata:
+      m_Items: []
+  - m_Id: 250256007618560
+    m_Localized: Ok
+    m_Metadata:
+      m_Items: []
+  - m_Id: 250597109391360
+    m_Localized: "Macher:\n\tPatonai Csan\xE1d\n\tVir\xE1nyi Rich\xE1rd\n\tSzobek
+      Roland\n\tHorv\xE1th Marcell\n\tGerstenbrein Zolt\xE1n"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 250733327802368
+    m_Localized: "Zur\xFCck zum Menu"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 258129974517760
+    m_Localized: Fahrzeug
+    m_Metadata:
+      m_Items: []
+  - m_Id: 262434320277504
+    m_Localized: Platz
+    m_Metadata:
+      m_Items: []
+  - m_Id: 262491731910656
+    m_Localized: Team
+    m_Metadata:
+      m_Items: []
+  - m_Id: 263453892665344
+    m_Localized: Rangliste
+    m_Metadata:
+      m_Items: []
+  - m_Id: 344066460999680
+    m_Localized: kein Fahrzeug
+    m_Metadata:
+      m_Items: []
+  - m_Id: 360631218724864
+    m_Localized: Benutzt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 360955438424064
+    m_Localized: Vorhanden
+    m_Metadata:
+      m_Items: []
+  - m_Id: 361475511148544
+    m_Localized: Gekauft
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

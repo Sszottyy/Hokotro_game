@@ -11,7 +11,8 @@ public class NetworkFunctions : MonoBehaviour
     public TMP_InputField portInput;
     private MainMenu mainMenu;
     private UnityTransport transport;
-
+    [Header("Host UI")]
+    public TMP_InputField hostPortInput;
     private void Start()
     {
         if (NetworkManager.Singleton == null)
@@ -42,7 +43,7 @@ public class NetworkFunctions : MonoBehaviour
 
         ushort port = transport.ConnectionData.Port;
 
-        string portText = portInput.text;
+        string portText = hostPortInput.text;
 
         if (!string.IsNullOrEmpty(portText))
         {
