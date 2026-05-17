@@ -2535,6 +2535,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ed527938ce775a4c9b7b326c1fe867c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BusStationPassengers
+  ShowTopMostFoldoutHeaderGroup: 1
   passengerPrefabs:
   - {fileID: 4028533530101603263, guid: e4cfc2f8cccee9942ade1609efe5e35e, type: 3}
   - {fileID: 4028533530101603263, guid: ad0f2c36e4426994a99ebf41911134fb, type: 3}
@@ -2549,6 +2550,31 @@ MonoBehaviour:
   maxSpawnInterval: 8
   maxPassengers: 6
   spawnRadius: 0.7
+--- !u!114 &699245699
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 699245696}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 287670650
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 0
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!1 &707104785
 GameObject:
   m_ObjectHideFlags: 0
@@ -3057,17 +3083,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 24109d1be1029314ba2df5d8827c48c0, type: 3}
---- !u!114 &783163257 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5913831501275424017, guid: 24109d1be1029314ba2df5d8827c48c0, type: 3}
-  m_PrefabInstance: {fileID: 783163256}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ebf5a58ba614b1c4ebd1f1f3fff854ca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SnowPlow.Controller.Traffic.VehicleOccupancyManager
 --- !u!1 &793987222
 GameObject:
   m_ObjectHideFlags: 0
@@ -9787,6 +9802,9 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 5829326260946577903, guid: b4703d1fd1bd59a43b6fb4af496673f7, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 699245699}
+    - targetCorrespondingSourceObject: {fileID: 5829326260946577903, guid: b4703d1fd1bd59a43b6fb4af496673f7, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 699245698}
   m_SourcePrefab: {fileID: 100100000, guid: b4703d1fd1bd59a43b6fb4af496673f7, type: 3}
 --- !u!1001 &8825545291792986907
@@ -9858,15 +9876,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 4312103084254756940, guid: c285ca9ee1ec27b4f998fbf32ef0f7b3, type: 3}
     - target: {fileID: 8338259273252699864, guid: c1f5a539f6f31a9498d758e22675aa8a, type: 3}
-<<<<<<< HEAD
-      propertyPath: occupancyManager
-      value: 
-      objectReference: {fileID: 783163257}
-=======
-      propertyPath: initialCarCount
-      value: 8
-      objectReference: {fileID: 0}
-    - target: {fileID: 8338259273252699864, guid: c1f5a539f6f31a9498d758e22675aa8a, type: 3}
       propertyPath: homeMarkerPrefab
       value: 
       objectReference: {fileID: 4291486057326810279, guid: f6dfbe9b77f0caa41bcc44a62df34f64, type: 3}
@@ -9881,7 +9890,7 @@ PrefabInstance:
     - target: {fileID: 8338259273252699864, guid: c1f5a539f6f31a9498d758e22675aa8a, type: 3}
       propertyPath: playerSnowPlowPrefab
       value: 
-      objectReference: {fileID: 8883108311115965997, guid: 0db6188f99cb0fb44afd6e90ad1df495, type: 3}
+      objectReference: {fileID: 5133161845695558243, guid: d2f21d0e638f1814ca22b63e7193728c, type: 3}
     - target: {fileID: 8338259273252699864, guid: c1f5a539f6f31a9498d758e22675aa8a, type: 3}
       propertyPath: spawnPlayerBusOnStart
       value: 0
@@ -9926,7 +9935,6 @@ PrefabInstance:
       propertyPath: spawnPlayerSnowPlowOnStart
       value: 1
       objectReference: {fileID: 0}
->>>>>>> origin/main
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -9948,9 +9956,6 @@ SceneRoots:
   - {fileID: 783163256}
   - {fileID: 761565363}
   - {fileID: 805539193}
-<<<<<<< HEAD
   - {fileID: 118478845}
-=======
   - {fileID: 2981537971944344293}
   - {fileID: 1857755343553784164}
->>>>>>> origin/main
