@@ -10850,6 +10850,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5386694152371798421, guid: 04388236cd51fe640bbc6c3cc9f38315, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1224631360}
+    - targetCorrespondingSourceObject: {fileID: 5386694152371798421, guid: 04388236cd51fe640bbc6c3cc9f38315, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1224631361}
   m_SourcePrefab: {fileID: 100100000, guid: 04388236cd51fe640bbc6c3cc9f38315, type: 3}
 --- !u!1 &1224631359 stripped
 GameObject:
@@ -10868,6 +10871,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 817cd81f40653d34381925306b94f3b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamMoneySync
+  ShowTopMostFoldoutHeaderGroup: 1
+--- !u!114 &1224631361
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1224631359}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79221db60eb80bd488fc33cf3d16e65f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamScoreSync
   ShowTopMostFoldoutHeaderGroup: 1
 --- !u!1 &1250184593
 GameObject:

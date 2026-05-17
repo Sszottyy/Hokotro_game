@@ -12,6 +12,7 @@ using Unity.Netcode;
 [System.Serializable]
 public class ToolVisualSet
 {
+    
     public PlowToolType toolType;
     public GameObject visualObject;
     public SpriteRenderer spriteRenderer;
@@ -52,6 +53,7 @@ public class ToolVisualSet
 
 public class PlowMovement : NetworkBehaviour
 {
+    private float spawnProtectionTimer = 1f;
     public NetworkVariable<ulong> OwnerClientId =
     new NetworkVariable<ulong>();
     public Rigidbody2D myRigidBody2D;
@@ -196,7 +198,7 @@ public class PlowMovement : NetworkBehaviour
     }
     private void FixedUpdate()
     {
-
+        spawnProtectionTimer -= Time.fixedDeltaTime;
         UpdateRemoteVisuals();
         if (!IsOwner)
         {
@@ -217,6 +219,10 @@ public class PlowMovement : NetworkBehaviour
 
         if (touchingRoads <= 0)
         {
+            if (spawnProtectionTimer > 0f)
+            {
+                return;
+            }
             if (myRigidBody2D.linearVelocity.magnitude < 0.5f)
             {
                 myRigidBody2D.linearVelocity = new Vector2(5f, 5f);

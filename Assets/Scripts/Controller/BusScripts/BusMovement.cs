@@ -7,6 +7,8 @@ using UnityEngine;
 
 public class BusMovement : NetworkBehaviour
 {
+
+    private ulong currentStationId;
     public NetworkVariable<int> PassengersOnBoard
     => passengersOnBoard;
     private Vector3 lastPosition;
@@ -63,6 +65,7 @@ public class BusMovement : NetworkBehaviour
     private GameObject lastStationVisited = null; // Prevents re-triggering while inside collider
 
     private Bus busModel;
+    public Bus BusModel => busModel;
     public void SetBusModel(Bus model)
     {
         busModel = model;
@@ -166,10 +169,40 @@ public class BusMovement : NetworkBehaviour
         }
 
         //check for bus stop
-        if(other.gameObject.tag.Equals("BusStop") && currentStation==null)
+        //if(other.gameObject.tag.Equals("BusStop") && currentStation==null)
+        //{
+        //    currentStation = other.gameObject;
+        //}
+        if (other.CompareTag("BusStop"))
         {
-            currentStation = other.gameObject;
+            NetworkObject netObj =
+    other.GetComponentInParent<NetworkObject>();
+
+            if (netObj != null)
+            {
+                currentStation = other.gameObject;
+                currentStationId = netObj.NetworkObjectId;
+
+                Debug.Log(
+                    $"[BUS] CURRENT STATION ID = {currentStationId}"
+                );
+            }
         }
+        //if (other.CompareTag("BusStop"))
+        //{
+        //    NetworkObject netObj =
+        //        other.GetComponent<NetworkObject>();
+
+        //    if (netObj != null)
+        //    {
+        //        currentStation = other.gameObject;
+        //        currentStationId = netObj.NetworkObjectId;
+
+        //        Debug.Log(
+        //            $"[BUS] CURRENT STATION ID = {currentStationId}"
+        //        );
+        //    }
+        //}
     }
 
 
@@ -366,6 +399,7 @@ public class BusMovement : NetworkBehaviour
         if (Input.GetKeyDown(KeyCode.Space)
             && currentStation != null)
         {
+            Debug.Log("[BUS] busModel null? " + (busModel == null));
             Debug.Log(
                 $"SPACE pressed | station: {currentStation != null}"
             );
@@ -374,8 +408,25 @@ public class BusMovement : NetworkBehaviour
             );
             //BusStationPassengers passengers = null;
             //    currentStation.StationPassengers;
-            BusStationPassengers passengers = currentStation.GetComponent<BusStationPassengers>();
+            // BusStationPassengers passengers = currentStation.GetComponent<BusStationPassengers>();
 
+            if (!NetworkManager.Singleton.SpawnManager
+    .SpawnedObjects.TryGetValue(
+        currentStationId,
+        out NetworkObject stationObj))
+            {
+                Debug.Log("[CLIENT] STATION OBJECT NOT FOUND");
+                return;
+            }
+
+            BusStationPassengers passengers =
+                stationObj.GetComponent<BusStationPassengers>();
+
+            if (passengers == null)
+            {
+                Debug.Log("[CLIENT] PASSENGERS COMPONENT NULL");
+                return;
+            }
             if (passengers == null)
             {
                 Debug.Log("No StationPassengers component!");
@@ -383,12 +434,20 @@ public class BusMovement : NetworkBehaviour
             }
 
             NetworkObject stationNetObj = null;
-            if(!currentStation.TryGetComponent<NetworkObject>(out stationNetObj))
+            //if(!currentStation.TryGetComponent<NetworkObject>(out stationNetObj))
+            //{
+            //    Debug.Log("Station net object is a nigger hihihiha <- CR7 reference");
+            //    return;
+            //}
+
+            stationNetObj =
+    currentStation.GetComponentInParent<NetworkObject>();
+
+            if (stationNetObj == null)
             {
-                Debug.Log("Station net object is a nigger hihihiha <- CR7 reference");
+                Debug.Log("Station net object NULL");
                 return;
             }
-
 
             bool isOtherStation =
                 pickupStation != null

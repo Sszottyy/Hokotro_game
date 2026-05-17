@@ -90,13 +90,13 @@ namespace SnowPlow.Model.Players
         private void HandleBusTripCompleted(int score)
         {
             Debug.Log($"Trip completed in time → +{score} score");
-            Team.Score += score;
+            Team.AddScore(score);
         }
 
         private void HandlePassengersDroppedOff(int amount)
         {
             Debug.Log($"Passengers dropped off: +{amount} score");
-            Team.Score += amount;
+            Team.AddScore(amount);
         }
 
         public SnowPlowVehicle GetOwnedSnowPlow()

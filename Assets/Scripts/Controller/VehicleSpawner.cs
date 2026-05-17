@@ -78,7 +78,15 @@ namespace SnowPlow.Controller.Spawning
             {
                 yield return null;
             }
+            while (mapVisualizer == null ||
+          mapVisualizer.SegmentDirectory == null ||
+          mapVisualizer.SegmentDirectory.Count == 0)
+            {
+                yield return null;
+            }
 
+            yield return null;
+            yield return null;
             Debug.Log("VehicleSpawner initialized, spawning players...");
 
             foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)
@@ -101,7 +109,16 @@ namespace SnowPlow.Controller.Spawning
             {
                 yield return null;
             }
+            while (mapVisualizer == null ||
+           mapVisualizer.SegmentDirectory == null ||
+           mapVisualizer.SegmentDirectory.Count == 0)
+            {
+                yield return null;
+            }
+            yield return null;
+            yield return null;
 
+            Debug.Log("[SPAWNER] Map fully ready, spawning player vehicle");
             SpawnPlayerVehicle(clientId);
         }
 

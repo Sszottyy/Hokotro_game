@@ -26,7 +26,7 @@ namespace SnowPlow.Controller
 
         public void Update(float deltaTime)
         {
-            //return;//-------------------------------------------------------------
+            return;//-------------------------------------------------------------
             dt += deltaTime;
             saltTimer += deltaTime;
 

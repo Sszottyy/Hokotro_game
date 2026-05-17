@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class BusStationPassengers : MonoBehaviour
+public class BusStationPassengers : NetworkBehaviour
 {
     [Header("Spawning")]
     public GameObject[] passengerPrefabs;
@@ -85,12 +85,56 @@ public class BusStationPassengers : MonoBehaviour
     }
 
     // Called when bus drops off passengers at the other station
-    public void DropOffPassengers(int count)
+    //public void DropOffPassengers(int count)
+    //{
+    //    Debug.Log($"[Station] {count} passengers dropped off.");
+    //    // Could spawn "arrived" passengers here if needed later
+    //    BusMovement bus =
+    //   FindFirstObjectByType<BusMovement>();
+
+    //    if (bus == null)
+    //        return;
+
+    //    if (bus.BusModel == null)
+    //        return;
+
+    //    if (bus.BusModel.Owner == null)
+    //        return;
+
+    //    if (bus.BusModel.Owner.Team == null)
+    //        return;
+
+    //    // bus.BusModel.Owner.Team.Score += count;
+    //    bus.BusModel.Owner.Team.AddScore(count);
+
+    //    Debug.Log(
+    //        $"[BUS SCORE] Team {bus.BusModel.Owner.Team.Name} +" +
+    //        $"{count} score | total = {bus.BusModel.Owner.Team.Score}"
+    //    );
+    //}
+    public void DropOffPassengers(BusMovement bus, int count)
     {
         Debug.Log($"[Station] {count} passengers dropped off.");
-        // Could spawn "arrived" passengers here if needed later
-    }
 
+        if (bus == null)
+            return;
+
+        if (bus.BusModel == null)
+            return;
+
+        if (bus.BusModel.Owner == null)
+            return;
+
+        if (bus.BusModel.Owner.Team == null)
+            return;
+
+        bus.BusModel.Owner.Team.AddScore(count);
+
+        Debug.Log(
+            $"[BUS SCORE] Team {bus.BusModel.Owner.Team.Name} +" +
+            $"{count} score | total = {bus.BusModel.Owner.Team.Score}"
+        );
+    }
     private IEnumerator SpawnRoutine()
     {
         while (isSpawning)
@@ -311,7 +355,8 @@ public class BusStationPassengers : MonoBehaviour
 
         int dropped = bus.PassengersOnBoard.Value;
 
-        DropOffPassengers(dropped);
+        //DropOffPassengers(dropped);
+        DropOffPassengers(bus, dropped);
 
         bus.PassengersOnBoard.Value = 0;
 
