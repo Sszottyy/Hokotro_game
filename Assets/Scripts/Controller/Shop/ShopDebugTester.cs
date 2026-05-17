@@ -41,7 +41,7 @@ public class ShopDebugTester : MonoBehaviour
             yield break;
         }
 
-        shopController.SetVisibleForSnowPlowPlayer(makeShopVisible);
+        //shopController.SetVisibleForSnowPlowPlayer(makeShopVisible);
         shopController.RefreshUI();
 
         Player player = GameManager.Instance.CurrentPlayer;

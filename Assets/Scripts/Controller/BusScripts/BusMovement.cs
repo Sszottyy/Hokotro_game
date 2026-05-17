@@ -5,8 +5,12 @@ using SnowPlow.Model.Map;
 using Unity.Netcode;
 using UnityEngine;
 
-public class BusMovement : MonoBehaviour
+public class BusMovement : NetworkBehaviour
 {
+    public NetworkVariable<int> PassengersOnBoard
+    => passengersOnBoard;
+    private Vector3 lastPosition;
+
     public Rigidbody2D myRigidBody2D;
     public float speedMultiplyer;
 
@@ -24,15 +28,21 @@ public class BusMovement : MonoBehaviour
     [Header("Collider")]
     public BoxCollider2D boxCollider;
     public Transform colliderPivot;
+    //public Vector2 colliderSize = new Vector2(6.0f, 3.0f);
     public Vector2 colliderSize = new Vector2(6.0f, 3.0f);
 
     [Header("Station Logic")]
-    public VisualSegment stationA;
-    public VisualSegment stationB;
+    //public VisualSegment stationA;
+    //public VisualSegment stationB;
+    //private LanePosition stationAPosition;
+    // private LanePosition stationBPosition;
 
-    private int passengersOnBoard = 0;
-    private VisualSegment currentStation = null;
-    private VisualSegment pickupStation = null;
+    //private int passengersOnBoard = 0;
+    private NetworkVariable<int> passengersOnBoard =
+    new NetworkVariable<int>(0);
+    
+    private GameObject currentStation = null;
+    private GameObject pickupStation = null;
 
     private readonly CarTraversalPolicy traversalPolicy = new CarTraversalPolicy();
     private int touchingRoads = 0;
@@ -47,9 +57,10 @@ public class BusMovement : MonoBehaviour
     private float tripStartTime = 0f;
 
     // --- TRIP TRACKING VARIABLES ---
-    private VisualSegment tripOriginStation = null; // The station where the round trip started
+    //private VisualSegment tripOriginStation = null; // The station where the round trip started
+    private LanePosition tripOriginPosition = null;
     private bool hasReachedMidpoint = false;        // True if we reached the "other" station
-    private VisualSegment lastStationVisited = null; // Prevents re-triggering while inside collider
+    private GameObject lastStationVisited = null; // Prevents re-triggering while inside collider
 
     private Bus busModel;
     public void SetBusModel(Bus model)
@@ -65,13 +76,29 @@ public class BusMovement : MonoBehaviour
     }
     public void SetStations(VisualSegment a, VisualSegment b)
     {
-        stationA = a;
-        stationB = b;
+        if (a == null || b == null)
+        {
+            Debug.LogError("SetStations received null station!");
+            return;
+        }
+
+        Debug.Log($"Bus stations set: {a.name} | {b.name}");
     }
     void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log($"TRIGGER with: {other.name} | tag: {other.tag}");
-        if (other.CompareTag("Road")) touchingRoads++;
+        Debug.Log(
+    $"TRIGGER with: {other.name} | tag: {other.tag} | layer: {LayerMask.LayerToName(other.gameObject.layer)}"
+);
+        //Debug.Log($"TRIGGER with: {other.name} | tag: {other.tag}");
+        
+
+        VisualSegment roadSegment =
+            other.GetComponentInParent<VisualSegment>();
+
+        if (roadSegment != null)
+        {
+            touchingRoads++;
+        }
 
         if (other.CompareTag("Vehicle"))
         {
@@ -91,10 +118,18 @@ public class BusMovement : MonoBehaviour
         if (blockCooldown > 0f) return;
 
         //VisualSegment vs = other.GetComponent<VisualSegment>();
-        VisualSegment vs = other.GetComponentInParent<VisualSegment>();
+        VisualSegment vs =
+    other.GetComponentInParent<VisualSegment>();
+        Debug.Log(
+    $"Station detected? {vs != null} | object: {other.name}"
+);
+
+        Debug.LogError("nigger "+(vs==null));
+
+        Debug.Log($"VisualSegment direct: {vs != null}");
         if (vs != null)
         {
-            Debug.Log($"FOUND VisualSegment: {vs.gameObject.name}");
+            //Debug.Log($"FOUND VisualSegment: {vs.gameObject.name}");
         }
         else
         {
@@ -117,100 +152,148 @@ public class BusMovement : MonoBehaviour
                 LaneSegment segment = vs.LanePosition.Lane[vs.LanePosition.SegmentIndex];
 
                 segment.RegisterVehiclePassForIceFormation();
+                Debug.Log(
+                    $"ICE PASS COUNT: {segment.PassedVehicleCount}"
+                    );
+                Debug.Log(
+                 $"SEGMENT ENTER: lane={vs.LanePosition.Lane.Id} " +
+                $"segment={vs.LanePosition.SegmentIndex} " +
+                $"count={segment.PassedVehicleCount}"
+                );
 
                 vs.UpdateVisuals();
             }
         }
 
-        if (vs != null)
+        //check for bus stop
+        if(other.gameObject.tag.Equals("BusStop") && currentStation==null)
         {
-            if (vs == stationA || vs == stationB)
-            {
-                currentStation = vs;
-                Debug.Log($"[Bus] Arrived at station: {vs.gameObject.name}");
-                if (currentStation != lastStationVisited)
-                {
-                    HandleTripCounter(currentStation);
-                    lastStationVisited = currentStation;
-                }
-            }
+            currentStation = other.gameObject;
         }
     }
 
-
-    private void HandleTripCounter(VisualSegment arrivedStation)
-    {
-        // 1. If we don't have an origin yet, set it.
-        if (tripOriginStation == null)
-        {
-            tripOriginStation = arrivedStation;
-            hasReachedMidpoint = false;
-            tripStartTime = Time.time;                          // ← start timer
-            Debug.Log($"[Bus] Trip started at {arrivedStation.gameObject.name}");
-        }
-        // 2. If we are at the OTHER station, we've reached the midpoint.
-        else if (arrivedStation != tripOriginStation && !hasReachedMidpoint)
-        {
-            hasReachedMidpoint = true;
-            Debug.Log($"[Bus] Midpoint reached at {arrivedStation.gameObject.name}");
-        }
-        // 3. If we return to the ORIGIN after reaching the midpoint, trip is complete.
-        else if (arrivedStation == tripOriginStation && hasReachedMidpoint)
-        {
-            float elapsed = Time.time - tripStartTime;
-            if (busModel != null)
-            {
-                busModel.IncreaseTripCount(elapsed);            // ← pass elapsed
-                Debug.Log($"[Bus] Full trip complete in {elapsed:F1}s! Total: {busModel.CompletedTrips}");
-            }
-            hasReachedMidpoint = false;
-            tripStartTime = Time.time;                          // ← reset for next trip
-        }
-    }
 
     void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("Road"))
-            touchingRoads = Mathf.Max(0, touchingRoads - 1); // ← Bug 3 fix, was: touchingRoads--
+        
 
-        //VisualSegment vs = other.GetComponent<VisualSegment>();
-        VisualSegment vs = other.GetComponentInParent<VisualSegment>();
-        if (vs != null)
+        VisualSegment roadSegment =
+            other.GetComponentInParent<VisualSegment>();
+
+        if (roadSegment != null)
         {
-            Debug.Log($"Triggered: {vs.gameObject.name}");
-
-            if (stationA != null)
-                Debug.Log($"stationA: {stationA.gameObject.name}");
-
-            if (stationB != null)
-                Debug.Log($"stationB: {stationB.gameObject.name}");
-
-            Debug.Log($"vs == stationA ? {vs == stationA}");
-            Debug.Log($"vs == stationB ? {vs == stationB}");
+            touchingRoads =
+                Mathf.Max(0, touchingRoads - 1);
         }
-        if (vs != null && vs.LanePosition != null)
+        if (roadSegment != null && roadSegment.LanePosition != null)
         {
             isBlocked = false; // ← Bug 2 fix, was: if (!traversalPolicy.CanEnterSegment(...)) isBlocked = false;
 
-            if (vs.LanePosition.Lane[vs.LanePosition.SegmentIndex].HasIce)
+            if (roadSegment.LanePosition.Lane[roadSegment.LanePosition.SegmentIndex].HasIce)
             {
                 isOnIce = false;
             }
         }
 
-        if (vs != null && vs == currentStation)
+        if (other.gameObject.tag.Equals("BusStop"))
         {
-            currentStation = null;
-        }
-
-        if (vs != null && vs == lastStationVisited)
-        {
-            lastStationVisited = null;
+            if (other.gameObject == currentStation)
+            {
+                currentStation = null;
+                lastStationVisited = other.gameObject;
+            }
         }
     }
 
+    /*private bool IsStation(VisualSegment vs)
+    {
+        if (vs == null || vs.LanePosition == null)
+            return false;
+
+        return
+            SamePosition(vs.LanePosition, stationAPosition) ||
+            SamePosition(vs.LanePosition, stationBPosition);
+    }*/
+
+    /*private bool SamePosition(LanePosition a, LanePosition b)
+    {
+        if (a == null || b == null)
+            return false;
+
+        return
+            a.Lane == b.Lane &&
+            a.SegmentIndex == b.SegmentIndex;
+    }*/
+
+    private void UpdateRemoteVisuals()
+    {
+        Vector3 delta =
+            transform.position - lastPosition;
+
+        if (delta.magnitude > 0.001f)
+        {
+            float angle =
+                Mathf.Atan2(delta.y, delta.x)
+                * Mathf.Rad2Deg;
+
+            UpdateSprite(angle);
+        }
+
+        lastPosition = transform.position;
+    }
+    private void HandleTripCounter(VisualSegment arrivedStation)
+    {
+        LanePosition arrivedPosition = arrivedStation.LanePosition;
+
+        // 1. első állomás
+        if (tripOriginPosition == null)
+        {
+            tripOriginPosition = arrivedPosition;
+
+            hasReachedMidpoint = false;
+            tripStartTime = Time.time;
+
+            Debug.Log($"[Bus] Trip started at {arrivedStation.gameObject.name}");
+        }
+
+        // 2. másik állomás elérése
+        else if (
+            //!SamePosition(arrivedPosition, tripOriginPosition)
+            arrivedPosition != tripOriginPosition
+            && !hasReachedMidpoint)
+        {
+            hasReachedMidpoint = true;
+
+            Debug.Log($"[Bus] Midpoint reached at {arrivedStation.gameObject.name}");
+        }
+
+        // 3. visszaérkezés az eredeti állomásra
+        else if (
+            //SamePosition(arrivedPosition, tripOriginPosition)
+            arrivedPosition == tripOriginPosition
+            && hasReachedMidpoint)
+        {
+            float elapsed = Time.time - tripStartTime;
+
+            if (busModel != null)
+            {
+                busModel.IncreaseTripCount(elapsed);
+
+                Debug.Log(
+                    $"[Bus] Full trip complete in {elapsed:F1}s! Total: {busModel.CompletedTrips}"
+                );
+            }
+
+            hasReachedMidpoint = false;
+            tripStartTime = Time.time;
+        }
+    }
+
+    
+
     private void FixedUpdate()
     {
+        UpdateRemoteVisuals();
         NetworkObject netObj = GetComponent<NetworkObject>();
 
         if (netObj != null && !netObj.IsOwner)
@@ -263,37 +346,93 @@ public class BusMovement : MonoBehaviour
 
     private void Update()
     {
-        // Station interaction
-        if (Input.GetKeyDown(KeyCode.Space) && currentStation != null && myRigidBody2D.linearVelocity.magnitude < 0.1f)
+        NetworkObject netObj = GetComponent<NetworkObject>();
+
+        if (netObj != null && !netObj.IsOwner)
+            return;
+
+        //Debug.Log($"UPDATE RUNNING | owner={IsOwner}");
+
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            Debug.Log($"SPACE pressed | station: {currentStation != null} | speed: {myRigidBody2D.linearVelocity.magnitude}");
-            if (currentStation == null)
+            Debug.Log("SPACE DETECTED");
+        }
+        //Debug.Log("UPDATE RUNNING");
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Debug.Log("SPACE DETECTED");
+        }
+        if (Input.GetKeyDown(KeyCode.Space)
+            && currentStation != null)
+        {
+            Debug.Log(
+                $"SPACE pressed | station: {currentStation != null}"
+            );
+            Debug.Log(
+            $"CLIENT CALLING BOARD RPC | bus net id = {NetworkObjectId}"
+            );
+            //BusStationPassengers passengers = null;
+            //    currentStation.StationPassengers;
+            BusStationPassengers passengers = currentStation.GetComponent<BusStationPassengers>();
+
+            if (passengers == null)
             {
-                Debug.Log("No current station!");
+                Debug.Log("No StationPassengers component!");
                 return;
             }
-            BusStationPassengers passengers = currentStation.StationPassengers;
-            if (passengers == null) return;
 
-            bool isOtherStation = pickupStation != null && currentStation != pickupStation;
+            NetworkObject stationNetObj = null;
+            if(!currentStation.TryGetComponent<NetworkObject>(out stationNetObj))
+            {
+                Debug.Log("Station net object is a nigger hihihiha <- CR7 reference");
+                return;
+            }
 
+
+            bool isOtherStation =
+                pickupStation != null
+                && currentStation != pickupStation;
+
+            // DROPOFF
             if (isOtherStation)
             {
-                passengers.DropOffPassengers(passengersOnBoard);
-                Debug.Log($"[Bus] Dropped off {passengersOnBoard} passengers at {currentStation.gameObject.name}.");
-                busModel.IncreasePassangers(passengersOnBoard);
-                passengersOnBoard = 0;
+                //RequestDropOffPassengersServerRpc(
+                //    stationNetObj.NetworkObjectId
+                //);
+                passengers.RequestDropOffPassengersServerRpc(
+                    NetworkObjectId
+                );
+
+                Debug.LogError(
+                    $"[Bus] Requested dropoff at {currentStation.gameObject.name}"
+                );
+
                 pickupStation = null;
             }
-            else if (!isOtherStation || passengersOnBoard == 0)
+
+            // PICKUP
+            else if (passengersOnBoard.Value == 0)
             {
-                int boarded = passengers.BoardPassengers();
-                passengersOnBoard += boarded;
+                Debug.Log(
+                        $"CALLING SERVER RPC | objId={stationNetObj.NetworkObjectId}"
+                    );
+                //RequestBoardPassengersServerRpc(
+                //    stationNetObj.NetworkObjectId
+                //);
+                passengers.RequestBoardPassengersServerRpc(
+                 NetworkObjectId
+                );
+
+                Debug.LogError(
+                    $"[Bus] Requested pickup at {currentStation.gameObject.name}"
+                );
+
                 pickupStation = currentStation;
-                Debug.Log($"[Bus] Picked up {boarded}, total on board: {passengersOnBoard}.");
             }
         }
     }
+    
 
     void UpdateSprite(float angle)
     {
@@ -315,7 +454,23 @@ public class BusMovement : MonoBehaviour
             colliderPivot.localRotation = Quaternion.Euler(0f, 0f, snapped - 90f);
         }
     }
+    void Start()
+    {
+        lastPosition = transform.position;
 
+        Debug.Log(
+            $"BUS START | obj={gameObject.name} | enabled={enabled}"
+        );
+    }
+
+    void OnEnable()
+    {
+        Debug.Log(
+            $"BUS ENABLED | obj={gameObject.name}"
+        );
+    }
+
+    
     public void Stun()
     {
         stunTimer = StunDuration;

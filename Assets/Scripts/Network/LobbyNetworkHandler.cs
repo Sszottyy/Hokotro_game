@@ -1,5 +1,8 @@
+using SnowPlow.Controller.Spawning;
+using SnowPlow.Model.Map.Generator;
 using SnowPlow.Model.Players;
 using SnowPlow.Model.Tools;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
@@ -7,7 +10,10 @@ using UnityEngine;
 public class LobbyNetworkHandler : NetworkBehaviour
 {
     public static LobbyNetworkHandler Instance { get; private set; }
-
+    public NetworkVariable<int> MapSeed =
+    new NetworkVariable<int>();
+    public NetworkVariable<int> IntersectionCount =
+    new NetworkVariable<int>(10);
     void Awake()
     {
         Debug.Log("LobbyNetworkHandler Awake called");
@@ -50,7 +56,66 @@ public class LobbyNetworkHandler : NetworkBehaviour
         // Ha valaki disconnectel
         if (IsServer)
         {
-            NetworkManager.OnClientDisconnectCallback += OnClientDisconnected;
+            MapSeed.Value =
+                UnityEngine.Random.Range(
+                    int.MinValue,
+                    int.MaxValue);
+
+            Debug.Log(
+                $"[MAP] GENERATED SEED: {MapSeed.Value}"
+            );
+
+            NetworkManager.OnClientDisconnectCallback +=
+                OnClientDisconnected;
+        }
+    }
+    [ServerRpc(RequireOwnership = false)]
+    public void SetIntersectionCountServerRpc(int count)
+    {
+        count = Mathf.Clamp(count, 5, 100);
+
+        IntersectionCount.Value = count;
+
+        Debug.Log(
+            $"[MAP] INTERSECTION COUNT SET TO: {count}"
+        );
+    }
+    public void GenerateMapForAll()
+    {
+        Debug.Log(
+            $"[MAP] GENERATING WITH SEED: {MapSeed.Value}"
+        );
+
+        MapGenerator generator =
+            new MapGenerator(MapSeed.Value);
+
+        MapData map =
+    generator.Generate(IntersectionCount.Value);
+
+        GameManager.Instance.CurrentMap = map;
+
+        MapVisualizer visualizer =
+            FindObjectOfType<MapVisualizer>();
+
+        if (visualizer != null)
+        {
+            // régi map törlése
+            for (int i = visualizer.transform.childCount - 1; i >= 0; i--)
+            {
+                Destroy(
+                    visualizer.transform.GetChild(i).gameObject
+                );
+            }
+
+            visualizer.Visualize(map);
+
+            VehicleSpawner spawner =
+                FindObjectOfType<VehicleSpawner>();
+
+            if (spawner != null)
+            {
+                spawner.Initialize(map, visualizer);
+            }
         }
     }
 
@@ -151,6 +216,7 @@ public class LobbyNetworkHandler : NetworkBehaviour
         string[] names = new string[4];
         string[] teams = new string[4];
         PlayerRole[] roles = new PlayerRole[4];
+        ulong[] clientIds = new ulong[4];
 
         int count = Mathf.Min(GameManager.Instance.Players.Count, 4);
 
@@ -161,6 +227,7 @@ public class LobbyNetworkHandler : NetworkBehaviour
             names[i] = p.Name;
             teams[i] = p.Team.Name;
             roles[i] = p.Role;
+            clientIds[i] = p.OwnerClientId;
         }
 
         UpdateLobbyUIClientRpc(
@@ -179,30 +246,94 @@ public class LobbyNetworkHandler : NetworkBehaviour
             roles[2],
             roles[3],
 
+            clientIds[0],
+            clientIds[1],
+            clientIds[2],
+            clientIds[3],
+
             count
         );
     }
 
     [ClientRpc]
     public void UpdateLobbyUIClientRpc(
-        string name1,
-        string name2,
-        string name3,
-        string name4,
+    string name1,
+    string name2,
+    string name3,
+    string name4,
 
-        string team1,
-        string team2,
-        string team3,
-        string team4,
+    string team1,
+    string team2,
+    string team3,
+    string team4,
 
-        PlayerRole role1,
-        PlayerRole role2,
-        PlayerRole role3,
-        PlayerRole role4,
+    PlayerRole role1,
+    PlayerRole role2,
+    PlayerRole role3,
+    PlayerRole role4,
 
-        int len)
+    ulong id1,
+    ulong id2,
+    ulong id3,
+    ulong id4,
+
+    int len)
     {
         Debug.Log($"UpdateLobbyUIClientRpc called. Player count: {len}");
+
+        //GameManager.Instance.Players.Clear();
+
+        if (len > 0 && !string.IsNullOrEmpty(name1))
+        {
+            if (GameManager.Instance.GetPlayer(id1) == null)
+            {
+                GameManager.Instance.CreatePlayer(
+                    name1,
+                    team1,
+                    role1,
+                    id1
+                );
+            }
+        }
+
+        if (len > 1 && !string.IsNullOrEmpty(name2))
+        {
+            if (GameManager.Instance.GetPlayer(id2) == null)
+            {
+                GameManager.Instance.CreatePlayer(
+                name2,
+                team2,
+                role2,
+                id2
+            );
+            }
+        }
+
+        if (len > 2 && !string.IsNullOrEmpty(name3))
+        {
+            if (GameManager.Instance.GetPlayer(id3) == null)
+            {
+                GameManager.Instance.CreatePlayer(
+                name3,
+                team3,
+                role3,
+                id3
+            );
+            }
+        }
+
+        if (len > 3 && !string.IsNullOrEmpty(name4))
+        {
+            if (GameManager.Instance.GetPlayer(id4) == null)
+            {
+                GameManager.Instance.CreatePlayer(
+                name4,
+                team4,
+                role4,
+                id4
+            );
+            }
+        }
 
         MainMenu mainMenu = FindObjectOfType<MainMenu>(true);
 
@@ -226,19 +357,21 @@ public class LobbyNetworkHandler : NetworkBehaviour
 
                 len);
         }
-        else
-        {
-            Debug.LogError("MainMenu not found in scene!");
-        }
     }
     [ServerRpc(RequireOwnership = false)]
     public void EquipToolServerRpc(
     ulong clientId,
     int toolType)
     {
+        EquipToolClientRpc(clientId, toolType);
+    }
+
+    [ClientRpc (RequireOwnership =false)]
+    private void EquipToolClientRpc(ulong clientId, int toolType)
+    {
         Player player =
-            GameManager.Instance.Players.Find(
-                p => p.OwnerClientId == clientId);
+           GameManager.Instance.Players.Find(
+               p => p.OwnerClientId == clientId);
 
         if (player == null)
         {
@@ -255,8 +388,8 @@ public class LobbyNetworkHandler : NetworkBehaviour
         }
 
         var tool =
-            player.FindOwnedTool(
-                (PlowToolType)toolType);
+           player.FindOwnedTool(
+               (PlowToolType)toolType);
 
         if (tool == null)
         {
@@ -264,10 +397,145 @@ public class LobbyNetworkHandler : NetworkBehaviour
             return;
         }
 
+        snowPlow.EquippedToolType =
+                (PlowToolType)toolType;
+
         snowPlow.EquippedTool = tool;
 
+        PlowMovement[] allPlowsOnMap = FindObjectsByType<PlowMovement>(FindObjectsSortMode.None);
+
+        foreach (PlowMovement movementScript in allPlowsOnMap)
+        {
+            if (movementScript.GetPlowModel() == snowPlow)
+            {
+                movementScript.SetEquippedToolType((PlowToolType)toolType);
+                Debug.Log("Updated visual on the exact player's screen for: " + toolType);
+                break;
+            }
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void BuyToolServerRpc(
+    ulong ownerClientId,
+    int toolType)
+    {
+        Player player =
+            GameManager.Instance.GetPlayer(ownerClientId);
+
+        if (player == null)
+            return;
+
+        IPlowTool tool = null;
+
+        switch ((PlowToolType)toolType)
+        {
+            case PlowToolType.Sweaper:
+                tool = new SweaperTool();
+                break;
+
+            case PlowToolType.IceBreaker:
+                tool = new IceBreaker();
+                break;
+
+            case PlowToolType.Vomit:
+                tool = new VomitTool();
+                break;
+
+            case PlowToolType.Salt:
+                tool = new SaltTool();
+                break;
+
+            case PlowToolType.Dragon:
+                tool = new DragonTool();
+                break;
+        }
+
+        if (tool == null)
+            return;
+
+        player.AddPlowTool(tool);
+
         Debug.Log(
-            "SERVER equipped tool: " +
+            "[SERVER] Tool bought: " +
+            tool.Type());
+        BuyToolClientRpc(ownerClientId, toolType);
+    }
+    [ClientRpc]
+    private void BuyToolClientRpc(
+ulong ownerClientId,
+int toolType)
+    {
+        Player player =
+            GameManager.Instance.GetPlayer(ownerClientId);
+
+        if (player == null)
+            return;
+
+        IPlowTool tool = ((PlowToolType)toolType) switch
+        {
+            PlowToolType.Sweaper => new SweaperTool(),
+
+            PlowToolType.IceBreaker => new IceBreaker(),
+
+            PlowToolType.Vomit => new VomitTool(),
+
+            PlowToolType.Salt => new SaltTool(),
+
+            PlowToolType.Dragon => new DragonTool(),
+
+            _ => null
+        };
+
+        if (tool == null)
+            return;
+
+        player.AddPlowTool(tool);
+
+        Debug.Log(
+            "[CLIENT] Tool synced: " +
             tool.Type());
     }
+    [ServerRpc(RequireOwnership = false)]
+    public void BuyNpcSnowPlowServerRpc(int toolType)
+    {
+        VehicleSpawner vehicleSpawner =
+            FindObjectOfType<VehicleSpawner>();
+
+        if (vehicleSpawner == null)
+        {
+            Debug.LogError(
+                "VehicleSpawner not found on server!"
+            );
+
+            return;
+        }
+
+        IPlowTool tool = ((PlowToolType)toolType) switch
+        {
+            PlowToolType.Sweaper => new SweaperTool(),
+
+            PlowToolType.IceBreaker => new IceBreaker(),
+
+            _ => null
+        };
+
+        if (tool == null)
+        {
+            Debug.LogError(
+                "Invalid NPC tool type!"
+            );
+
+            return;
+        }
+
+        Debug.Log(
+            "[SERVER] Spawning NPC snowplow..."
+        );
+
+        vehicleSpawner.SpawnSnowPlowNPC(tool);
+    }
+
+
+
 }

@@ -1,14 +1,15 @@
 using SnowPlow.Model.Map;
-using System.Collections.Generic;
-using UnityEngine;
 using SnowPlow.Model.Map.Generator;
+using System.Collections.Generic;
+using Unity.Netcode;
+using UnityEngine;
 
 namespace SnowPlow.Controller.NPCMovement
 {
     // ez a class csak a lathato mozgast kezeli
     // nem valaszt celt, nem keres utat, es nem allitja a modell CurrentPosition erteket
     // azt a sensor fogja csinalni
-    public class NPCVehicleMover : MonoBehaviour
+    public class NPCVehicleMover : NetworkBehaviour
     {
         [Header("Map Visual")]
         [SerializeField] private MapVisualizer mapVisualizer;
@@ -32,6 +33,8 @@ namespace SnowPlow.Controller.NPCMovement
 
         private void Update()
         {
+            if (!IsServer)
+                return;
             if (stunTimer > 0f)
             {
                 stunTimer -= Time.deltaTime;

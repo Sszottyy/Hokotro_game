@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using SnowPlow.Model.Map;
+using UnityEngine;
 
 namespace SnowPlow.Model.Tools
 {
@@ -17,7 +18,7 @@ namespace SnowPlow.Model.Tools
             LaneSegment sourceSegment = sourceLane[segmentIndex];
 
             int snowToMove = sourceSegment.SnowLevel;
-
+            Debug.Log($"[SWEEPER] snowToMove = {snowToMove}");
             if (snowToMove <= 0)
             {
                 return;

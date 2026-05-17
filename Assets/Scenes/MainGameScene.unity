@@ -642,7 +642,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8338259273252699864, guid: c1f5a539f6f31a9498d758e22675aa8a, type: 3}
   m_PrefabInstance: {fileID: 8825545291792986907}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8825545291792986908}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dbc4e42e8a2e9d640957008df03c2b95, type: 3}
@@ -3055,6 +3055,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 24109d1be1029314ba2df5d8827c48c0, type: 3}
+--- !u!114 &783163257 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5913831501275424017, guid: 24109d1be1029314ba2df5d8827c48c0, type: 3}
+  m_PrefabInstance: {fileID: 783163256}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebf5a58ba614b1c4ebd1f1f3fff854ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SnowPlow.Controller.Traffic.VehicleOccupancyManager
 --- !u!1 &793987222
 GameObject:
   m_ObjectHideFlags: 0
@@ -4731,6 +4742,7 @@ MonoBehaviour:
   equipDragonButton: {fileID: 1494300536}
   buyDragonFuelButton: {fileID: 479135942}
   buySaltFuelButton: {fileID: 678184311}
+  lobbyNetworkHandler: {fileID: 0}
   konamiCheatEnabled: 1
   konamiMoneyReward: 670000
   konamiInputTimeoutSeconds: 3
@@ -8787,10 +8799,11 @@ MonoBehaviour:
   shopController: {fileID: 1001218456}
   vehicleSpawner: {fileID: 161271741}
   playerName: Player
-  playerRole: 2
+  playerRole: 1
   startingMoney: 0
   timerText: {fileID: 1035969286}
   scoreText: {fileID: 795824757}
+  moneyText: {fileID: 641288283}
 --- !u!4 &2042722199
 Transform:
   m_ObjectHideFlags: 0
@@ -9616,6 +9629,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1733641128491293018, guid: c1f5a539f6f31a9498d758e22675aa8a, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 1958282077
+      objectReference: {fileID: 0}
+    - target: {fileID: 1733641128491293018, guid: c1f5a539f6f31a9498d758e22675aa8a, type: 3}
+      propertyPath: SceneMigrationSynchronization
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1733641128491293018, guid: c1f5a539f6f31a9498d758e22675aa8a, type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 869004914
+      objectReference: {fileID: 0}
     - target: {fileID: 2419409682123632775, guid: c1f5a539f6f31a9498d758e22675aa8a, type: 3}
       propertyPath: m_Name
       value: VehicleSpawner
@@ -9665,63 +9690,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 4312103084254756940, guid: c285ca9ee1ec27b4f998fbf32ef0f7b3, type: 3}
     - target: {fileID: 8338259273252699864, guid: c1f5a539f6f31a9498d758e22675aa8a, type: 3}
-      propertyPath: initialCarCount
-      value: 8
-      objectReference: {fileID: 0}
-    - target: {fileID: 8338259273252699864, guid: c1f5a539f6f31a9498d758e22675aa8a, type: 3}
       propertyPath: occupancyManager
       value: 
-      objectReference: {fileID: 5913831501275424017, guid: 24109d1be1029314ba2df5d8827c48c0, type: 3}
-    - target: {fileID: 8338259273252699864, guid: c1f5a539f6f31a9498d758e22675aa8a, type: 3}
-      propertyPath: playerSnowPlowPrefab
-      value: 
-      objectReference: {fileID: 8883108311115965997, guid: 0db6188f99cb0fb44afd6e90ad1df495, type: 3}
-    - target: {fileID: 8338259273252699864, guid: c1f5a539f6f31a9498d758e22675aa8a, type: 3}
-      propertyPath: spawnPlayerBusOnStart
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8338259273252699864, guid: c1f5a539f6f31a9498d758e22675aa8a, type: 3}
-      propertyPath: spawnPlayerSnowPlowOnStart
-      value: 1
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 783163257}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 2419409682123632775, guid: c1f5a539f6f31a9498d758e22675aa8a, type: 3}
-      insertIndex: 1
-      addedObject: {fileID: 8825545291792986909}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c1f5a539f6f31a9498d758e22675aa8a, type: 3}
---- !u!1 &8825545291792986908 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2419409682123632775, guid: c1f5a539f6f31a9498d758e22675aa8a, type: 3}
-  m_PrefabInstance: {fileID: 8825545291792986907}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &8825545291792986909
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8825545291792986908}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 780550221
-  InScenePlacedSourceGlobalObjectIdHash: 0
-  DeferredDespawnTick: 0
-  Ownership: 1
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 0
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
-  SyncOwnerTransformWhenParented: 1
-  AllowOwnerToParent: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

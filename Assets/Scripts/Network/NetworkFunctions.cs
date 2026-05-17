@@ -9,7 +9,7 @@ public class NetworkFunctions : MonoBehaviour
     [Header("Connection UI")]
     public TMP_InputField ipInput;
     public TMP_InputField portInput;
-
+    private MainMenu mainMenu;
     private UnityTransport transport;
 
     private void Start()
@@ -26,6 +26,10 @@ public class NetworkFunctions : MonoBehaviour
         {
             Debug.LogError("UnityTransport component missing from NetworkManager!");
         }
+        mainMenu = FindObjectOfType<MainMenu>(true);
+
+        NetworkManager.Singleton.OnClientDisconnectCallback +=
+            OnClientDisconnected;
     }
 
     public void StartHost()
@@ -91,8 +95,20 @@ public class NetworkFunctions : MonoBehaviour
         NetworkManager.Singleton.StartClient();
     }
 
-   
 
+    private void OnClientDisconnected(ulong clientId)
+    {
+        // csak a saját kliens disconnectje érdekel
+        if (clientId != NetworkManager.Singleton.LocalClientId)
+            return;
+
+        Debug.Log("[NETWORK] Connection failed or disconnected");
+
+        if (mainMenu != null)
+        {
+            mainMenu.ReturnToMainMenu();
+        }
+    }
     public void Disconnect()
     {
         StartCoroutine(DisconnectRoutine());

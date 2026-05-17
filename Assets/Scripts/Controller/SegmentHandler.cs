@@ -31,10 +31,7 @@ public static class SegmentHandler
 
         if (vehicle is SnowPlowVehicle snowPlow)
         {
-            if (NetworkManager.Singleton.IsServer)
-            {
-                snowPlow.ApplyToolEffect(position);
-            }
+            snowPlow.ApplyToolEffect(position);
         }
 
         if (shouldRegisterIceFormation)

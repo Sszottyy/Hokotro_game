@@ -1,4 +1,5 @@
 using SnowPlow.Model.Map;
+using Unity.Netcode;
 using UnityEngine;
 
 public class VisualSegment : MonoBehaviour
@@ -6,10 +7,9 @@ public class VisualSegment : MonoBehaviour
 
     public LaneSegment LogicSegment { get; private set; }
     public LanePosition LanePosition { get; private set; }
-    public BusStationPassengers StationPassengers { get; private set; }
     public bool IsLeftmost => _isLeftmost;
     public bool IsRightmost => _isRightmost;
-
+    public bool IsStation { get; private set; }
     [Header("Vonalak")]
     public GameObject leftOuterLine;
     public GameObject rightOuterLine;
@@ -145,32 +145,39 @@ public class VisualSegment : MonoBehaviour
         stationOverlay.sprite = GenerateHatchSprite(64, 64, offsetX, offsetY);
         stationOverlay.gameObject.SetActive(true);
     }
-
+    private bool _stationInitialized = false;
     public void MarkAsStation()
     {
+        IsStation = true;
+        //Debug.Log( $"BusStationPassengers count: {GetComponents<BusStationPassengers>().Length}");
+        if (_stationInitialized)
+        {
+            Debug.Log($"Station already initialized on {gameObject.name}");
+            return;
+        }
+
+        _stationInitialized = true;
         Debug.Log($"busStopPrefab null? {busStopPrefab == null}");
         Debug.Log($"MarkAsStation called on {gameObject.name}");
-        // Create hatch/line overlay
+
+        // =====================================================
+        // VISUALS -> EVERY CLIENT
+        // =====================================================
+
         MarkAsStationLine();
+        if (!NetworkManager.Singleton.IsServer)
+            return;
+        if (busStopPrefab == null)
+            return;
 
-        // --- Bus stop sign ---
-        if (busStopPrefab == null) return;
-
-        /*// Outward direction: perpendicular to the segment's forward, toward the outside of the road
-        Vector3 outwardDir = new Vector3(-transform.up.y, transform.up.x, 0).normalized;
-        outwardDir *= _isRightmost ? 1f : -1f;
-
-        // Use the outer line's position as the exact segment edge
-        GameObject outerLine = _isRightmost ? rightOuterLine : leftOuterLine;*/
-        // Use the outer line's position as the exact segment edge
         GameObject outerLine = _isRightmost ? rightOuterLine : leftOuterLine;
 
-        // Calculate outward direction based on actual outer line position
         Vector3 outwardDir;
 
         if (outerLine != null)
         {
-            outwardDir = (outerLine.transform.position - transform.position).normalized;
+            outwardDir =
+                (outerLine.transform.position - transform.position).normalized;
         }
         else
         {
@@ -178,38 +185,82 @@ public class VisualSegment : MonoBehaviour
         }
 
         Vector3 signOrigin;
+
         if (outerLine != null)
         {
             signOrigin = outerLine.transform.position;
         }
         else
         {
-            // Fallback to collider bounds if outer line is missing
-            Collider2D ownCollider = GetComponent<Collider2D>();
-            float extent = ownCollider != null ? Mathf.Abs(Vector3.Dot(ownCollider.bounds.extents, outwardDir)) : 0.5f;
-            signOrigin = transform.position + outwardDir * extent;
+            Collider2D ownCollider =
+                GetComponent<Collider2D>();
+
+            float extent =
+                ownCollider != null
+                    ? Mathf.Abs(Vector3.Dot(
+                        ownCollider.bounds.extents,
+                        outwardDir))
+                    : 0.5f;
+
+            signOrigin =
+                transform.position + outwardDir * extent;
         }
 
-        // Instantiate sign, upright, detached from segment rotation
-        GameObject stopSign = Instantiate(busStopPrefab, transform.parent);
-        Debug.Log($"STOP SIGN SPAWNED at {stopSign.transform.position}");
-        stopSign.name = "BusStopSign";
-        stopSign.transform.rotation = Quaternion.identity;
-        stopSign.transform.position = signOrigin + outwardDir * 1.3f;
+        Vector3 signWorldPosition =
+            signOrigin + outwardDir * 1.3f;
 
-        SpriteRenderer sr = stopSign.GetComponent<SpriteRenderer>();
-        if (sr != null)
+        // =====================================================
+        // CREATE SIGN FOR EVERYONE
+        // =====================================================
+
+        GameObject stopSign = null;
+
+        // =====================================================
+        // SERVER CREATES NETWORKED SIGN
+        // =====================================================
+
+        if (Unity.Netcode.NetworkManager.Singleton.IsServer)
         {
-            sr.sortingLayerName = "Vehicles";
-            sr.sortingOrder = 9;
+            stopSign = Instantiate(busStopPrefab, transform);
+
+            stopSign.name = "BusStopSign";
+
+            stopSign.transform.position = signWorldPosition;
+            stopSign.transform.rotation = Quaternion.identity;
+
+            NetworkObject no =
+                stopSign.GetComponent<NetworkObject>();
+
+            if (no != null)
+            {
+                no.Spawn(true);
+            }
+
+            // =====================================================
+            // ONLY SERVER CREATES PASSENGER SYSTEM
+            // =====================================================
+
+            BusStationPassengers diddy = null;
+            if (!stopSign.TryGetComponent<BusStationPassengers>(out diddy))
+            {
+                diddy=stopSign.AddComponent<BusStationPassengers>();
+            }
+            diddy.passengerPrefabs = passengerPrefabs;
+
+            diddy.Initialize(signWorldPosition);
         }
 
-        // Calculate the exact same position the sign was placed at
-        Vector3 signWorldPosition = signOrigin + outwardDir * 1.3f;
-        // Add passenger spawner to this segment
-        StationPassengers = gameObject.AddComponent<BusStationPassengers>();
-        StationPassengers.passengerPrefabs = passengerPrefabs;
-        StationPassengers.Initialize(signWorldPosition); // ← use sign position, not outerLine
+        if (stopSign != null)
+        {
+            SpriteRenderer sr =
+                stopSign.GetComponentInChildren<SpriteRenderer>();
+
+            if (sr != null)
+            {
+                sr.sortingLayerName = "Vehicles";
+                sr.sortingOrder = 9;
+            }
+        }
     }
 
     private Sprite GenerateHatchSprite(int width, int height, int offsetX, int offsetY)

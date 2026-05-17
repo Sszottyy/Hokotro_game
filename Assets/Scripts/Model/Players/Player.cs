@@ -43,15 +43,24 @@ namespace SnowPlow.Model.Players
 
         public void AddVehicle(Vehicle vehicle)
         {
-
             Debug.Log("AddVehicle called");
-            if (vehicle == null) return;
+
+            if (vehicle == null)
+                return;
+
+            vehicle.Owner = this;
+
+            Debug.Log("[PLAYER] vehicle owner set to: " + Name);
+
             Vehicles.Add(vehicle);
+
             _team?.AddVehicle(vehicle);
+
             if (vehicle is SnowPlowVehicle snowPlow)
             {
                 snowPlow.SnowCleared += HandleClearedSnow;
             }
+
             if (vehicle is Bus bus)
             {
                 bus.TripCompleted += HandleBusTripCompleted;

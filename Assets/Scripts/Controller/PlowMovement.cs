@@ -1,9 +1,13 @@
-using UnityEngine;
 using SnowPlow.Controller.Pathfinding;
 using SnowPlow.Model.Map;
-using SnowPlow.Model.Vehicles;
+using SnowPlow.Model.Players;
 using SnowPlow.Model.Tools;
+using SnowPlow.Model.Vehicles;
+using UnityEngine;
 using SnowPlowVehicle = SnowPlow.Model.Vehicles.SnowPlow;
+using System.Collections;
+using SnowPlow.Model.Players;
+using Unity.Netcode;
 
 [System.Serializable]
 public class ToolVisualSet
@@ -46,11 +50,14 @@ public class ToolVisualSet
     public float rot_Down;
 }
 
-public class PlowMovement : MonoBehaviour
+public class PlowMovement : NetworkBehaviour
 {
+    public NetworkVariable<ulong> OwnerClientId =
+    new NetworkVariable<ulong>();
     public Rigidbody2D myRigidBody2D;
     public float speedMultiplyer = 500f;
-
+    private PlowToolType equippedToolType = PlowToolType.Sweaper;
+    private Vector3 lastPosition;
     [Header("Isometric Sprites - Truck Body")]
     public SpriteRenderer spriteRenderer;
     public Sprite iso_UpRight, iso_UpLeft, iso_DownRight, iso_DownLeft, iso_Right, iso_Left, iso_Up, iso_Down;
@@ -79,10 +86,24 @@ public class PlowMovement : MonoBehaviour
 
     public void SetPlowModel(SnowPlowVehicle model)
     {
+        Debug.Log("[PLOWMOVEMENT] SetPlowModel CALLED");
+
         plowModel = model;
+
+        equippedToolType = plowModel != null
+     ? plowModel.EquippedToolType
+     : PlowToolType.Sweaper;
+
+        Debug.Log("[PLOWMOVEMENT] model null? " + (plowModel == null));
+        Debug.Log("[PLOWMOVEMENT] tool = " + equippedToolType);
+
         UpdateEquippedToolVisual();
     }
-
+    public void SetEquippedToolType(PlowToolType type)
+    {
+        equippedToolType = type;
+        UpdateEquippedToolVisual();
+    }
     public SnowPlowVehicle GetPlowModel()
     {
         return plowModel;
@@ -90,9 +111,9 @@ public class PlowMovement : MonoBehaviour
 
     public void UpdateEquippedToolVisual()
     {
-        if (plowModel == null || plowModel.EquippedTool == null) return;
-
-        PlowToolType currentType = plowModel.EquippedTool.Type();
+        if (toolVisuals == null || toolVisuals.Length == 0) return;
+        
+        PlowToolType currentType = equippedToolType;
         activeToolVisual = null;
 
         // Kikapcsoljuk a felesleges fejeket, bekapcsoljuk az aktívat
@@ -157,8 +178,30 @@ public class PlowMovement : MonoBehaviour
         }
     }
 
+    private void UpdateRemoteVisuals()
+    {
+        Vector3 delta =
+            transform.position - lastPosition;
+
+        if (delta.magnitude > 0.001f)
+        {
+            float angle =
+                Mathf.Atan2(delta.y, delta.x)
+                * Mathf.Rad2Deg;
+
+            UpdateSprite(angle);
+        }
+
+        lastPosition = transform.position;
+    }
     private void FixedUpdate()
     {
+
+        UpdateRemoteVisuals();
+        if (!IsOwner)
+        {
+            return;
+        }
         if (stunTimer > 0f)
         {
             stunTimer -= Time.fixedDeltaTime;
@@ -200,6 +243,24 @@ public class PlowMovement : MonoBehaviour
         {
             float angle = Mathf.Atan2(myRigidBody2D.linearVelocity.y, myRigidBody2D.linearVelocity.x) * Mathf.Rad2Deg;
             UpdateSprite(angle);
+        }
+        //Debug.Log("[PLOWMOVEMENT] plowModel null? " + (plowModel == null));
+        Collider2D[] hits = Physics2D.OverlapCircleAll(
+        transform.position,
+        0.5f
+            );
+
+        foreach (Collider2D hit in hits)
+        {
+            VisualSegment vs = hit.GetComponent<VisualSegment>();
+
+            if (vs != null && vs.LanePosition != null)
+            {
+                if (plowModel != null)
+                {
+                    plowModel.ApplyToolEffect(vs.LanePosition);
+                }
+            }
         }
 
         /* [JÖVŐ ZENÉJE] --- RÉSZECSKE EFFEKTEK BE- ÉS KIKAPCSOLÁSA MOZGÁS ALAPJÁN ---
@@ -330,5 +391,66 @@ public class PlowMovement : MonoBehaviour
         // Dinamikus Collider méretezés az irány alapján
         if (boxCollider != null)
             boxCollider.size = isSideView ? horizontalSize : verticalSize;
+    }
+    private void Start()
+    {
+        lastPosition = transform.position;
+        StartCoroutine(SetupVisualsDelayed());
+    }
+
+    private IEnumerator SetupVisualsDelayed()
+    {
+        while (plowModel == null)
+        {
+            yield return null;
+        }
+
+        Debug.Log(
+    "[CLIENT VISUAL] updating visual: " +
+    plowModel.EquippedToolType
+);
+
+        UpdateEquippedToolVisual();
+    }
+    public void LateInitialize()
+    {
+        Player player =
+            GameManager.Instance.GetPlayer(
+                OwnerClientId.Value);
+
+        if (player == null)
+        {
+            Debug.LogWarning("LateInitialize: player null");
+            return;
+        }
+
+        SnowPlowVehicle plow =
+            player.GetOwnedSnowPlow();
+
+        if (plow == null)
+        {
+            Debug.LogWarning("LateInitialize: plow null");
+            return;
+        }
+
+        SetPlowModel(plow);
+
+        Debug.Log(
+    "[CLIENT] LateInitialize SUCCESS: " +
+    plow.EquippedToolType);
+        UpdateEquippedToolVisual();
+    }
+    public override void OnNetworkSpawn()
+    {
+        StartCoroutine(DelayedInit());
+    }
+
+    private IEnumerator DelayedInit()
+    {
+        // várunk 2 frame-et
+        yield return null;
+        yield return null;
+
+        LateInitialize();
     }
 }

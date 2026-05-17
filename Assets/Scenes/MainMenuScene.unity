@@ -464,7 +464,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.00048828125, y: 14.231934}
+  m_AnchoredPosition: {x: 0.00048828125, y: -61}
   m_SizeDelta: {x: 617.999, y: 97.5301}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &62761615
@@ -708,7 +708,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &69995314
@@ -1471,8 +1471,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: -0.03503418, y: -237.47424}
-  m_SizeDelta: {x: 617.9995, y: 20}
+  m_AnchoredPosition: {x: 8.634003, y: -312.14148}
+  m_SizeDelta: {x: 609.3306, y: 20}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &138804250
 MonoBehaviour:
@@ -1900,7 +1900,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &231055029
@@ -2902,7 +2902,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &306112922
@@ -4860,7 +4860,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &503726626
@@ -6116,7 +6116,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &741872187
@@ -6797,7 +6797,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &802606459
@@ -6987,8 +6987,11 @@ MonoBehaviour:
   - {fileID: 1846416336}
   endGamePanel: {fileID: 369730751}
   mainMenuPanel: {fileID: 366956476}
+  mainMenuRoot: {fileID: 366956476}
+  configPanel: {fileID: 1592103284}
   teamToggle: {fileID: 1994622228}
   vehicleToggle: {fileID: 1270857998}
+  roundaboutInput: {fileID: 1203845627}
   hostJoinPanel: {fileID: 2141957304}
   lobbyPanel: {fileID: 464453378}
   playerRowPrefab: {fileID: 4731092233328871275, guid: 5702d5a0575883d48b7efd1bc6d7418a, type: 3}
@@ -8575,6 +8578,18 @@ MonoBehaviour:
       - m_Target: {fileID: 853793345}
         m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
         m_MethodName: Quitgame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 656049753}
+        m_TargetAssemblyTypeName: NetworkFunctions, Assembly-CSharp
+        m_MethodName: Disconnect
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -10831,8 +10846,29 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5386694152371798421, guid: 04388236cd51fe640bbc6c3cc9f38315, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1224631360}
   m_SourcePrefab: {fileID: 100100000, guid: 04388236cd51fe640bbc6c3cc9f38315, type: 3}
+--- !u!1 &1224631359 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5386694152371798421, guid: 04388236cd51fe640bbc6c3cc9f38315, type: 3}
+  m_PrefabInstance: {fileID: 1224631358}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1224631360
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1224631359}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 817cd81f40653d34381925306b94f3b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamMoneySync
+  ShowTopMostFoldoutHeaderGroup: 1
 --- !u!1 &1250184593
 GameObject:
   m_ObjectHideFlags: 0
@@ -12975,7 +13011,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &1458478863
@@ -13112,7 +13148,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &1463731528
@@ -14883,7 +14919,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &1705058520
@@ -15273,7 +15309,7 @@ MonoBehaviour:
   m_DisconnectTimeoutMS: 30000
   ConnectionData:
     Address: 127.0.0.1
-    Port: 7779
+    Port: 42067
     WebSocketPath: /
     ServerListenAddress: 127.0.0.1
     ClientBindPort: 0
@@ -15946,7 +15982,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1846416335
 RectTransform:
   m_ObjectHideFlags: 0
@@ -16107,7 +16143,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.0014648438, y: 126.66492}
+  m_AnchoredPosition: {x: -0.0014648438, y: -68.601135}
   m_SizeDelta: {x: 1244.77, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1882402650
@@ -16983,7 +17019,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &1991237921
@@ -18093,7 +18129,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &2121651344
@@ -18355,7 +18391,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8395189107022905072, guid: 62bb9853eb5ec4f40a244d9ff0e50847, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 577.9995
+      value: 569.3306
       objectReference: {fileID: 0}
     - target: {fileID: 8395189107022905072, guid: 62bb9853eb5ec4f40a244d9ff0e50847, type: 3}
       propertyPath: m_SizeDelta.y

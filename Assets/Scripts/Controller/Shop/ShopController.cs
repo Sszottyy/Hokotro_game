@@ -89,7 +89,24 @@ namespace SnowPlow.Controller.Shop
 
         private void Start()
         {
+            Player player = GetCurrentPlayerSilently();
+
+            bool isSnowplow =
+                player != null &&
+                player.Role == PlayerRole.SnowPlowDriver;
+
+            isVisibleForSnowPlowPlayer = isSnowplow;
+
+            if (shopRoot != null)
+            {
+                shopRoot.SetActive(isSnowplow);
+            }
+
+            RefreshUI();
+
             StartCoroutine(RefreshAfterSceneSetup());
+
+            Debug.Log("SHOP ROLE CHECK = " + isSnowplow);
         }
 
         private void OnEnable()
@@ -106,20 +123,33 @@ namespace SnowPlow.Controller.Shop
             RefreshUI();
         }
 
-        public void SetVisibleForSnowPlowPlayer(bool visible)
+        /* public void SetVisibleForSnowPlowPlayer(bool visible)
+         {
+             isVisibleForSnowPlowPlayer = visible;
+
+             if (shopRoot != null)
+             {
+                 shopRoot.SetActive(visible);
+             }
+
+             RefreshUI();
+             StartCoroutine(RefreshAfterSceneSetup());
+
+             Debug.Log("Shop visibility for snowplow player: " + visible);
+         }*/
+        /*public void SetVisibleForSnowPlowPlayer(bool visible)
         {
-            isVisibleForSnowPlowPlayer = visible;
+            isVisibleForSnowPlowPlayer = true;
 
             if (shopRoot != null)
             {
-                shopRoot.SetActive(visible);
+                shopRoot.SetActive(true);
             }
 
             RefreshUI();
-            StartCoroutine(RefreshAfterSceneSetup());
 
-            Debug.Log("Shop visibility for snowplow player: " + visible);
-        }
+            Debug.Log("SHOP FORCE ENABLED");
+        }*/
 
         public void BuyNpcSweaperSnowPlow()
         {
@@ -413,7 +443,10 @@ namespace SnowPlow.Controller.Shop
 
             if (!TrySpendMoney(price)) return false;
 
-            vehicleSpawner.SpawnSnowPlowNPC(tool);
+            //vehicleSpawner.SpawnSnowPlowNPC(tool);
+            lobbyNetworkHandler.BuyNpcSnowPlowServerRpc(
+            (int)tool.Type()
+                );
 
             Debug.Log("Bought NPC SnowPlow with tool: " + tool.Type());
 
@@ -435,7 +468,11 @@ namespace SnowPlow.Controller.Shop
 
             if (!TrySpendMoney(price)) return;
 
-            player.AddPlowTool(tool);
+            // player.AddPlowTool(tool);
+            lobbyNetworkHandler.BuyToolServerRpc(
+     NetworkManager.Singleton.LocalClientId,
+     (int)type
+ );
 
             Debug.Log("Bought player tool: " + type);
         }
@@ -478,24 +515,26 @@ namespace SnowPlow.Controller.Shop
 
             Debug.Log("Equipped tool: " + type);
 
-snowPlow.EquippedTool = ownedTool;
+            snowPlow.EquippedTool = ownedTool;
+           
+            snowPlow.EquippedToolType = type;
 
-PlowMovement[] allPlowsOnMap = FindObjectsByType<PlowMovement>(FindObjectsSortMode.None);
+            //PlowMovement[] allPlowsOnMap = FindObjectsByType<PlowMovement>(FindObjectsSortMode.None);
 
-foreach (PlowMovement movementScript in allPlowsOnMap)
-{
-    if (movementScript.GetPlowModel() == snowPlow)
-    {
-        movementScript.UpdateEquippedToolVisual();
-        Debug.Log("Updated visual on the exact player's screen for: " + type);
-        break;
-    }
-}
+            //foreach (PlowMovement movementScript in allPlowsOnMap)
+            //{
+            //    if (movementScript.GetPlowModel() == snowPlow)
+            //    {
+            //        movementScript.SetEquippedToolType(type);
+            //        Debug.Log("Updated visual on the exact player's screen for: " + type);
+            //        break;
+            //    }
+            //}
 
-lobbyNetworkHandler.EquipToolServerRpc(
-    NetworkManager.Singleton.LocalClientId,
-    (int)type
-);
+            lobbyNetworkHandler.EquipToolServerRpc(
+                NetworkManager.Singleton.LocalClientId,
+                (int)type
+            );
 
             Debug.Log("SHOP equipped requested: " + type);
             Debug.Log("SHOP snowPlow instance: " + snowPlow.GetHashCode());
@@ -515,7 +554,21 @@ lobbyNetworkHandler.EquipToolServerRpc(
             bool hasPlayer = player != null;
             bool hasTeam = player?.Team != null;
             bool ownsTool = hasPlayer && player.HasTool(type);
-
+            /*Debug.Log(
+    "[SHOP DEBUG] " +
+    "type=" + type +
+    " visible=" + isVisibleForSnowPlowPlayer +
+    " hasTeam=" + hasTeam +
+    " ownsTool=" + ownsTool +
+    " money=" + player?.Team?.Money +
+    " price=" + price +
+    " canAfford=" + player?.Team?.CanAfford(price)
+);
+            Debug.Log(
+    "[SHOP] " +
+    type +
+    " ownsTool=" + ownsTool
+);*/
             bool isEquipped =
                 ownsTool &&
                 equippedTool != null &&
@@ -630,6 +683,10 @@ lobbyNetworkHandler.EquipToolServerRpc(
 
         private bool TrySpendMoney(int amount)
         {
+            Debug.Log(
+    "[SHOP] money before spend = " +
+    GetCurrentTeam()?.Money
+);
             Team team = GetCurrentTeam();
 
             if (team == null)
@@ -637,11 +694,15 @@ lobbyNetworkHandler.EquipToolServerRpc(
                 Debug.LogWarning("Cannot buy item: current player has no team.");
                 return false;
             }
-
+            Debug.Log(
+    "[SHOP] trying to spend = " + amount
+);
             if (!team.TrySpendMoney(amount))
             {
                 Debug.LogWarning("Cannot buy item: not enough money.");
+                Debug.Log("[SHOP] NOT ENOUGH MONEY");
                 return false;
+
             }
 
             return true;
@@ -651,7 +712,7 @@ lobbyNetworkHandler.EquipToolServerRpc(
         {
             if (!isVisibleForSnowPlowPlayer)
             {
-                Debug.LogWarning("Cannot use shop: player is not a snowplow player.");
+                Debug.LogWarning("SHOP BLOCKED: not snowplow player");
                 return false;
             }
 
@@ -666,19 +727,32 @@ lobbyNetworkHandler.EquipToolServerRpc(
                 return null;
             }
 
-            if (global::GameManager.Instance.CurrentPlayer == null)
+            if (global::GameManager.Instance.LocalPlayer == null)
             {
-                Debug.LogWarning("Cannot access shop: CurrentPlayer is missing.");
+                Debug.LogWarning("Cannot access shop: LocalPlayer is missing.");
                 return null;
             }
 
-            return global::GameManager.Instance.CurrentPlayer;
+            return global::GameManager.Instance.LocalPlayer;
         }
 
         private Player GetCurrentPlayerSilently()
         {
-            if (global::GameManager.Instance == null) return null;
-            return global::GameManager.Instance.CurrentPlayer;
+            // if (global::GameManager.Instance == null) return null;
+            //return global::GameManager.Instance.CurrentPlayer;
+            if (global::GameManager.Instance == null)
+            {
+                Debug.LogWarning("Cannot access shop: GameManager is missing.");
+                return null;
+            }
+
+            if (global::GameManager.Instance.LocalPlayer == null)
+            {
+                Debug.LogWarning("Cannot access shop: LocalPlayer is missing.");
+                return null;
+            }
+
+            return global::GameManager.Instance.LocalPlayer;
         }
 
         private Team GetCurrentTeam()

@@ -79,6 +79,7 @@ public int PassedVehicleCount { get; private set; }
 
         public void RegisterVehiclePassForIceFormation()
         {
+
             if (HasIce) return;
 
             if (SaltPower > 0) return;

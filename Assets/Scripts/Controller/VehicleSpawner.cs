@@ -6,7 +6,9 @@ using SnowPlow.Model.Players;
 using SnowPlow.Model.Tools;
 using SnowPlow.Model.Vehicles;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
 using SnowPlowVehicle = SnowPlow.Model.Vehicles.SnowPlow;
@@ -87,6 +89,10 @@ namespace SnowPlow.Controller.Spawning
 
         private void OnClientConnected(ulong clientId)
         {
+            // Host already spawned in WaitForInitialization
+            if (clientId == NetworkManager.ServerClientId)
+                return;
+
             StartCoroutine(SpawnClientWhenReady(clientId));
         }
         private System.Collections.IEnumerator SpawnClientWhenReady(ulong clientId)
@@ -115,7 +121,13 @@ namespace SnowPlow.Controller.Spawning
 
             if (spawnPlayerBusOnStart)
             {
-                SpawnBus();
+                bool hasHumanBusDriver =
+                GameManager.Instance.Players.Any(p => p.Role == PlayerRole.BusDriver);
+
+                if (!hasHumanBusDriver)
+                {
+                    SpawnBus();
+                }
             }
         }
 
@@ -156,6 +168,14 @@ namespace SnowPlow.Controller.Spawning
 
         public SnowPlowVehicle SpawnSnowPlowNPC(IPlowTool tool)
         {
+            if (!IsServer)
+            {
+                Debug.LogError(
+                    "SpawnSnowPlowNPC CALLED ON CLIENT!"
+                );
+
+                return null;
+            }
             EnsureInitialized();
 
             if (tool == null)
@@ -217,13 +237,17 @@ namespace SnowPlow.Controller.Spawning
 
             SnowPlowVehicle playerSnowPlow =
                 player.GetOwnedSnowPlow();
+            
 
             if (playerSnowPlow == null)
             {
                 Debug.LogError($"Player {player.Name} has no SnowPlow!");
                 return null;
             }
-
+            playerSnowPlow.Owner = player;
+            Debug.Log(
+    $"[SPAWNER] Assigned owner {player.Name} to plow. Team: {player.Team?.Name}"
+);
             LanePosition startPosition = GetRandomFreePosition();
 
             playerSnowPlow.CurrentPosition = startPosition;
@@ -267,12 +291,28 @@ namespace SnowPlow.Controller.Spawning
             );
 
             PlowMovement plowMovement = instance.GetComponent<PlowMovement>();
+
             if (plowMovement != null)
             {
+                plowMovement.OwnerClientId.Value =
+                    player.OwnerClientId;
+
                 plowMovement.SetPlowModel(playerSnowPlow);
             }
 
+            if (clientId == NetworkManager.Singleton.LocalClientId)
+            {
+                CameraFollow cameraFollow =
+                    Camera.main.GetComponent<CameraFollow>();
+
+                if (cameraFollow != null)
+                {
+                    cameraFollow.SetTarget(instance.transform);
+                }
+            }
+
             return playerSnowPlow;
+            
         }
 
 
@@ -304,6 +344,11 @@ namespace SnowPlow.Controller.Spawning
 
             MarkStationWithNeighbors(stationA);
             MarkStationWithNeighbors(stationB);
+            SpawnStationsClientRpc(
+    mapVisualizer.SegmentDirectory[stationA].gameObject.name,
+    mapVisualizer.SegmentDirectory[stationB].gameObject.name
+);
+
 
             GameObject instance = InstantiateVehiclePrefab(busPrefab, startPosition, "Bus");
 
@@ -752,6 +797,10 @@ namespace SnowPlow.Controller.Spawning
 
             MarkStationWithNeighbors(stationA);
             MarkStationWithNeighbors(stationB);
+            SpawnStationsClientRpc(
+    mapVisualizer.SegmentDirectory[stationA].gameObject.name,
+    mapVisualizer.SegmentDirectory[stationB].gameObject.name
+);
 
             GameObject instance = InstantiateVehiclePrefab(
                 busPrefab,
@@ -791,17 +840,23 @@ namespace SnowPlow.Controller.Spawning
                 startPosition
             );
 
-            CameraFollow cameraFollow =Camera.main.GetComponent<CameraFollow>();
-
-            if (cameraFollow != null)
+            if (clientId == NetworkManager.Singleton.LocalClientId)
             {
-                cameraFollow.SetTarget(instance.transform);
+                CameraFollow cameraFollow =
+                    Camera.main.GetComponent<CameraFollow>();
+
+                if (cameraFollow != null)
+                {
+                    cameraFollow.SetTarget(instance.transform);
+                }
             }
 
             BusMovement busMovement = instance.GetComponent<BusMovement>();
 
             if (busMovement != null)
             {
+                
+
                 busMovement.SetStations(
                     mapVisualizer.SegmentDirectory[stationA],
                     mapVisualizer.SegmentDirectory[stationB]
@@ -821,6 +876,96 @@ namespace SnowPlow.Controller.Spawning
             }
 
             return playerBus;
+        }
+
+        [ClientRpc]
+        private void SpawnStationsClientRpc(
+    string stationAName,
+    string stationBName
+        )
+        {
+            if (IsServer)
+                return;
+
+            StartCoroutine(
+                SpawnStationsWhenReady(
+                    stationAName,
+                    stationBName
+                )
+            );
+        }
+
+        private IEnumerator SpawnStationsWhenReady(
+    string stationAName,
+    string stationBName
+)
+        {
+            Debug.Log("CLIENT waiting for station visuals...");
+            VisualSegment[] allSegments = null;
+
+            while (true)
+            {
+                allSegments = FindObjectsOfType<VisualSegment>();
+
+                bool ready =
+                    allSegments.Length > 0 &&
+                    allSegments.All(v =>
+                        v != null &&
+                        v.LanePosition != null);
+
+                if (ready)
+                    break;
+
+                yield return null;
+            }
+
+            foreach (VisualSegment vs in allSegments)
+            {
+                if (vs.gameObject.name == stationAName ||
+                    vs.gameObject.name == stationBName)
+                {
+                    LaneSegment seg =
+                        vs.LanePosition.Lane[
+                            vs.LanePosition.SegmentIndex];
+
+                    MarkStationWithNeighbors(seg);
+                }
+            }
+            Debug.Log("CLIENT station visuals spawned");
+
+            // várjuk meg amíg a networkelt bus prefab ténylegesen megjelenik
+            while (FindObjectsOfType<BusMovement>().Length == 0)
+            {
+                yield return null;
+            }
+
+            BusMovement[] buses = FindObjectsOfType<BusMovement>();
+
+            foreach (BusMovement bus in buses)
+            {
+                StationArrowIndicator arrows =
+                    bus.GetComponent<StationArrowIndicator>();
+
+                if (arrows != null)
+                {
+                    arrows.SetStations(
+                        mapVisualizer.SegmentDirectory[
+                            GetSegmentByName(stationAName)],
+                        mapVisualizer.SegmentDirectory[
+                            GetSegmentByName(stationBName)]
+                    );
+                }
+            }
+        }
+        private LaneSegment GetSegmentByName(string objName)
+        {
+            foreach (var kvp in mapVisualizer.SegmentDirectory)
+            {
+                if (kvp.Value.gameObject.name == objName)
+                    return kvp.Key;
+            }
+
+            return null;
         }
     }
 }

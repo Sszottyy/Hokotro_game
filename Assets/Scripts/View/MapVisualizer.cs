@@ -35,6 +35,10 @@ public class MapVisualizer : MonoBehaviour
     public void Visualize(MapData data)
     {
         SegmentDirectory.Clear();
+
+        segmentLookup.Clear();
+        visualLookup.Clear();
+
         _visualNodes.Clear();
 
         GenerateGridPositions(data);
@@ -224,5 +228,13 @@ public class MapVisualizer : MonoBehaviour
         int segmentIndex)
     {
         return visualLookup[(roadId, laneId, segmentIndex)];
+    }
+    public bool HasSegment(
+    int roadId,
+    int laneId,
+    int segmentIndex)
+    {
+        return segmentLookup.ContainsKey(
+            (roadId, laneId, segmentIndex));
     }
 }

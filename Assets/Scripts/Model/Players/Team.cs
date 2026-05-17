@@ -1,7 +1,9 @@
-﻿using System;
+﻿using SnowPlow.Model.Vehicles;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using SnowPlow.Model.Vehicles;
+using Unity.Netcode;
+using UnityEngine;
 
 namespace SnowPlow.Model.Players
 {
@@ -66,6 +68,17 @@ namespace SnowPlow.Model.Players
             if (amount <= 0) return;
 
             Money += amount;
+            Debug.Log($"[TEAM MONEY] {Name} now has {Money}");
+            if (NetworkManager.Singleton != null &&
+    NetworkManager.Singleton.IsServer &&
+    TeamMoneySync.Instance != null)
+            {
+                TeamMoneySync.Instance.SyncMoney();
+            }
+        }
+        public void SetMoney(int amount)
+        {
+            Money = amount;
         }
     }
 }

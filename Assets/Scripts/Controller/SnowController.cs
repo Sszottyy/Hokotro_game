@@ -16,8 +16,12 @@ namespace Assets.Scripts.Controller
 
         public void Init(List<Lane> lanes)
         {
-            
             snowSystem = new SnowSystem(lanes, snowSync);
+
+            if (NetworkManager.Singleton.IsServer)
+            {
+                //snowSystem.GenerateInitialSnow();
+            }
         }
 
 
