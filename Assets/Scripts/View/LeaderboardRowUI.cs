@@ -14,11 +14,35 @@ public class LeaderboardRowUI : MonoBehaviour
     {
         placeText.text = place + ".";
         nameText.text = player.Name;
-        teamText.text = player.Team != null ? player.Team.Name : "-";
-        vehicleText.text = player.Vehicles.Count > 0
-            ? player.Vehicles[0].ToString()
-            : "-";
 
+        teamText.text = player.Team != null ? player.Team.Name : "-";
+
+
+        if (player.Vehicles.Count > 0)
+        {
+            string vehicleName = player.Vehicles[0].GetType().Name;
+
+            string localizationKey =
+                vehicleName.Contains("Bus")
+                ? "lobby_bus"
+                : "lobby_snowplow";
+
+            vehicleText.text =
+                UnityEngine.Localization.Settings.LocalizationSettings
+                .StringDatabase
+                .GetLocalizedString(
+                    "UI_Table",
+                    localizationKey);
+        }
+        else
+        {
+            vehicleText.text =
+                UnityEngine.Localization.Settings.LocalizationSettings
+                .StringDatabase
+                .GetLocalizedString(
+                    "UI_Table",
+                    "lobby_novehicle");
+        }
         // Score a csapatból jön, ha van csapata
         scoreText.text = player.Team != null
             ? player.Team.Score.ToString()

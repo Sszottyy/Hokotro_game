@@ -1,12 +1,13 @@
+using System.Collections;
 using SnowPlow.Controller.Spawning;
 using SnowPlow.Model.Players;
 using SnowPlow.Model.Shop;
 using SnowPlow.Model.Tools;
-using SnowPlowVehicle = SnowPlow.Model.Vehicles.SnowPlow;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Localization.Settings;
 using UnityEngine.UI;
-using System.Collections;
+using SnowPlowVehicle = SnowPlow.Model.Vehicles.SnowPlow;
 
 namespace SnowPlow.Controller.Shop
 {
@@ -519,11 +520,11 @@ namespace SnowPlow.Controller.Shop
             {
                 if (isEquipped)
                 {
-                    statusText.text = "Equipped";
+                    statusText.text = Localize("game_equipped");
                 }
                 else if (ownsTool)
                 {
-                    statusText.text = "Owned";
+                    statusText.text = Localize("game_owned");
                 }
                 else
                 {
@@ -688,14 +689,14 @@ namespace SnowPlow.Controller.Shop
             if (npcSweaperPriceText != null)
             {
                 npcSweaperPriceText.text = hasBoughtNpcSweaperSnowPlow
-                    ? "SOLD"
+                    ? Localize("game_sold")
                     : $"{ShopCatalog.NpcSweaperSnowPlowPrice}$";
             }
 
             if (npcIceBreakerPriceText != null)
             {
                 npcIceBreakerPriceText.text = hasBoughtNpcIceBreakerSnowPlow
-                    ? "SOLD"
+                    ? Localize("game_sold")
                     : $"{ShopCatalog.NpcIceBreakerSnowPlowPrice}$";
             }
 
@@ -776,6 +777,13 @@ namespace SnowPlow.Controller.Shop
             {
                 npcIceBreakerDefaultSprite = npcIceBreakerImage.sprite;
             }
+        }
+
+        private string Localize(string key)
+        {
+            return LocalizationSettings.StringDatabase.GetLocalizedString(
+                "UI_Table",
+                key);
         }
 
         #region Konami Money Cheat

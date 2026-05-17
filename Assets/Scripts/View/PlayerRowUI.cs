@@ -35,10 +35,32 @@ public class PlayerRowUI : MonoBehaviour
         if (nameText == null || vehiclesText == null) return;
 
         nameText.text = player.Name;
-        vehiclesText.text = player.Vehicles.Count > 0
-            //? player.Vehicles[0].GetType().ToString()
-            ? player.Vehicles[0].GetType().Name
-            : "Nincs jármű";
+        string localizationKey;
+
+        if (player.Vehicles.Count <= 0)
+        {
+            localizationKey = "lobby_novehicle";
+        }
+        else
+        {
+            string vehicleType = player.Vehicles[0].GetType().Name;
+
+            if (vehicleType.Contains("Bus"))
+            {
+                localizationKey = "lobby_bus";
+            }
+            else
+            {
+                localizationKey = "lobby_snowplow";
+            }
+        }
+
+        vehiclesText.text =
+            UnityEngine.Localization.Settings.LocalizationSettings
+            .StringDatabase
+            .GetLocalizedString(
+                "UI_Table",
+                localizationKey);
 
         nameText.enabled = true;
         vehiclesText.enabled = true;
@@ -56,19 +78,26 @@ public class PlayerRowUI : MonoBehaviour
 
         nameText.text = playerName;
 
+        string localizationKey;
         // Jármű típusának meghatározása a role alapján
         if (role == PlayerRole.SnowPlowDriver)
         {
-            vehiclesText.text = "SnowPlow";
+            localizationKey = "lobby_snowplow";
         }
         else if (role == PlayerRole.BusDriver)
         {
-            vehiclesText.text = "Bus";
+            localizationKey = "lobby_bus";
         }
         else
         {
-            vehiclesText.text = "Nincs jármű";
+            localizationKey = "lobby_novehicle";
         }
+        vehiclesText.text =
+    UnityEngine.Localization.Settings.LocalizationSettings
+    .StringDatabase
+    .GetLocalizedString(
+        "UI_Table",
+        localizationKey);
 
         nameText.enabled = true;
         vehiclesText.enabled = true;
