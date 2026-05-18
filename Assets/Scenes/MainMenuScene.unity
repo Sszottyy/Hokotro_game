@@ -7684,6 +7684,7 @@ MonoBehaviour:
   hostButton: {fileID: 236483468}
   joinButton: {fileID: 444359986}
   singlePlayerButton: {fileID: 1846416336}
+  roundaboutConfirmButton: {fileID: 872003097}
   portInputField: {fileID: 1415909974}
   mainMenuRoot: {fileID: 366956476}
   configPanel: {fileID: 1592103284}
@@ -7694,7 +7695,7 @@ MonoBehaviour:
   lobbyPanel: {fileID: 464453378}
   playerRowPrefab: {fileID: 4731092233328871275, guid: 5702d5a0575883d48b7efd1bc6d7418a, type: 3}
   playerListA: {fileID: 138804249}
-  playerListB: {fileID: 0}
+  playerListB: {fileID: 805615985}
 --- !u!224 &853793346
 RectTransform:
   m_ObjectHideFlags: 0
@@ -11585,20 +11586,32 @@ MonoBehaviour:
   m_VerticalScrollbarEventHandler: {fileID: 0}
   m_LayoutGroup: {fileID: 0}
   m_ScrollSensitivity: 1
-  m_ContentType: 0
+  m_ContentType: 2
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 0
+  m_KeyboardType: 2
   m_LineType: 0
   m_HideMobileInput: 0
   m_HideSoftKeyboard: 0
-  m_CharacterValidation: 0
+  m_CharacterValidation: 2
   m_RegexValue: 
   m_GlobalPointSize: 14
   m_CharacterLimit: 0
   m_OnEndEdit:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 853793345}
+        m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
+        m_MethodName: OnRoundaboutInputEndEdit
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_OnSubmit:
     m_PersistentCalls:
       m_Calls: []
@@ -11616,7 +11629,19 @@ MonoBehaviour:
       m_Calls: []
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 853793345}
+        m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
+        m_MethodName: CheckRoundaboutInput
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_OnTouchScreenKeyboardStatusChanged:
     m_PersistentCalls:
       m_Calls: []
