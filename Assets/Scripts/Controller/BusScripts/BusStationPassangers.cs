@@ -251,7 +251,7 @@ public class BusStationPassengers : NetworkBehaviour
     //        $"[SERVER BUS] Picked up {boarded}, total: {passengersOnBoard.Value}"
     //    );
     //}
-    [ServerRpc]
+    [ServerRpc (RequireOwnership = false)]
     public void RequestBoardPassengersServerRpc(
     ulong busObjectId,
     ServerRpcParams rpcParams = default)
@@ -334,7 +334,7 @@ public class BusStationPassengers : NetworkBehaviour
 
     //    passengersOnBoard.Value = 0;
     //}
-    [ServerRpc]
+    [ServerRpc (RequireOwnership =false)]
     public void RequestDropOffPassengersServerRpc(
     ulong busObjectId,
     ServerRpcParams rpcParams = default)

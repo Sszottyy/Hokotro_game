@@ -329,7 +329,7 @@ public class BusMovement : NetworkBehaviour
         UpdateRemoteVisuals();
         NetworkObject netObj = GetComponent<NetworkObject>();
 
-        if (netObj != null && !netObj.IsOwner)
+        if (netObj == null || !netObj.IsOwner)
             return;
         if (stunTimer > 0f)
         {
@@ -381,7 +381,7 @@ public class BusMovement : NetworkBehaviour
     {
         NetworkObject netObj = GetComponent<NetworkObject>();
 
-        if (netObj != null && !netObj.IsOwner)
+        if (netObj == null || !netObj.IsOwner)
             return;
 
         //Debug.Log($"UPDATE RUNNING | owner={IsOwner}");
@@ -516,7 +516,7 @@ public class BusMovement : NetworkBehaviour
     void Start()
     {
         lastPosition = transform.position;
-
+        
         Debug.Log(
             $"BUS START | obj={gameObject.name} | enabled={enabled}"
         );
