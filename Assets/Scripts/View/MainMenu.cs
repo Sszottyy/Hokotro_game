@@ -10,9 +10,13 @@ using UnityEngine.UI;
 public class MainMenu : MonoBehaviour
 {
     public TMP_InputField InputField;
-    public Button[] buttons;
     public GameObject endGamePanel;
     public GameObject mainMenuPanel;
+
+    public Button hostButton;
+    public Button joinButton;
+    public Button singlePlayerButton;
+    public TMP_InputField portInputField;
 
     [Header("Main Panels")]
     public GameObject mainMenuRoot;
@@ -351,14 +355,24 @@ public class MainMenu : MonoBehaviour
 
     public void CheckInput(string text)
     {
-        bool isValid = isValidName(text);
-        Debug.Log("Buttos are set to: " + isValid);
+        bool nameValid = isValidName(InputField.text);
+        bool portValid = isValidName(portInputField != null ? portInputField.text : "");
 
-        foreach (Button btn in buttons)
-        {
-            btn.interactable = isValid;
-        }
+        if (hostButton != null)
+            hostButton.interactable = nameValid;
 
+        if (joinButton != null)
+            joinButton.interactable = nameValid && portValid;
+
+        if (singlePlayerButton != null)
+            singlePlayerButton.interactable = nameValid;
+
+        Debug.Log($"Name valid: {nameValid}, Port valid: {portValid}");
+    }
+
+    public void CheckPortInput(string text)
+    {
+        CheckInput(InputField.text); // reuse the same unified check
     }
     void Start()
     {
