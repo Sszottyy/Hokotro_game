@@ -12,9 +12,11 @@ namespace SnowPlow.Model.Tools
         {
             if (pos.Lane[pos.SegmentIndex] != null)
             {
-                pos.Lane[pos.SegmentIndex]?.SetIce(false);
-                pos.Lane[pos.SegmentIndex]?.AddSnow(); // the broken ice will create a layer of snow on the lane}
-
+                if(pos.Lane[pos.SegmentIndex].HasIce)
+                {
+                    pos.Lane[pos.SegmentIndex]?.SetIce(false);
+                    pos.Lane[pos.SegmentIndex]?.AddSnow(); // the broken ice will create a layer of snow on the lane
+                }
             }
         }
         
