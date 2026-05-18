@@ -1,19 +1,26 @@
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
-using UnityEngine;
+using Unity.Services.Relay;
+using Unity.Services.Relay.Models;
+//using Unity.Networking.Transport.Relay;
+using Unity.Services.Relay.Models;
+using Unity.Netcode.Transports.UTP;
 using TMPro;
+using UnityEngine;
 using System.Collections;
+using Unity.Services.Core;
+using Unity.Services.Authentication;
 
 public class NetworkFunctions : MonoBehaviour
 {
-    [Header("Connection UI")]
-    public TMP_InputField ipInput;
-    public TMP_InputField portInput;
+    [Header("Relay UI")]
+    public TMP_InputField joinCodeInput;
+    public TMP_Text joinCodeText;
+
     private MainMenu mainMenu;
     private UnityTransport transport;
-    [Header("Host UI")]
-    public TMP_InputField hostPortInput;
-    private void Start()
+
+    private async void Start()
     {
         if (NetworkManager.Singleton == null)
         {
@@ -21,98 +28,131 @@ public class NetworkFunctions : MonoBehaviour
             return;
         }
 
-        transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
+        transport =
+            NetworkManager.Singleton
+            .GetComponent<UnityTransport>();
 
         if (transport == null)
         {
-            Debug.LogError("UnityTransport component missing from NetworkManager!");
+            Debug.LogError(
+                "UnityTransport missing!");
+            return;
         }
-        mainMenu = FindObjectOfType<MainMenu>(true);
 
-        NetworkManager.Singleton.OnClientDisconnectCallback +=
+        mainMenu =
+            FindAnyObjectByType<MainMenu>();
+
+        NetworkManager.Singleton
+            .OnClientDisconnectCallback +=
             OnClientDisconnected;
+
+       
+
+        Debug.Log("[RELAY] READY");
     }
 
-    public void StartHost()
+    public async void StartHost()
     {
-        if (transport == null)
+        try
         {
-            Debug.LogError("Transport is NULL!");
-            return;
-        }
+            Allocation allocation =
+                await RelayService.Instance
+                .CreateAllocationAsync(4);
 
-        ushort port = transport.ConnectionData.Port;
+            string joinCode =
+                await RelayService.Instance
+                .GetJoinCodeAsync(
+                    allocation.AllocationId);
 
-        string portText = hostPortInput.text;
+            Debug.Log(
+                $"[RELAY] JOIN CODE: {joinCode}");
 
-        if (!string.IsNullOrEmpty(portText))
-        {
-            if (!ushort.TryParse(portText, out port))
+            if (joinCodeText != null)
             {
-                Debug.LogError("Invalid port!");
+                joinCodeText.text =
+                    $"CODE: {joinCode}";
+            }
+
+            transport.SetHostRelayData(
+    allocation.RelayServer.IpV4,
+    (ushort)allocation.RelayServer.Port,
+    allocation.AllocationIdBytes,
+    allocation.Key,
+    allocation.ConnectionData);
+
+           
+
+            NetworkManager.Singleton.StartHost();
+
+            Debug.Log("[RELAY] HOST STARTED");
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError(
+                $"[RELAY HOST ERROR] {e}");
+        }
+    }
+
+    public async void StartClient()
+    {
+        try
+        {
+            string joinCode =
+                joinCodeInput.text;
+
+            if (string.IsNullOrEmpty(joinCode))
+            {
+                Debug.LogError(
+                    "Join code empty!");
                 return;
             }
+
+            JoinAllocation allocation =
+                await RelayService.Instance
+                .JoinAllocationAsync(joinCode);
+
+            transport.SetClientRelayData(
+     allocation.RelayServer.IpV4,
+     (ushort)allocation.RelayServer.Port,
+     allocation.AllocationIdBytes,
+     allocation.Key,
+     allocation.ConnectionData,
+     allocation.HostConnectionData);
+
+           
+
+            NetworkManager.Singleton.StartClient();
+
+            Debug.Log(
+                "[RELAY] CLIENT CONNECTED");
         }
-
-        transport.SetConnectionData("0.0.0.0", port);
-
-        Debug.Log($"HOST STARTING ON PORT: {port}");
-
-        NetworkManager.Singleton.StartHost();
+        catch (System.Exception e)
+        {
+            Debug.LogError(
+                $"[RELAY CLIENT ERROR] {e}");
+        }
     }
 
-    public void StartClient()
+    private void OnClientDisconnected(
+        ulong clientId)
     {
-        if (transport == null)
-        {
-            Debug.LogError("Transport is NULL!");
-            return;
-        }
-
-        string ip = ipInput.text;
-
-        if (string.IsNullOrEmpty(ip))
-        {
-            ip = "127.0.0.1";
-        }
-
-        ushort port = transport.ConnectionData.Port;
-
-        string portText = portInput.text;
-
-        if (!string.IsNullOrEmpty(portText))
-        {
-            if (!ushort.TryParse(portText, out port))
-            {
-                Debug.LogError("Invalid port!");
-                return;
-            }
-        }
-
-        transport.SetConnectionData(ip, port);
-
-        Debug.Log($"CLIENT CONNECTING TO: {ip}:{port}");
-
-        NetworkManager.Singleton.StartClient();
-    }
-
-
-    private void OnClientDisconnected(ulong clientId)
-    {
-        // csak a saját kliens disconnectje érdekel
-        if (clientId != NetworkManager.Singleton.LocalClientId)
+        if (clientId !=
+            NetworkManager.Singleton.LocalClientId)
             return;
 
-        Debug.Log("[NETWORK] Connection failed or disconnected");
+        Debug.Log(
+            "[NETWORK] Disconnected");
 
         if (mainMenu != null)
         {
             mainMenu.ReturnToMainMenu();
         }
     }
+
     public void Disconnect()
     {
-        StartCoroutine(DisconnectRoutine());
+        StartCoroutine(
+            DisconnectRoutine());
     }
 
     private IEnumerator DisconnectRoutine()
@@ -122,23 +162,23 @@ public class NetworkFunctions : MonoBehaviour
             yield break;
         }
 
-        // Szólunk a szervernek, hogy törölje a játékost
         if (LobbyNetworkHandler.Instance != null &&
-            (NetworkManager.Singleton.IsClient || NetworkManager.Singleton.IsHost))
+            (NetworkManager.Singleton.IsClient ||
+             NetworkManager.Singleton.IsHost))
         {
-            LobbyNetworkHandler.Instance.RemovePlayerServerRpc(
-                NetworkManager.Singleton.LocalClientId
-            );
+            LobbyNetworkHandler.Instance
+                .RemovePlayerServerRpc(
+                    NetworkManager.Singleton
+                    .LocalClientId);
         }
 
-        // Kis várakozás, hogy az RPC átérjen
         yield return new WaitForSeconds(0.2f);
 
-        Debug.Log("Shutting down network session...");
+        Debug.Log(
+            "Shutting down network session...");
 
         NetworkManager.Singleton.Shutdown();
 
-        // Hostnál lobby reset
         if (GameManager.Instance != null)
         {
             GameManager.Instance.Players.Clear();
