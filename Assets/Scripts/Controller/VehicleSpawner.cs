@@ -257,10 +257,18 @@ namespace SnowPlow.Controller.Spawning
 
             behaviour.Initialize(snowPlow, mapData);
 
-            NPCPlowVisuals npcVisuals = instance.GetComponent<NPCPlowVisuals>();
+            //NPCPlowVisuals npcVisuals = instance.GetComponent<NPCPlowVisuals>();
+            //if (npcVisuals != null)
+            //{
+            //    npcVisuals.SetPlowModel(snowPlow);
+            //}
+            NPCPlowVisuals npcVisuals =
+    instance.GetComponent<NPCPlowVisuals>();
+
             if (npcVisuals != null)
             {
-                npcVisuals.SetPlowModel(snowPlow);
+                npcVisuals.EquippedTool.Value =
+                    (int)tool.Type();
             }
 
             return snowPlow;

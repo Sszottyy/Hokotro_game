@@ -1,9 +1,10 @@
-using UnityEngine;
-using SnowPlow.Model.Vehicles;
 using SnowPlow.Model.Tools;
+using SnowPlow.Model.Vehicles;
+using Unity.Netcode;
+using UnityEngine;
 using SnowPlowVehicle = SnowPlow.Model.Vehicles.SnowPlow;
 
-public class NPCPlowVisuals : MonoBehaviour
+public class NPCPlowVisuals : NetworkBehaviour
 {
     [Header("Isometric Sprites - Truck Body")]
     public SpriteRenderer spriteRenderer;
@@ -17,12 +18,42 @@ public class NPCPlowVisuals : MonoBehaviour
 
     // Itt tároljuk el, hol volt a kocsi egy pillanattal ezelőtt
     private Vector3 lastPosition;
-
+    public NetworkVariable<int> EquippedTool =
+    new NetworkVariable<int>();
     private void Start()
     {
         lastPosition = transform.position;
     }
+    public override void OnNetworkSpawn()
+    {
+        EquippedTool.OnValueChanged += OnToolChanged;
 
+        UpdateVisual(
+            (PlowToolType)EquippedTool.Value
+        );
+    }
+    private void OnToolChanged(
+    int oldValue,
+    int newValue)
+    {
+        UpdateVisual((PlowToolType)newValue);
+    }
+    private void UpdateVisual(PlowToolType type)
+    {
+        activeToolVisual = null;
+
+        foreach (var tool in toolVisuals)
+        {
+            bool active = tool.toolType == type;
+
+            tool.visualObject.SetActive(active);
+
+            if (active)
+            {
+                activeToolVisual = tool;
+            }
+        }
+    }
     public void SetPlowModel(SnowPlowVehicle model)
     {
         plowModel = model;
