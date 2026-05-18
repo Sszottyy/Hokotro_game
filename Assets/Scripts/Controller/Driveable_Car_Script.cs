@@ -1,7 +1,8 @@
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class Driveable_Car_Script : MonoBehaviour
+public class Driveable_Car_Script : NetworkBehaviour
 {
     public Rigidbody2D myRigidBody2D;
     public float speedMultiplyer;
@@ -29,6 +30,8 @@ public class Driveable_Car_Script : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!IsOwner)
+            return;
         // HA LEMENTÜNK AZ ÚTRÓL (a kék felületre értünk)
         if (touchingRoads <= 0)
         {

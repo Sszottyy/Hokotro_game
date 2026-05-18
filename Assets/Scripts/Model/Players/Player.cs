@@ -21,6 +21,7 @@ namespace SnowPlow.Model.Players
         public PlayerRole Role { get; set; } = PlayerRole.None;
 
         private Team _team;
+        public ulong OwnerClientId { get; set; }
         public Team Team
         {
             get
@@ -42,15 +43,24 @@ namespace SnowPlow.Model.Players
 
         public void AddVehicle(Vehicle vehicle)
         {
-
             Debug.Log("AddVehicle called");
-            if (vehicle == null) return;
+
+            if (vehicle == null)
+                return;
+
+            vehicle.Owner = this;
+
+            Debug.Log("[PLAYER] vehicle owner set to: " + Name);
+
             Vehicles.Add(vehicle);
+
             _team?.AddVehicle(vehicle);
+
             if (vehicle is SnowPlowVehicle snowPlow)
             {
                 snowPlow.SnowCleared += HandleClearedSnow;
             }
+
             if (vehicle is Bus bus)
             {
                 bus.TripCompleted += HandleBusTripCompleted;
@@ -80,13 +90,13 @@ namespace SnowPlow.Model.Players
         private void HandleBusTripCompleted(int score)
         {
             Debug.Log($"Trip completed in time → +{score} score");
-            Team.Score += score;
+            Team.AddScore(score);
         }
 
         private void HandlePassengersDroppedOff(int amount)
         {
             Debug.Log($"Passengers dropped off: +{amount} score");
-            Team.Score += amount;
+            Team.AddScore(amount);
         }
 
         public SnowPlowVehicle GetOwnedSnowPlow()

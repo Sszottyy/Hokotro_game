@@ -1,6 +1,7 @@
 using SnowPlow.Controller.Shop;
 using SnowPlow.Controller.Spawning;
 using SnowPlow.Model.Players;
+using System.Collections;
 using UnityEngine;
 
 [DefaultExecutionOrder(100)]
@@ -16,33 +17,67 @@ public class GameSessionController : MonoBehaviour
     [Header("Local Game Session")]
     [SerializeField] private string playerName = "Player";
     [SerializeField] private PlayerRole playerRole = PlayerRole.SnowPlowDriver;
-    [SerializeField] private int startingMoney = 0;
+    [SerializeField] private int startingMoney = 5000;
 
 
     public TMPro.TextMeshProUGUI timerText;
     public TMPro.TextMeshProUGUI scoreText;
+    public TMPro.TextMeshProUGUI moneyText;
 
-    private void Awake()
+    private IEnumerator Start()
     {
+        while (GameManager.Instance == null ||
+               GameManager.Instance.LocalPlayer == null)
+        {
+            yield return null;
+        }
+
         EnsurePlayer();
-        ConfigureVehicleSpawner();
+        //ConfigureVehicleSpawner();
+
+        gameTimer.OnTimerEnded += EndGame;
+
+        // FONTOS: várunk hogy a role/network biztosan betöltõdjön
+        yield return new WaitForSeconds(1f);
+        if (LobbyNetworkHandler.Instance != null)
+        {
+            LobbyNetworkHandler.Instance.GenerateMapForAll();
+        }
+        Debug.Log(
+            "[SESSION ROLE CHECK] role = " +
+            GameManager.Instance.LocalPlayer.Role
+        );
+
+        //ApplyShopVisibility();
     }
 
-    private void Start()
+    /*private void Start()
     {
         gameTimer.OnTimerEnded += EndGame;
         ApplyShopVisibility();
-    }
+    }*/
 
     private void Update()
     {
-        if (gameTimer == null || timerText == null) return;
-        timerText.text = gameTimer.GetFormattedTime();
+        if (gameTimer != null && timerText != null)
+        {
+            timerText.text = gameTimer.GetFormattedTime();
+        }
 
         if (scoreText != null)
         {
-            int score = GameManager.Instance?.CurrentPlayer?.Team?.Score ?? 0;
+            int score =
+                GameManager.Instance?.LocalPlayer?.Team?.Score ?? 0;
+
             scoreText.text = $"{score}";
+        }
+
+        if (moneyText != null)
+        {
+            int money =
+                GameManager.Instance?.LocalPlayer?.Team?.Money ?? 0;
+
+            moneyText.text = $"{money}";
         }
     }
 
@@ -58,49 +93,33 @@ public class GameSessionController : MonoBehaviour
     private void EnsurePlayer()
     {
         if (GameManager.Instance == null)
-        {
-            Debug.LogError("GameSessionController: GameManager is missing from the scene.");
             return;
-        }
 
-        if (GameManager.Instance.CurrentPlayer == null)
-        {
-            GameManager.Instance.CreatePlayer(playerName,"Team A",PlayerRole.SnowPlowDriver);
-        }
-
-        Player player = GameManager.Instance.CurrentPlayer;
+        Player player = GameManager.Instance.LocalPlayer;
 
         if (player == null)
-        {
-            Debug.LogError("GameSessionController: CurrentPlayer could not be created.");
             return;
-        }
 
-        player.Role = playerRole;
-
-        if (player.Team == null)
-        {
-            Team team = new Team
-            {
-                Name = "LocalTeam"
-            };
-
-            if (startingMoney > 0)
-            {
-                team.AddMoney(startingMoney);
-            }
-
-            player.Team = team;
-        }
-        else if (startingMoney > 0)
+        if (player.Team != null && player.Team.Money <= 0)
         {
             player.Team.AddMoney(startingMoney);
+
+            Debug.Log(
+                $"[SESSION] START MONEY ADDED = {startingMoney}"
+            );
         }
 
-        Debug.Log($"GameSessionController: Player ready. Name={player.Name}, Role={player.Role}, Money={player.Team?.Money}");
+        Debug.Log(
+            $"[SESSION] Player={player.Name} Team={player.Team?.Name} Money={player.Team?.Money}"
+        );
+
+        if (shopController != null)
+        {
+            shopController.RefreshUI();
+        }
     }
 
-    private void ConfigureVehicleSpawner()
+    /*private void ConfigureVehicleSpawner()
     {
         if (vehicleSpawner == null)
         {
@@ -108,13 +127,21 @@ public class GameSessionController : MonoBehaviour
             return;
         }
 
-        bool spawnSnowPlow = playerRole == PlayerRole.SnowPlowDriver;
-        bool spawnBus = playerRole == PlayerRole.BusDriver;
+        //bool spawnSnowPlow = playerRole == PlayerRole.SnowPlowDriver;
+        //bool spawnBus = playerRole == PlayerRole.BusDriver;
+        PlayerRole actualRole =
+    GameManager.Instance.LocalPlayer.Role;
+
+        bool spawnSnowPlow =
+            actualRole == PlayerRole.SnowPlowDriver;
+
+        bool spawnBus =
+            actualRole == PlayerRole.BusDriver;
 
         vehicleSpawner.ConfigurePlayerSpawn(spawnSnowPlow, spawnBus);
-    }
+    }*/
 
-    private void ApplyShopVisibility()
+    /*private void ApplyShopVisibility()
     {
         if (shopController == null)
         {
@@ -122,9 +149,12 @@ public class GameSessionController : MonoBehaviour
             return;
         }
 
-        bool isSnowPlowPlayer = playerRole == PlayerRole.SnowPlowDriver;
+        //bool isSnowPlowPlayer = playerRole == PlayerRole.SnowPlowDriver;
+        bool isSnowPlowPlayer =
+        GameManager.Instance.LocalPlayer.Role
+        == PlayerRole.SnowPlowDriver;
 
         shopController.SetVisibleForSnowPlowPlayer(isSnowPlowPlayer);
         shopController.RefreshUI();
-    }
+    }*/
 }

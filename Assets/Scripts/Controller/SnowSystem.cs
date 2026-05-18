@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+//using System.Diagnostics;
 using System.Text;
 using SnowPlow.Model.Map;
+using UnityEngine;
 
 namespace SnowPlow.Controller
 {
     public class SnowSystem
     {
+        private readonly System.Random rng = new();
         public List<Lane> Lanes { get; set;  } = new List<Lane>();
 
         public float SnowFallRate { get; set; } = 5f; // másodpercenkénti hóesés gyakorisága (kezdetben 5 másodperc)
@@ -15,13 +17,16 @@ namespace SnowPlow.Controller
 
         private float dt { get; set; } = 0;
         private float saltTimer { get; set; } = 0;
-        public SnowSystem(List<Lane> lanes)
+        private SnowNetworkSync snowSync;
+        public SnowSystem(List<Lane> lanes, SnowNetworkSync sync)
         {
             this.Lanes = lanes;
+            snowSync = sync;
         }
 
         public void Update(float deltaTime)
         {
+            //return;//-------------------------------------------------------------
             dt += deltaTime;
             saltTimer += deltaTime;
 
@@ -32,12 +37,27 @@ namespace SnowPlow.Controller
 
                 foreach (var lane in Lanes)
                 {
-                    foreach (var segment in lane.Segments)
+                    for (int i = 0; i < lane.Segments.Count; i++)
                     {
-                        if (new Random().NextDouble() < SnowChance)
+                        LaneSegment segment = lane.Segments[i];
+                        if (i < 4 || i >= lane.Segments.Count - 4)
+                        {
+                            continue;
+                        }
+                        if (rng.NextDouble() < SnowChance)
                         {
                             segment.AddSnow();
+
+                            snowSync.UpdateSnowClientRpc(
+                                lane.ParentRoad.Id,
+                                lane.Id,
+                                i,
+                                segment.SnowLevel,
+                                segment.HasIce,
+                                 segment.SaltPower
+                            );
                         }
+                        
                     }
                 }
                 if (SnowChance < 0.8f)
@@ -55,6 +75,33 @@ namespace SnowPlow.Controller
             }
 
 
+        }
+        public void GenerateInitialSnow()
+        {
+            Debug.Log("[SNOW] GenerateInitialSnow CALLED");
+            foreach (var lane in Lanes)
+            {
+                for (int i = 0; i < lane.Segments.Count; i++)
+                {
+                    LaneSegment segment = lane.Segments[i];
+
+                    if (rng.NextDouble() < 0.35f)
+                    {
+                        int amount = rng.Next(1, 4);
+
+                        segment.AddSnow(amount);
+
+                        snowSync.UpdateSnowClientRpc(
+                            lane.ParentRoad.Id,
+                            lane.Id,
+                            i,
+                            segment.SnowLevel,
+                            segment.HasIce,
+                            segment.SaltPower
+                        );
+                    }
+                }
+            }
         }
     }
 }

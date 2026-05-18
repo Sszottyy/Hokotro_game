@@ -6,9 +6,9 @@ namespace SnowPlow.Model.Map
     public class LaneSegment
     {
         public const int MaxSaltPower = 12;
-        public const int IceFormationVehicleThreshold = 3;
+public const int IceFormationVehicleThreshold = 3;
 
-        public int PassedVehicleCount {  get; private set; }
+public int PassedVehicleCount { get; private set; }
         private int _snowLevel;
         public int SnowLevel { 
             get { return _snowLevel; }
@@ -79,6 +79,7 @@ namespace SnowPlow.Model.Map
 
         public void RegisterVehiclePassForIceFormation()
         {
+
             if (HasIce) return;
 
             if (SaltPower > 0) return;
@@ -108,6 +109,10 @@ namespace SnowPlow.Model.Map
             if (amount == 0) return;
 
             SaltPower = Math.Min(MaxSaltPower, SaltPower + amount);
+        }
+        public void SetSaltPower(int value)
+        {
+            SaltPower = Mathf.Clamp(value, 0, MaxSaltPower);
         }
 
         public void ConsumeSaltPower(int amount)

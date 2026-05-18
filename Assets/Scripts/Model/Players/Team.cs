@@ -1,7 +1,9 @@
-﻿using System;
+﻿using SnowPlow.Model.Vehicles;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using SnowPlow.Model.Vehicles;
+using Unity.Netcode;
+using UnityEngine;
 
 namespace SnowPlow.Model.Players
 {
@@ -12,7 +14,8 @@ namespace SnowPlow.Model.Players
         public List<Vehicle> Vehicles { get; set; } = new List<Vehicle>();
 
 
-        public int Score { get; set; }
+        
+        public int Score { get; private set; }
 
         public int Money { get; private set; }
 
@@ -66,6 +69,39 @@ namespace SnowPlow.Model.Players
             if (amount <= 0) return;
 
             Money += amount;
+            Debug.Log($"[TEAM MONEY] {Name} now has {Money}");
+            if (NetworkManager.Singleton != null &&
+    NetworkManager.Singleton.IsServer &&
+    TeamMoneySync.Instance != null)
+            {
+                TeamMoneySync.Instance.SyncMoney();
+            }
+        }
+        public void SetMoney(int amount)
+        {
+            Money = amount;
+        }
+
+        public void AddScore(int amount)
+        {
+            if (amount <= 0)
+                return;
+
+            Score += amount;
+
+            Debug.Log($"[TEAM SCORE] {Name} now has {Score}");
+
+            if (NetworkManager.Singleton != null &&
+                NetworkManager.Singleton.IsServer &&
+                TeamScoreSync.Instance != null)
+            {
+                TeamScoreSync.Instance.SyncScore();
+            }
+        }
+
+        public void SetScore(int amount)
+        {
+            Score = amount;
         }
     }
 }

@@ -14,6 +14,16 @@ public class LeaderboardManager : MonoBehaviour
 
     public void RefreshLeaderboard()
     {
+        Debug.Log("RefreshLeaderboard called");
+
+        ClearList();
+
+        Debug.Log("Players count: " + GameManager.Instance.Players.Count);
+
+        foreach (var p in GameManager.Instance.Players)
+        {
+            Debug.Log($"Player: {p.Name} Score: {p.Team?.Score}");
+        }
         ClearList();
 
         // Rendezés score szerint csökkenő sorrendben

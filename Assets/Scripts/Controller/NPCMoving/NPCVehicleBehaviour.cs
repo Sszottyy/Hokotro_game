@@ -6,6 +6,7 @@ using SnowPlow.Model.Map.Generator;
 using SnowPlow.Model.Vehicles;
 using System;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using SnowPlowVehicle = SnowPlow.Model.Vehicles.SnowPlow;
 
@@ -16,7 +17,7 @@ namespace SnowPlow.Controller.NPCMovement
     // - mikor kell utvonalat keresni
     // - mikor kell ujratervezni
     // - megalljon-e, ha a kovetkezo szegmensen mar van masik jarmu
-    public class NPCVehicleBehaviour : MonoBehaviour
+    public class NPCVehicleBehaviour : NetworkBehaviour
     {
         [Header("Movement")]
         [SerializeField] private NPCVehicleMover mover;
@@ -105,6 +106,8 @@ namespace SnowPlow.Controller.NPCMovement
 
         private void Update()
         {
+            if (!IsServer)
+                return;
             if (!isInitialized) return;
 
             repathTimer += Time.deltaTime;

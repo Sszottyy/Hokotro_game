@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using SnowPlow.Model.Map;
+using UnityEngine;
 
 namespace SnowPlow.Model.Tools
 {
@@ -17,7 +18,7 @@ namespace SnowPlow.Model.Tools
             LaneSegment sourceSegment = sourceLane[segmentIndex];
 
             int snowToMove = sourceSegment.SnowLevel;
-
+            Debug.Log($"[SWEEPER] snowToMove = {snowToMove}");
             if (snowToMove <= 0)
             {
                 return;
@@ -43,6 +44,40 @@ namespace SnowPlow.Model.Tools
 
             // A modell szabályait követjük: AddSnow kezeli a sózott/jeges eseteket.
             targetSegment.AddSnow(snowToMove);
+            var sync =
+    UnityEngine.Object.FindObjectOfType<SnowNetworkSync>();
+
+            if (sync != null)
+            {
+                sync.UpdateSnowClientRpc(
+                    sourceLane.ParentRoad.Id,
+                    sourceLane.Id,
+                    segmentIndex,
+                    sourceSegment.SnowLevel,
+                    sourceSegment.HasIce,
+                    sourceSegment.SaltPower);
+
+                sync.UpdateSnowClientRpc(
+                    rightLane.ParentRoad.Id,
+                    rightLane.Id,
+                    segmentIndex,
+                    targetSegment.SnowLevel,
+                    targetSegment.HasIce,
+                    targetSegment.SaltPower);
+            }
+            if (MapVisualizer.Instance.SegmentDirectory.TryGetValue(
+                    targetSegment,
+                    out VisualSegment targetVisual))
+            {
+                targetVisual.UpdateVisuals();
+            }
+
+            if (MapVisualizer.Instance.SegmentDirectory.TryGetValue(
+                    sourceSegment,
+                    out VisualSegment sourceVisual))
+            {
+                sourceVisual.UpdateVisuals();
+            }
         }
 
         private Lane GetRightLane(Lane lane)

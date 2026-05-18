@@ -14,9 +14,16 @@ public class MainMenu : MonoBehaviour
     public GameObject endGamePanel;
     public GameObject mainMenuPanel;
 
+    [Header("Main Panels")]
+    public GameObject mainMenuRoot;
+    public GameObject configPanel;
+
     [Header("Új Választó Elemek (3. kép)")]
     public UISwitcher.UISwitcher teamToggle;         // Ha be van kapcsolva = Team B, ha ki = Team A
     public UISwitcher.UISwitcher vehicleToggle;      // Ha be van kapcsolva = Bus, ha ki = Snowplow
+
+    [SerializeField]
+    private TMP_InputField roundaboutInput;
 
     [Header("Panelek")]
     public GameObject hostJoinPanel;  // A Host/Join panel, amit bezárunk
@@ -30,7 +37,7 @@ public class MainMenu : MonoBehaviour
     void Awake()
     {
         // Csak annyit csináljunk, hogy ellenõrizzük a NetworkObject-ot
-        NetworkObject netObj = GetComponent<NetworkObject>();
+        /*NetworkObject netObj = GetComponent<NetworkObject>();
         if (netObj != null)
         {
             Debug.Log($"NetworkObject found on MainMenu. IsSpawned: {netObj.IsSpawned}");
@@ -38,7 +45,7 @@ public class MainMenu : MonoBehaviour
         else
         {
             Debug.LogWarning("No NetworkObject on MainMenu - RPCs won't work from this object");
-        }
+        }*/
     }
     /*public void PlayGame()
     {
@@ -105,8 +112,24 @@ public class MainMenu : MonoBehaviour
         // Meghívjuk a GameManager frissített CreatePlayer függvényét
         //CreatePlayerInstanceServerRpc(playerName, selectedTeam, selectedRole);
         // GameManager.Instance.CreatePlayer(playerName, selectedTeam, selectedRole);
-        if (LobbyNetworkHandler.Instance != null)
+        if (LobbyNetworkHandler.Instance != null &&
+        LobbyNetworkHandler.Instance.IsSpawned)
         {
+            if (NetworkManager.Singleton.IsHost)
+            {
+                int count = 10;
+
+                if (roundaboutInput != null &&
+                    !string.IsNullOrEmpty(roundaboutInput.text))
+                {
+                    int.TryParse(
+                        roundaboutInput.text,
+                        out count);
+                }
+
+                LobbyNetworkHandler.Instance
+                    .SetIntersectionCountServerRpc(count);
+            }
             Debug.Log($"LobbyNetworkHandler Instance IsSpawned: {LobbyNetworkHandler.Instance.IsSpawned}");
             LobbyNetworkHandler.Instance.CreatePlayerServerRpc(playerName, selectedTeam, selectedRole,
                 NetworkManager.Singleton.LocalClientId);
@@ -195,7 +218,7 @@ public class MainMenu : MonoBehaviour
         }
         // ... a többi kód ...
     }
-    [ServerRpc(RequireOwnership = false)]
+    /*[ServerRpc(RequireOwnership = false)]
     public void CreatePlayerInstanceServerRpc(string playerName, string selectedTeam, PlayerRole selectedRole)
     {
         GameManager.Instance.CreatePlayer(playerName, selectedTeam, selectedRole);
@@ -220,7 +243,7 @@ public class MainMenu : MonoBehaviour
 
         // Hostnál is frissítsük a helyi UI-t
         UpdateLobbyUI();
-    }
+    }*/
 
     private void UpdateLobbyUI()
     {
@@ -373,5 +396,21 @@ public class MainMenu : MonoBehaviour
     {
         endGamePanel.SetActive(false);
         mainMenuPanel.SetActive(true);
+    }
+    public void ReturnToMainMenu()
+    {
+        if (mainMenuPanel != null)
+            mainMenuPanel.SetActive(true);
+
+        if (hostJoinPanel != null)
+            hostJoinPanel.SetActive(false);
+
+        if (configPanel != null)
+            configPanel.SetActive(false);
+
+        if (lobbyPanel != null)
+            lobbyPanel.SetActive(false);
+
+        Debug.Log("[MENU] Returned to main menu");
     }
 }
