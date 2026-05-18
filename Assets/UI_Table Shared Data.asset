@@ -179,6 +179,14 @@ MonoBehaviour:
     m_Key: game_sold
     m_Metadata:
       m_Items: []
+  - m_Id: 1081755917344768
+    m_Key: menu_portnumber
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1081834266943488
+    m_Key: lobby_code
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

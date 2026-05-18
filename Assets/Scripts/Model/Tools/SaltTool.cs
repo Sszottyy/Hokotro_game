@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using SnowPlow.Model.Map;
 using SnowPlow.Model.Tools;
@@ -30,7 +31,9 @@ namespace SnowPlow.Model.Tools
             {
                 pos.Lane[pos.SegmentIndex].AddSaltPower(1); //ugyanaz maradt, csak most a lanepositionbol ki kell nyerni a szegmenst
                 Fuel -= 1;
+                Debug.WriteLine($" Remaining fuel: {Fuel}");
             }
+            
         }
 
         public PlowToolType Type() => PlowToolType.Salt;

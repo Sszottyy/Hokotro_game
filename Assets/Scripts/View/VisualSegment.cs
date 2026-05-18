@@ -110,7 +110,7 @@ public class VisualSegment : MonoBehaviour
 
                 snowOverlay.color = snowColor;
 
-                snowOverlay.transform.localScale = Vector3.one * (1f + t * 0.1f);
+                
             }
         }
     }
