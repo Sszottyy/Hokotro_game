@@ -4226,6 +4226,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 656049753}
+        m_TargetAssemblyTypeName: NetworkFunctions, Assembly-CSharp
+        m_MethodName: StartClient
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &444359987
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16897,7 +16909,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Portnumber
+  m_text: Lobby Code
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f6e24cf1e2e90fb469ef2b1d1482feee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: f6e24cf1e2e90fb469ef2b1d1482feee, type: 2}
