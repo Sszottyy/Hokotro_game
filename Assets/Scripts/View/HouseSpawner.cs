@@ -88,36 +88,33 @@ public class HouseSpawner : MonoBehaviour
     private GameObject SpawnHouseWithFallback(LanePosition lanePosition, GameObject prefab, string name)
     {
         if (prefab == null || lanePosition?.Lane == null) return null;
-
         if (lanePosition.SegmentIndex >= lanePosition.Lane.Segments.Count) return null;
-        LaneSegment targetLogicSegment = lanePosition.Lane.Segments[lanePosition.SegmentIndex];
 
+        LaneSegment targetLogicSegment = lanePosition.Lane.Segments[lanePosition.SegmentIndex];
         if (!_mapVisualizer.SegmentDirectory.TryGetValue(targetLogicSegment, out VisualSegment visSeg)) return null;
 
         Vector3 laneForward = visSeg.transform.up;
         Vector3 standardOutwardDir = new Vector3(-laneForward.y, laneForward.x, 0).normalized;
 
         if (visSeg.IsLeftmost && !visSeg.IsRightmost)
-        {
             standardOutwardDir = -standardOutwardDir;
-        }
 
         float halfRoadWidth = visSeg.transform.localScale.x * 0.5f;
         float segmentLength = visSeg.transform.localScale.y;
 
+        // Expanded candidate list — both sides, forward and backward shifts
         Vector3[] positionCandidates = new Vector3[]
         {
-            // Option 1: Standard outward position
-            visSeg.transform.position + standardOutwardDir * (halfRoadWidth + houseClearanceBuffer),
-
-            // Option 2: Flip to opposite side
-            visSeg.transform.position - standardOutwardDir * (halfRoadWidth + houseClearanceBuffer),
-
-            // Option 3: Shift backward along the road and outward
-            visSeg.transform.position - (laneForward * segmentLength * 0.6f) + standardOutwardDir * (halfRoadWidth + houseClearanceBuffer),
-
-            // Option 4: Shift backward and flip sides
-            visSeg.transform.position - (laneForward * segmentLength * 0.6f) - standardOutwardDir * (halfRoadWidth + houseClearanceBuffer)
+        visSeg.transform.position + standardOutwardDir * (halfRoadWidth + houseClearanceBuffer),
+        visSeg.transform.position - standardOutwardDir * (halfRoadWidth + houseClearanceBuffer),
+        visSeg.transform.position - (laneForward * segmentLength * 0.6f) + standardOutwardDir * (halfRoadWidth + houseClearanceBuffer),
+        visSeg.transform.position - (laneForward * segmentLength * 0.6f) - standardOutwardDir * (halfRoadWidth + houseClearanceBuffer),
+        // NEW: forward shifts
+        visSeg.transform.position + (laneForward * segmentLength * 0.6f) + standardOutwardDir * (halfRoadWidth + houseClearanceBuffer),
+        visSeg.transform.position + (laneForward * segmentLength * 0.6f) - standardOutwardDir * (halfRoadWidth + houseClearanceBuffer),
+        // NEW: larger clearance fallbacks
+        visSeg.transform.position + standardOutwardDir * (halfRoadWidth + houseClearanceBuffer * 2f),
+        visSeg.transform.position - standardOutwardDir * (halfRoadWidth + houseClearanceBuffer * 2f),
         };
 
         Vector3 finalSpawnPos = Vector3.zero;
@@ -125,37 +122,34 @@ public class HouseSpawner : MonoBehaviour
 
         foreach (Vector3 candidate in positionCandidates)
         {
-            Vector3 adjustedCandidate = PushOutFromRoundabout(lanePosition.Lane.StartNode, candidate, houseClearanceBuffer);
-            adjustedCandidate = PushOutFromRoundabout(lanePosition.Lane.EndNode, adjustedCandidate, houseClearanceBuffer);
+            Vector3 adjusted = PushOutFromRoundabout(lanePosition.Lane.StartNode, candidate, houseClearanceBuffer);
+            adjusted = PushOutFromRoundabout(lanePosition.Lane.EndNode, adjusted, houseClearanceBuffer);
 
-            if (IsPositionSafe(adjustedCandidate, targetLogicSegment, houseClearanceBuffer))
+            if (IsPositionSafe(adjusted, targetLogicSegment, houseClearanceBuffer))
             {
-                finalSpawnPos = adjustedCandidate;
+                finalSpawnPos = adjusted;
                 foundValidSpot = true;
                 break;
             }
         }
 
+        // ✅ Reserve the spot BEFORE spawning to prevent race conditions
         if (!foundValidSpot)
         {
-            finalSpawnPos = PushOutFromRoundabout(lanePosition.Lane.StartNode, positionCandidates[0], houseClearanceBuffer);
-            finalSpawnPos = PushOutFromRoundabout(lanePosition.Lane.EndNode, finalSpawnPos, houseClearanceBuffer);
+            Debug.LogWarning($"[HouseSpawner] No valid spot found for {name}, skipping spawn.");
+            return null; // ✅ Don't spawn on an invalid position
         }
 
         finalSpawnPos.z = _zOffset;
 
-        // Register the position globally so future houses don't spawn right on top of it
+        // ✅ Register immediately to block concurrent spawners from picking same spot
         SpawnedHousePositions.Add(finalSpawnPos);
 
         GameObject house = Instantiate(prefab, finalSpawnPos, Quaternion.identity, _mapVisualizer.transform);
-
         house.name = $"{name}_Lane{lanePosition.Lane.Id}_Seg{lanePosition.SegmentIndex}";
-        NetworkObject no = house.GetComponent<NetworkObject>();
 
-        if (no != null)
-        {
-            no.Spawn();
-        }
+        NetworkObject no = house.GetComponent<NetworkObject>();
+        if (no != null) no.Spawn();
 
         return house;
     }
