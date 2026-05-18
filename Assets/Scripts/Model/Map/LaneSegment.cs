@@ -139,7 +139,7 @@ public int PassedVehicleCount { get; private set; }
             {
                 ConsumeSaltPower();
                 RemoveSnow();
-                HasIce = false;
+                SetIce(false);
             }
         }
         public bool TooMuchSnow()
