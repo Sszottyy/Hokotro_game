@@ -9,10 +9,17 @@ using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour
 {
+    private Color _defaultInputColor;
+
     public TMP_InputField InputField;
-    public Button[] buttons;
     public GameObject endGamePanel;
     public GameObject mainMenuPanel;
+
+    public Button hostButton;
+    public Button joinButton;
+    public Button singlePlayerButton;
+    public Button roundaboutConfirmButton;
+    public TMP_InputField portInputField;
 
     [Header("Main Panels")]
     public GameObject mainMenuRoot;
@@ -36,6 +43,7 @@ public class MainMenu : MonoBehaviour
 
     void Awake()
     {
+        ColorUtility.TryParseHtmlString("#332CFE", out _defaultInputColor);
         // Csak annyit csináljunk, hogy ellenõrizzük a NetworkObject-ot
         /*NetworkObject netObj = GetComponent<NetworkObject>();
         if (netObj != null)
@@ -351,14 +359,25 @@ public class MainMenu : MonoBehaviour
 
     public void CheckInput(string text)
     {
-        bool isValid = isValidName(text);
-        Debug.Log("Buttos are set to: " + isValid);
+        bool nameValid = isValidName(InputField.text);
+        bool portValid = isValidName(portInputField != null ? portInputField.text : "");
+        bool roundaboutValid = isValidRoundaboutCount(roundaboutInput != null ? roundaboutInput.text : "");
 
-        foreach (Button btn in buttons)
-        {
-            btn.interactable = isValid;
-        }
+        if (hostButton != null)
+            hostButton.interactable = nameValid;
 
+        if (joinButton != null)
+            joinButton.interactable = nameValid && portValid;
+
+        if (singlePlayerButton != null)
+            singlePlayerButton.interactable = nameValid;
+
+        Debug.Log($"Name valid: {nameValid}, Port valid: {portValid}");
+    }
+
+    public void CheckPortInput(string text)
+    {
+        CheckInput(InputField.text); // reuse the same unified check
     }
     void Start()
     {
@@ -412,5 +431,36 @@ public class MainMenu : MonoBehaviour
             lobbyPanel.SetActive(false);
 
         Debug.Log("[MENU] Returned to main menu");
+    }
+
+    private bool isValidRoundaboutCount(string text)
+    {
+        if (string.IsNullOrEmpty(text)) return true; // empty = use default, that's fine
+        if (!int.TryParse(text, out int value)) return false;
+        return value >= 5 && value <= 100;
+    }
+
+    public void CheckRoundaboutInput(string text)
+    {
+        string cleaned = System.Text.RegularExpressions.Regex.Replace(text, @"[^0-9]", "");
+        if (cleaned != text)
+        {
+            roundaboutInput.SetTextWithoutNotify(cleaned);
+            text = cleaned;
+        }
+
+        bool roundaboutValid = isValidRoundaboutCount(text);
+
+        // Red if invalid, default if valid or empty
+        roundaboutInput.textComponent.color = roundaboutValid ? _defaultInputColor : Color.red;
+
+        if (roundaboutConfirmButton != null)
+            roundaboutConfirmButton.interactable = roundaboutValid;
+    }
+
+    public void OnRoundaboutInputEndEdit(string text)
+    {
+        // Just re-run the visual check when focus is lost, no clamping
+        CheckRoundaboutInput(text);
     }
 }
