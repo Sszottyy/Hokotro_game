@@ -1,7 +1,9 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
-using SnowPlow.Model.Map;
+﻿using SnowPlow.Model.Map;
 using SnowPlow.Model.Vehicles;
+using System.Collections;
+using System.Collections.Generic;
+using Unity.Netcode;
+using UnityEngine;
 
 public class HouseSpawner : MonoBehaviour
 {
@@ -43,6 +45,15 @@ public class HouseSpawner : MonoBehaviour
 
     private void Start()
     {
+        StartCoroutine(DelayedSpawn());
+    }
+
+    private IEnumerator DelayedSpawn()
+    {
+        yield return null;
+        yield return null;
+        yield return null;
+        yield return new WaitForSeconds(4f);
         TrySpawnHouses();
     }
 
@@ -137,7 +148,14 @@ public class HouseSpawner : MonoBehaviour
         SpawnedHousePositions.Add(finalSpawnPos);
 
         GameObject house = Instantiate(prefab, finalSpawnPos, Quaternion.identity, _mapVisualizer.transform);
+
         house.name = $"{name}_Lane{lanePosition.Lane.Id}_Seg{lanePosition.SegmentIndex}";
+        NetworkObject no = house.GetComponent<NetworkObject>();
+
+        if (no != null)
+        {
+            no.Spawn();
+        }
 
         return house;
     }
