@@ -409,12 +409,14 @@ public class MainMenu : MonoBehaviour
     {
         endGamePanel.SetActive(true);
         mainMenuPanel.SetActive(false);
+        MusicManager.Instance?.PlayEndMusic();
     }
 
     private void ShowMainMenu()
     {
         endGamePanel.SetActive(false);
         mainMenuPanel.SetActive(true);
+        MusicManager.Instance?.PlayMenuMusic();
     }
     public void ReturnToMainMenu()
     {
@@ -429,6 +431,8 @@ public class MainMenu : MonoBehaviour
 
         if (lobbyPanel != null)
             lobbyPanel.SetActive(false);
+
+        MusicManager.Instance?.PlayMenuMusic();
 
         Debug.Log("[MENU] Returned to main menu");
     }
