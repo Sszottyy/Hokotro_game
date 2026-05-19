@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class VisualSegment : MonoBehaviour
 {
+    private static int nextId = 0;
 
+    public int Id { get; private set; } = -1;
     public LaneSegment LogicSegment { get; private set; }
     public LanePosition LanePosition { get; private set; }
     public bool IsLeftmost => _isLeftmost;
@@ -35,6 +37,11 @@ public class VisualSegment : MonoBehaviour
     public GameObject[] passengerPrefabs;
     [Header("Bus Station")]
     public SpriteRenderer stationOverlay;
+
+    public VisualSegment()
+    {
+       Id = nextId++;
+    }
 
     public void Initialize(
         Lane lane,
@@ -151,6 +158,7 @@ public class VisualSegment : MonoBehaviour
     public void MarkAsStation()
     {
         IsStation = true;
+        Debug.LogError("nigger id: " + Id);
         //Debug.Log( $"BusStationPassengers count: {GetComponents<BusStationPassengers>().Length}");
         if (_stationInitialized)
         {
@@ -225,8 +233,6 @@ public class VisualSegment : MonoBehaviour
         {
             stopSign = Instantiate(busStopPrefab, transform);
 
-            stopSign.name = "BusStopSign";
-
             stopSign.transform.position = signWorldPosition;
             stopSign.transform.rotation = Quaternion.identity;
 
@@ -248,6 +254,9 @@ public class VisualSegment : MonoBehaviour
                 diddy=stopSign.AddComponent<BusStationPassengers>();
             }
             diddy.passengerPrefabs = passengerPrefabs;
+
+            diddy.segmentId.Value = Id;
+            diddy.segmentId.SetDirty(true);
 
             diddy.Initialize(signWorldPosition);
         }

@@ -3758,7 +3758,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4814058972869334088, guid: 0c0702d07fbacc54ea2bc112dbc6b634, type: 3}
       propertyPath: matchDurationSeconds
-      value: 30
+      value: 120
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4827,8 +4827,8 @@ MonoBehaviour:
   npcIceBreakerPriceText: {fileID: 369711831}
   dragonFuelBar: {fileID: 81908829}
   saltFuelBar: {fileID: 807697551}
-  dragonFuelDisplayMax: 100
-  saltFuelDisplayMax: 100
+  dragonFuelDisplayMax: 10000
+  saltFuelDisplayMax: 10000
   sweaperStatusText: {fileID: 203803048}
   iceBreakerStatusText: {fileID: 1671341988}
   vomitStatusText: {fileID: 742187695}

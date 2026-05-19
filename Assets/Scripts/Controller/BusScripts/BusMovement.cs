@@ -7,6 +7,8 @@ using UnityEngine;
 
 public class BusMovement : NetworkBehaviour
 {
+    private BusStationPassengers stationA;
+    private BusStationPassengers stationB;
 
     private ulong currentStationId;
     public NetworkVariable<int> PassengersOnBoard
@@ -44,7 +46,8 @@ public class BusMovement : NetworkBehaviour
     new NetworkVariable<int>(0);
     
     private GameObject currentStation = null;
-    private GameObject pickupStation = null;
+    //private GameObject pickupStation = null;
+    private ulong pickupStationId = 0;
 
     private readonly CarTraversalPolicy traversalPolicy = new CarTraversalPolicy();
     private int touchingRoads = 0;
@@ -77,15 +80,35 @@ public class BusMovement : NetworkBehaviour
         if (boxCollider != null)
             boxCollider.size = colliderSize;
     }
-    public void SetStations(VisualSegment a, VisualSegment b)
+
+    [ClientRpc (RequireOwnership =false)]
+    public void SetStationsClientRpc(int visSegId1, int visSegId2)
     {
-        if (a == null || b == null)
+
+        Debug.LogError("nigga "+visSegId1+" and "+visSegId2);
+
+        foreach(BusStationPassengers bsp in GameObject.FindObjectsOfType<BusStationPassengers>())
         {
-            Debug.LogError("SetStations received null station!");
+            Debug.LogWarning("sus " + bsp.segmentId.Value);
+            if(bsp.segmentId.Value== visSegId1)
+                stationA= bsp;
+            if (bsp.segmentId.Value == visSegId2)
+                stationB = bsp;
+        }
+
+        if (stationA == null || stationB == null)
+        {
+            Debug.LogError("BusStationPassengers missing!");
             return;
         }
 
-        Debug.Log($"Bus stations set: {a.name} | {b.name}");
+        Debug.Log(
+            $"[BUS] Stations assigned: " +
+            $"{stationA.name} / {stationB.name}"
+        );
+        StationArrowIndicator arrows =
+         GetComponent<StationArrowIndicator>();
+        arrows.SetStations(stationA.segmentId.Value,stationB.segmentId.Value);
     }
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -399,21 +422,11 @@ public class BusMovement : NetworkBehaviour
         if (Input.GetKeyDown(KeyCode.Space)
             && currentStation != null)
         {
-            Debug.Log("[BUS] busModel null? " + (busModel == null));
-            Debug.Log(
-                $"SPACE pressed | station: {currentStation != null}"
-            );
-            Debug.Log(
-            $"CLIENT CALLING BOARD RPC | bus net id = {NetworkObjectId}"
-            );
-            //BusStationPassengers passengers = null;
-            //    currentStation.StationPassengers;
-            // BusStationPassengers passengers = currentStation.GetComponent<BusStationPassengers>();
 
             if (!NetworkManager.Singleton.SpawnManager
-    .SpawnedObjects.TryGetValue(
-        currentStationId,
-        out NetworkObject stationObj))
+        .SpawnedObjects.TryGetValue(
+            currentStationId,
+            out NetworkObject stationObj))
             {
                 Debug.Log("[CLIENT] STATION OBJECT NOT FOUND");
                 return;
@@ -427,11 +440,28 @@ public class BusMovement : NetworkBehaviour
                 Debug.Log("[CLIENT] PASSENGERS COMPONENT NULL");
                 return;
             }
-            if (passengers == null)
+
+            bool isOwnedStation =
+                passengers == stationA ||
+                passengers == stationB;
+
+            if (!isOwnedStation)
             {
-                Debug.Log("No StationPassengers component!");
+                Debug.Log("[BUS] This station does not belong to this bus!");
                 return;
             }
+            Debug.Log("[BUS] busModel null? " + (busModel == null));
+            Debug.Log(
+                $"SPACE pressed | station: {currentStation != null}"
+            );
+            Debug.Log(
+            $"CLIENT CALLING BOARD RPC | bus net id = {NetworkObjectId}"
+            );
+            //BusStationPassengers passengers = null;
+            //    currentStation.StationPassengers;
+            // BusStationPassengers passengers = currentStation.GetComponent<BusStationPassengers>();
+
+            
 
             NetworkObject stationNetObj = null;
             //if(!currentStation.TryGetComponent<NetworkObject>(out stationNetObj))
@@ -450,8 +480,12 @@ public class BusMovement : NetworkBehaviour
             }
 
             bool isOtherStation =
-                pickupStation != null
-                && currentStation != pickupStation;
+        pickupStationId != 0 &&
+        currentStationId != pickupStationId &&
+        (
+            passengers == stationA ||
+            passengers == stationB
+        );
 
             // DROPOFF
             if (isOtherStation)
@@ -467,7 +501,8 @@ public class BusMovement : NetworkBehaviour
                     $"[Bus] Requested dropoff at {currentStation.gameObject.name}"
                 );
 
-                pickupStation = null;
+                // pickupStation = null;
+                pickupStationId = 0;
             }
 
             // PICKUP
@@ -487,7 +522,7 @@ public class BusMovement : NetworkBehaviour
                     $"[Bus] Requested pickup at {currentStation.gameObject.name}"
                 );
 
-                pickupStation = currentStation;
+                pickupStationId = currentStationId;
             }
         }
     }

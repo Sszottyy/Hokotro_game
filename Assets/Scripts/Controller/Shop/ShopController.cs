@@ -32,8 +32,8 @@ namespace SnowPlow.Controller.Shop
         [SerializeField] private Slider dragonFuelBar;
         [SerializeField] private Slider saltFuelBar;
 
-        [SerializeField] private int dragonFuelDisplayMax = 100;
-        [SerializeField] private int saltFuelDisplayMax = 100;
+        [SerializeField] private int dragonFuelDisplayMax = 10000;
+        [SerializeField] private int saltFuelDisplayMax = 10000;
 
         [SerializeField] private TMP_Text sweaperStatusText;
         [SerializeField] private TMP_Text iceBreakerStatusText;

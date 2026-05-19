@@ -18,6 +18,8 @@ public class BusStationPassengers : NetworkBehaviour
 
     public int PassengerCount => waitingPassengers.Count;
 
+    public NetworkVariable<int> segmentId = new NetworkVariable<int>(-1);
+
     public void Initialize(Vector3 busSignPosition)
     {
         Debug.Log(
