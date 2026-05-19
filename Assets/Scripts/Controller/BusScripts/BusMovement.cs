@@ -44,7 +44,8 @@ public class BusMovement : NetworkBehaviour
     new NetworkVariable<int>(0);
     
     private GameObject currentStation = null;
-    private GameObject pickupStation = null;
+    //private GameObject pickupStation = null;
+    private ulong pickupStationId = 0;
 
     private readonly CarTraversalPolicy traversalPolicy = new CarTraversalPolicy();
     private int touchingRoads = 0;
@@ -450,8 +451,8 @@ public class BusMovement : NetworkBehaviour
             }
 
             bool isOtherStation =
-                pickupStation != null
-                && currentStation != pickupStation;
+    pickupStationId != 0 &&
+    currentStationId != pickupStationId;
 
             // DROPOFF
             if (isOtherStation)
@@ -467,7 +468,8 @@ public class BusMovement : NetworkBehaviour
                     $"[Bus] Requested dropoff at {currentStation.gameObject.name}"
                 );
 
-                pickupStation = null;
+                // pickupStation = null;
+                pickupStationId = 0;
             }
 
             // PICKUP
@@ -487,7 +489,7 @@ public class BusMovement : NetworkBehaviour
                     $"[Bus] Requested pickup at {currentStation.gameObject.name}"
                 );
 
-                pickupStation = currentStation;
+                pickupStationId = currentStationId;
             }
         }
     }
