@@ -218,7 +218,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   ShowTopMostFoldoutHeaderGroup: 1
   myRigidBody2D: {fileID: 4644353460964745811}
-  speedMultiplyer: 50
+  speedMultiplyer: 30
   spriteRenderer: {fileID: 4082599843553801428}
   iso_UpRight: {fileID: 2025089731813422451, guid: 3e30783cd03e706448815683f19b68fe, type: 3}
   iso_UpLeft: {fileID: 5925332631808196048, guid: 3fab8d92587aa2b41a17080921a286bf, type: 3}
@@ -402,6 +402,9 @@ MonoBehaviour:
   engineStartClip: {fileID: 8300000, guid: acdbaf1fbec1793449a39aa5fb018f8f, type: 3}
   idleClip: {fileID: 8300000, guid: f327e6496403fb14cb51159f0dac66ca, type: 3}
   driveClip: {fileID: 8300000, guid: d4d9d3e069ffe8545b4601c566d514c4, type: 3}
+  startVolume: 1
+  idleVolume: 1
+  driveVolume: 1.5
   moveThreshold: 0.1
 --- !u!82 &-6697423747309774355
 AudioSource:
