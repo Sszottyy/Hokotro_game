@@ -54,17 +54,17 @@ namespace SnowPlow.Model.Vehicles
             {
                 SnowCleared?.Invoke();
 
-                int reward = snowBefore * 5;
+                //int reward = snowBefore * 5;
 
-                if (Owner != null && Owner.Team != null)
-                {
-                    Owner.Team.AddMoney(reward);
-                    Debug.Log($"[MONEY] Added {reward}");
+                //if (Owner != null && Owner.Team != null)
+                //{
+                //    Owner.Team.AddMoney(reward);
+                //    Debug.Log($"[MONEY] Added {reward}");
 
-                    Debug.Log(
-                        $"[MONEY] {Owner.Name} earned {reward}. Team money: {Owner.Team.Money}"
-                    );
-                }
+                //    Debug.Log(
+                //        $"[MONEY] {Owner.Name} earned {reward}. Team money: {Owner.Team.Money}"
+                //    );
+                //}
             }
 
             Debug.Log("APPLY snowPlow instance: " + GetHashCode());

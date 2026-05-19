@@ -4781,8 +4781,8 @@ MonoBehaviour:
   npcIceBreakerPriceText: {fileID: 369711831}
   dragonFuelBar: {fileID: 81908829}
   saltFuelBar: {fileID: 807697551}
-  dragonFuelDisplayMax: 100
-  saltFuelDisplayMax: 100
+  dragonFuelDisplayMax: 10000
+  saltFuelDisplayMax: 10000
   sweaperStatusText: {fileID: 203803048}
   iceBreakerStatusText: {fileID: 1671341988}
   vomitStatusText: {fileID: 742187695}
