@@ -7,7 +7,7 @@ namespace SnowPlow.Model.Shop
         public static int NpcIceBreakerSnowPlowPrice = 400;
 
         // Player tool prices
-        public static int SweaperToolPrice = 100;
+        public static int SweaperToolPrice = 0;
         public static int IceBreakerToolPrice = 150;
         public static int VomitToolPrice = 200;
         public static int SaltToolPrice = 250;

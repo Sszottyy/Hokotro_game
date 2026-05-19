@@ -348,7 +348,7 @@ namespace SnowPlow.Controller.Shop
 
             if (moneyText != null)
             {
-                moneyText.text = hasTeam ? $"{team.Money}$" : "0$";
+                moneyText.text = hasTeam ? team.MoneyToString() : "0$";
             }
 
             RefreshNpcUI();
