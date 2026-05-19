@@ -13,11 +13,13 @@ namespace SnowPlow.Model.Players
         public List<Player> Players { get; set; } = new List<Player>();
         public List<Vehicle> Vehicles { get; set; } = new List<Vehicle>();
 
-
-        
         public int Score { get; private set; }
 
         public int Money { get; private set; }
+
+        public string MoneyToString() {
+            return $"{Money}$";
+        }
 
         public void AddPlayer(Player player)
         {

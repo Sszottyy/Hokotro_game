@@ -39,11 +39,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 3980431187968
-    m_Localized: Punkte
+    m_Localized: 'Punkte:'
     m_Metadata:
       m_Items: []
   - m_Id: 4140796207104
-    m_Localized: Zeit
+    m_Localized: 'Zeit:'
     m_Metadata:
       m_Items: []
   - m_Id: 4354873483264
@@ -189,6 +189,10 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 1081834266943488
     m_Localized: Kode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1510399700176896
+    m_Localized: $67
     m_Metadata:
       m_Items: []
   references:

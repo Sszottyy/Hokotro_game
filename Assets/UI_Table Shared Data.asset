@@ -187,6 +187,10 @@ MonoBehaviour:
     m_Key: lobby_code
     m_Metadata:
       m_Items: []
+  - m_Id: 1510399700176896
+    m_Key: money_text
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
