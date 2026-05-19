@@ -23,11 +23,18 @@ public class StationArrowIndicator : MonoBehaviour
     private Transform stationATransform;
     private Transform stationBTransform;
 
-    public void SetStations(VisualSegment a, VisualSegment b)
+    public void SetStations(int Ida, int Idb)
     {
         Debug.Log($"[Arrows] SetStations called from: {new System.Diagnostics.StackTrace()}");
-        stationATransform = a.transform;
-        stationBTransform = b.transform;
+        MapVisualizer map=MapVisualizer.Instance;
+        foreach(var item in map.Segments)
+        {
+            if(item.Id==Ida)
+                stationATransform = item.transform;
+            if(item.Id==Idb)
+                stationBTransform = item.transform;
+        }
+        
 
         // Destroy ALL arrow children by name — reliable regardless of reference state
         foreach (Transform child in transform)

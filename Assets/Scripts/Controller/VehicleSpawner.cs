@@ -429,13 +429,13 @@ namespace SnowPlow.Controller.Spawning
             }
 
             StationArrowIndicator arrowIndicator = instance.GetComponent<StationArrowIndicator>();
-            if (arrowIndicator != null)
-            {
-                arrowIndicator.SetStations(
-                    mapVisualizer.SegmentDirectory[stationA],
-                    mapVisualizer.SegmentDirectory[stationB]
-                );
-            }
+            //if (arrowIndicator != null)
+            //{
+            //    arrowIndicator.SetStations(
+            //        mapVisualizer.SegmentDirectory[stationA],
+            //        mapVisualizer.SegmentDirectory[stationB]
+            //    );
+            //}
 
             if (global::GameManager.Instance != null &&
                 global::GameManager.Instance.CurrentPlayer != null)
@@ -913,13 +913,13 @@ namespace SnowPlow.Controller.Spawning
             StationArrowIndicator arrowIndicator =
     instance.GetComponent<StationArrowIndicator>();
 
-            if (arrowIndicator != null)
-            {
-                arrowIndicator.SetStations(
-                    mapVisualizer.SegmentDirectory[stationA],
-                    mapVisualizer.SegmentDirectory[stationB]
-                );
-            }
+            //if (arrowIndicator != null)
+            //{
+            //    arrowIndicator.SetStations(
+            //        mapVisualizer.SegmentDirectory[stationA],
+            //        mapVisualizer.SegmentDirectory[stationB]
+            //    );
+            //}
 
             return playerBus;
         }
@@ -992,15 +992,15 @@ namespace SnowPlow.Controller.Spawning
                 StationArrowIndicator arrows =
                     bus.GetComponent<StationArrowIndicator>();
 
-                if (arrows != null)
-                {
-                    arrows.SetStations(
-                        mapVisualizer.SegmentDirectory[
-                            GetSegmentByName(stationAName)],
-                        mapVisualizer.SegmentDirectory[
-                            GetSegmentByName(stationBName)]
-                    );
-                }
+                //if (arrows != null)
+                //{
+                //    arrows.SetStations(
+                //        mapVisualizer.SegmentDirectory[
+                //            GetSegmentByName(stationAName)],
+                //        mapVisualizer.SegmentDirectory[
+                //            GetSegmentByName(stationBName)]
+                //    );
+                //}
             }
         }
         private LaneSegment GetSegmentByName(string objName)

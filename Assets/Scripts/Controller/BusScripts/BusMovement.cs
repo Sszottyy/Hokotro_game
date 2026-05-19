@@ -84,6 +84,7 @@ public class BusMovement : NetworkBehaviour
     [ClientRpc (RequireOwnership =false)]
     public void SetStationsClientRpc(int visSegId1, int visSegId2)
     {
+
         Debug.LogError("nigga "+visSegId1+" and "+visSegId2);
 
         foreach(BusStationPassengers bsp in GameObject.FindObjectsOfType<BusStationPassengers>())
@@ -105,6 +106,9 @@ public class BusMovement : NetworkBehaviour
             $"[BUS] Stations assigned: " +
             $"{stationA.name} / {stationB.name}"
         );
+        StationArrowIndicator arrows =
+         GetComponent<StationArrowIndicator>();
+        arrows.SetStations(stationA.segmentId.Value,stationB.segmentId.Value);
     }
     void OnTriggerEnter2D(Collider2D other)
     {
