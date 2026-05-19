@@ -15,9 +15,9 @@ namespace SnowPlow.Model.Shop
 
         // Fuel prices and amounts
         public static int DragonFuelPrice = 50;
-        public static int DragonFuelAmountPerPurchase = 10;
+        public static int DragonFuelAmountPerPurchase = 1000;
 
         public static int SaltFuelPrice = 40;
-        public static int SaltFuelAmountPerPurchase = 10;
+        public static int SaltFuelAmountPerPurchase = 1000;
     }
 }

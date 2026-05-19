@@ -103,12 +103,13 @@ public int PassedVehicleCount { get; private set; }
             HasAccident = value;
         }
 
-        public void AddSaltPower(int amount)
+        public bool AddSaltPower(int amount)
         {
             if (amount < 0) throw new ArgumentOutOfRangeException(nameof(amount), "Salt power amount cannot be negative.");
-            if (amount == 0) return;
-
+            if (amount == 0) return false;
+            if(SaltPower >= MaxSaltPower) return false;
             SaltPower = Math.Min(MaxSaltPower, SaltPower + amount);
+            return true;
         }
         public void SetSaltPower(int value)
         {

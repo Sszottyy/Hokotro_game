@@ -29,9 +29,10 @@ namespace SnowPlow.Model.Tools
 
             if (pos.Lane[pos.SegmentIndex] != null && Fuel > 0)
             {
-                pos.Lane[pos.SegmentIndex].AddSaltPower(1); //ugyanaz maradt, csak most a lanepositionbol ki kell nyerni a szegmenst
-                Fuel -= 1;
-                Debug.WriteLine($" Remaining fuel: {Fuel}");
+                if (pos.Lane[pos.SegmentIndex].AddSaltPower(1)) //ugyanaz maradt, csak most a lanepositionbol ki kell nyerni a szegmenst
+                {
+                    Fuel -= 1;
+                }
             }
             
         }
