@@ -26,6 +26,7 @@ public class MapVisualizer : MonoBehaviour
 
     private Dictionary<MapNode, Vector3> _nodePositions = new Dictionary<MapNode, Vector3>();
     private Dictionary<MapNode, NodeVisualData> _visualNodes = new Dictionary<MapNode, NodeVisualData>();
+    public List<VisualSegment> Segments = new List<VisualSegment>();
     public static MapVisualizer Instance { get; private set; }
 
     private void Awake()
@@ -206,7 +207,7 @@ public class MapVisualizer : MonoBehaviour
                 visualLookup[key] = visSeg;
 
                 LaneSegment logicSegment = logicLane.Segments[s];
-
+                Segments.Add(visSeg);
                 if (!SegmentDirectory.ContainsKey(logicSegment))
                 {
                     SegmentDirectory.Add(logicSegment, visSeg);
