@@ -399,9 +399,9 @@ namespace SnowPlow.Controller.Spawning
             MarkStationWithNeighbors(stationA);
             MarkStationWithNeighbors(stationB);
             SpawnStationsClientRpc(
-    mapVisualizer.SegmentDirectory[stationA].gameObject.name,
-    mapVisualizer.SegmentDirectory[stationB].gameObject.name
-);
+                mapVisualizer.SegmentDirectory[stationA].gameObject.name,
+                mapVisualizer.SegmentDirectory[stationB].gameObject.name
+            );
 
 
             GameObject instance = InstantiateVehiclePrefab(busPrefab, startPosition, "Bus");
@@ -424,10 +424,7 @@ namespace SnowPlow.Controller.Spawning
             BusMovement busMovement = instance.GetComponent<BusMovement>();
             if (busMovement != null)
             {
-                busMovement.SetStations(
-                    mapVisualizer.SegmentDirectory[stationA],
-                    mapVisualizer.SegmentDirectory[stationB]
-                );
+                StartCoroutine(SetStations(busMovement, mapVisualizer.SegmentDirectory[stationA].Id, mapVisualizer.SegmentDirectory[stationB].Id));
                 busMovement.SetBusModel(bus);
             }
 
@@ -909,12 +906,7 @@ namespace SnowPlow.Controller.Spawning
 
             if (busMovement != null)
             {
-                
-
-                busMovement.SetStations(
-                    mapVisualizer.SegmentDirectory[stationA],
-                    mapVisualizer.SegmentDirectory[stationB]
-                );
+                StartCoroutine(SetStations(busMovement, mapVisualizer.SegmentDirectory[stationA].Id, mapVisualizer.SegmentDirectory[stationB].Id));
 
                 busMovement.SetBusModel(playerBus);
             }
@@ -1020,6 +1012,13 @@ namespace SnowPlow.Controller.Spawning
             }
 
             return null;
+        }
+
+        private IEnumerator SetStations(BusMovement bus, int visSegId1, int visSegId2)
+        {
+            yield return new WaitForSeconds(2);
+
+            bus.SetStationsClientRpc(visSegId1, visSegId2);
         }
     }
 }
