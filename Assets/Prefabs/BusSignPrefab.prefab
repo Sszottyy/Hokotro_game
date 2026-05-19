@@ -177,6 +177,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ed527938ce775a4c9b7b326c1fe867c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BusStationPassengers
+  ShowTopMostFoldoutHeaderGroup: 1
   passengerPrefabs:
   - {fileID: 4028533530101603263, guid: e4cfc2f8cccee9942ade1609efe5e35e, type: 3}
   - {fileID: 4028533530101603263, guid: ad0f2c36e4426994a99ebf41911134fb, type: 3}
