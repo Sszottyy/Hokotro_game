@@ -7,27 +7,34 @@ using UnityEngine.UI;
 
 namespace Assets.Scripts.Controller
 {
-    public class VolumeController: MonoBehaviour
+    public class VolumeController : MonoBehaviour
     {
+        public static VolumeController Instance { get; private set; }
+
         [SerializeField] private AudioMixer audioMixer;
         [SerializeField] private Slider volumeSlider;
 
+        private void Awake()
+        {
+            if (Instance != null && Instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+
         private void Start()
         {
+            volumeSlider.minValue = 0.0001f;
             volumeSlider.onValueChanged.AddListener(SetVolume);
-
-            // kezdő érték
             volumeSlider.value = 1f;
         }
 
         public void SetVolume(float value)
         {
-            // logaritmikus hangerő
             audioMixer.SetFloat("MasterVolume", Mathf.Log10(value) * 20);
-        }
-        private void Awake()
-        {
-            DontDestroyOnLoad(gameObject);
         }
     }
 }
