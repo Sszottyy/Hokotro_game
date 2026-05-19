@@ -29,7 +29,7 @@ namespace Assets.Scripts.Controller
         {
             volumeSlider.minValue = 0.0001f;
             volumeSlider.onValueChanged.AddListener(SetVolume);
-            volumeSlider.value = 1f;
+            volumeSlider.value = 0.5f;
         }
 
         public void SetVolume(float value)
