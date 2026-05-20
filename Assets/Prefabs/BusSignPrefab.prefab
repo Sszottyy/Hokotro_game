@@ -163,7 +163,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 40, y: 40}
+  m_Size: {x: 20, y: 20}
   m_EdgeRadius: 0
 --- !u!114 &7114523517627625877
 MonoBehaviour:
@@ -190,3 +190,8 @@ MonoBehaviour:
   maxSpawnInterval: 8
   maxPassengers: 6
   spawnRadius: 0.7
+  segmentId:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: -1
