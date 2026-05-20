@@ -218,7 +218,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   ShowTopMostFoldoutHeaderGroup: 1
   myRigidBody2D: {fileID: 4644353460964745811}
-  speedMultiplyer: 30
+  speedMultiplyer: 25
   spriteRenderer: {fileID: 4082599843553801428}
   iso_UpRight: {fileID: 2025089731813422451, guid: 3e30783cd03e706448815683f19b68fe, type: 3}
   iso_UpLeft: {fileID: 5925332631808196048, guid: 3fab8d92587aa2b41a17080921a286bf, type: 3}
